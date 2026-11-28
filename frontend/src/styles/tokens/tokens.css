@@ -1423,18 +1423,16 @@
    A lightbox (600) can never coexist with a boot splash (interaction
    is impossible before ready), but the loader family rides above it
    anyway so the invariant «exactly one full-screen layer, on top»
-   holds without caveats. */
-:root {
-  --z-splash: 800;
-  --z-loader: 700;
-  --z-menu-drawer: 530;
-  --z-dialog: 520;
-  --z-consent: 510;
-  /* --z-toast is deliberately NOT re-declared here: the §3a block owns
-     it at 500 and re-keying it to 40 would demote every live toast
-     under every dropdown in the app. See the mapping table above. */
-  --z-header: 90;
-}
+   holds without caveats.
+
+   r369 slice 06 (stylelint no-duplicate-selectors): this block and
+   the legacy ladder below were TWO :root blocks — and the legacy
+   block silently re-clobbered this ladder's --z-dialog 520 back to
+   400, so R323's dialog rung NEVER won. The declarations now live in
+   the ONE :root ladder below; every live computed value is preserved
+   exactly (consumers were verified against --z-dialog 400 — the
+   r369.css dialog seat is its only consumer — so 400 stays and the
+   R323 520 intent is recorded as superseded in the r369 LEDGER). */
 
 /* ═════════════════════════════════════════════════════════════════════
    ── The landing reference palette (r342 integration) — scoped ────────
@@ -1569,11 +1567,19 @@
 :root {
   --z-content: 0;
   --z-raised: 10;
+  --z-header: 90; /* R323: the free rung under --z-dropdown (100) */
   --z-sticky: 100;
   --z-nav: 200;
   --z-menu: 300;
-  --z-dialog: 400;
+  --z-dialog: 400; /* the LIVE legacy rung (see the note above): R323's
+     re-key to 520 never took effect — preserved, not re-keyed, in the
+     slice-06 sweep. */
   --z-cookie: 450;
-  --z-toast: 500;
+  --z-toast: 500; /* owned here deliberately — re-keying demotes every
+     live toast under every dropdown (the R323 mapping table). */
+  --z-consent: 510; /* R323: consent above toasts */
+  --z-menu-drawer: 530; /* R323: the drawer family tops dialogs */
   --z-cursor: 600;
+  --z-loader: 700; /* R323: the full-screen loading family seat */
+  --z-splash: 800; /* R323: TOPMOST — the boot splash covers everything */
 }

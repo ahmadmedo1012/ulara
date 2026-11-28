@@ -849,7 +849,7 @@ describe('ExamTakerPage submit & autosave integrity (16-E1)', () => {
     });
     expect(mocks.finish).toHaveBeenCalledTimes(1);
     expect(mocks.finish).toHaveBeenCalledWith('a1');
-    expect(screen.getByText('مبروك — لقد اجتزت الاختبار!')).toBeTruthy();
+    expect(screen.getByText('اجتزت الاختبار' /* r369 tone: neutral academic pass message (was a congratulation) */)).toBeTruthy();
   });
 
   it('submit stops waiting for a hung save after the flush timeout (15-e P0-1)', async () => {
@@ -911,7 +911,7 @@ describe('ExamTakerPage submit & autosave integrity (16-E1)', () => {
     // The blur really happened — the field no longer owns focus — and
     // the real result screen rendered.
     expect(document.activeElement).not.toBe(draft);
-    expect(screen.getByText('مبروك — لقد اجتزت الاختبار!')).toBeTruthy();
+    expect(screen.getByText('اجتزت الاختبار' /* r369 tone: neutral academic pass message (was a congratulation) */)).toBeTruthy();
   });
 
   it('a manual submit settles the attempt — no second finish, timer + beforeunload torn down (15-e P0-2)', async () => {
@@ -926,7 +926,7 @@ describe('ExamTakerPage submit & autosave integrity (16-E1)', () => {
 
     await confirmSubmit();
     expect(mocks.finish).toHaveBeenCalledTimes(1);
-    expect(screen.getByText('مبروك — لقد اجتزت الاختبار!')).toBeTruthy();
+    expect(screen.getByText('اجتزت الاختبار' /* r369 tone: neutral academic pass message (was a congratulation) */)).toBeTruthy();
 
     // The countdown interval and the beforeunload listener retired with
     // the attempt…
@@ -1022,7 +1022,7 @@ describe('ExamTakerPage submit & autosave integrity (16-E1)', () => {
     await startExam();
     await confirmSubmit();
 
-    expect(screen.getByText('مبروك — لقد اجتزت الاختبار!')).toBeTruthy();
+    expect(screen.getByText('اجتزت الاختبار' /* r369 tone: neutral academic pass message (was a congratulation) */)).toBeTruthy();
     // Collapsed by default — the verdict stays the moment.
     const toggle = screen.getByRole('button', { name: 'مراجعة الأسئلة' });
     expect(toggle).toHaveAttribute('aria-expanded', 'false');
@@ -1172,7 +1172,7 @@ describe('ExamTakerPage submit & autosave integrity (16-E1)', () => {
     await act(async () => {
       fireEvent.click(screen.getByRole('button', { name: 'تسليم نهائي' }));
     });
-    const resultH1 = screen.getByText('مبروك — لقد اجتزت الاختبار!', { selector: 'h1' });
+    const resultH1 = screen.getByText('اجتزت الاختبار' /* r369 tone: neutral academic pass message (was a congratulation) */, { selector: 'h1' });
     expect(resultH1.className).toBe('oex-result-title');
     // R321 override (WP-B1b) — same seat as the done twin: the sheet
     // owns the size (see the pin above).

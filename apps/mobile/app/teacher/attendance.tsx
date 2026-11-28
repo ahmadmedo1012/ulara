@@ -22,6 +22,7 @@ import { Field } from "@/components/ui/fields";
 import { EmptyState, ErrorState, SkeletonList } from "@/components/ui/states";
 import { toast } from "@/components/ui/toast";
 import { OfferingPicker, toRosterEntry, useTeacherOfferings } from "@/features/teacher/components";
+import { pressFeedback } from "@/motion";
 
 type AttStatus = "PRESENT" | "LATE" | "ABSENT" | "EXCUSED";
 
@@ -59,7 +60,7 @@ function StatusToggle({
       accessibilityLabel={`حضور ${name}: ${label}`}
       accessibilityState={{ selected: on }}
       onPress={() => onPick(status)}
-      style={{
+      style={({ pressed }) => [{
         minHeight: 44,
         justifyContent: "center",
         alignItems: "center",
@@ -68,7 +69,7 @@ function StatusToggle({
         borderWidth: StyleSheet.hairlineWidth,
         borderColor: on ? t.ink : p.border,
         flex: 1,
-      }}
+      }, pressed && { opacity: pressFeedback.linkOpacity }]}
     >
       <T variant="sm" weight={on ? "bold" : "medium"} style={on ? { color: t.ink } : undefined}>
         {label}

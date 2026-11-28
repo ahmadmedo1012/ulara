@@ -14,7 +14,7 @@ const url = process.argv[2] ?? 'http://127.0.0.1:5310/';
 const WIDTHS = [320, 360, 390, 768, 1024, 1440, 1920];
 const findings = [];
 
-const browser = await chromium.launch({ channel: 'chrome' });
+const browser = await chromium.launch(process.env.PW_CHROME_CHANNEL === 'bundled' ? {} : { channel: 'chrome' });
 for (const dark of [false, true]) {
   for (const width of WIDTHS) {
     const ctx = await browser.newContext({

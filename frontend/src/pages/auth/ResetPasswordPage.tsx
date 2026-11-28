@@ -5,17 +5,12 @@ import { z } from 'zod';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { AlertCircle, ArrowLeft } from 'lucide-react';
 import { Icon } from '../../components/Icon';
-import { Logo } from '../../brand';
 import { useResetPassword } from '../../hooks/useAuth';
 import { useThemeSync } from '../../components/layout/ThemeToggle';
 import { usePageTitle } from '../../hooks/usePageTitle';
 import { authErrorView } from '../../lib/authErrors';
 import { isCommonPassword } from '../../lib/commonPasswords';
-// r359 · A1-AUTH — the auth sheets' measured grammar (the appended
-// AUTH section of errors.css, A1-owned; unlayered + .auth-shell-scoped
-// so only these four sheets drift). The base sheet rules stay in
-// patterns.css.
-import '../../styles/errors.css';
+import { PublicShell } from '../../components/landing/r369/pages/PublicShell';
 
 /**
  * R320 §D (PAGES-GAP §5) — خطوة ٢: /auth/reset-password?token=…
@@ -62,7 +57,7 @@ type ResetInputs = z.infer<typeof resetFormSchema>;
  * are indistinguishable by design (PAGES-GAP §5: no token-oracle). */
 const INVALID_TOKEN_TITLE = 'الرابط غير صالح أو انتهت صلاحيته';
 const INVALID_TOKEN_BODY =
-  'روابط الاستعادة تُستخدم مرة واحدة وتنتهي صلاحيتها بعد ٣٠ دقيقة — اطلب رابطًا جديدًا وأعد المحاولة.';
+  'روابط الاستعادة تُستخدم مرة واحدة وتنتهي صلاحيتها بعد 30 دقيقة — اطلب رابطًا جديدًا وأعد المحاولة.';
 
 /** Generic refusal ONLY for failures the server never answered (network). */
 const GENERIC_RESET_ERROR =
@@ -109,26 +104,18 @@ export default function ResetPasswordPage() {
   const linkIsDead = !token || (serverRefused && !succeeded);
 
   return (
-    <div className="auth-shell">
-      <div className="auth-frame" aria-hidden="true">
-        <span className="auth-mark auth-mark-tl" />
-        <span className="auth-mark auth-mark-tr" />
-        <span className="auth-mark auth-mark-bl" />
-        <span className="auth-mark auth-mark-br" />
-      </div>
-      <div className="auth-grain" aria-hidden="true" />
-
-      <header className="auth-top">
+    /* r369 slice B · T5 — PublicShell chrome replaces the retired
+       drafting frame/marks/grain + auth-top bar; the back-to-login
+       link moves into the in-column flow bar. Logic untouched. */
+    <PublicShell>
+      <div className="p369-t5">
+      <div className="auth-flowbar">
         <Link to="/auth" className="auth-back-home">
           <Icon icon={ArrowLeft} size={14} />
           العودة إلى تسجيل الدخول
         </Link>
-        <span className="auth-context">
-          <Logo variant="mark" size={14} /> أُلارا
-        </span>
-      </header>
-
-      <main className="auth-center">
+      </div>
+      <div className="auth-center">
         <div className="auth-card">
 
           {succeeded ? (
@@ -190,7 +177,7 @@ export default function ResetPasswordPage() {
                 <span className="auth-meta">(كلمة مرور جديدة)</span>
                 <h1 className="auth-form-title">عيّن كلمة مرور جديدة</h1>
                 <p className="auth-form-sub">
-                  اختر كلمة مرور قوية لحسابك — من ١٢ إلى ٧٢ حرفًا، ليست من الكلمات الشائعة.
+                  اختر كلمة مرور قوية لحسابك — من 12 إلى 72 حرفًا، ليست من الكلمات الشائعة.
                 </p>
               </div>
 
@@ -253,7 +240,7 @@ export default function ResetPasswordPage() {
                     12–72 + the common-password blocklist — nothing
                     invented, nothing hidden. */}
                 <div className="fp-mail-note" role="note">
-                  السياسة الفعلية: ١٢ حرفًا على الأقل و٧٢ كحدّ أقصى، وألا تكون من الكلمات الشائعة (تُرفض مثل password123). تعمل القاعدة نفسها في التسجيل وتغيير كلمة المرور.
+                  السياسة الفعلية: 12 حرفًا على الأقل و72 كحدّ أقصى، وألا تكون من الكلمات الشائعة (تُرفض مثل password123). تعمل القاعدة نفسها في التسجيل وتغيير كلمة المرور.
                 </div>
 
                 {resetPassword.isError && (
@@ -285,7 +272,7 @@ export default function ResetPasswordPage() {
                 >
                   {resetPassword.isPending ? (
                     <>
-                      <span className="auth-submit-spinner" aria-hidden />
+                      <span className="spinner" aria-hidden />
                       <span>جارٍ الحفظ…</span>
                     </>
                   ) : (
@@ -310,11 +297,12 @@ export default function ResetPasswordPage() {
             </>
           )}
         </div>
-      </main>
+      </div>
 
       <footer className="auth-bottom">
-        <strong>منصّة تعليم ذكية مستقلّة</strong> · عربية أولًا
+        <strong>منصّة تعليمية مستقلّة</strong>
       </footer>
-    </div>
+      </div>
+    </PublicShell>
   );
 }

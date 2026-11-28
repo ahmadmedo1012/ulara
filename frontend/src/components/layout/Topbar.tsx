@@ -1,5 +1,5 @@
 import { useMemo, useState, useRef } from 'react';
-import { Menu, MessageSquarePlus, LogOut, User as UserIcon, Sun, Moon, Search, Building2 } from 'lucide-react';
+import { Menu, MessageSquarePlus, LogOut, User as UserIcon, Sun, Moon, Search, Building2, Sparkles } from 'lucide-react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Icon } from '../Icon';
 import { UserAvatar } from '../primitives';
@@ -11,6 +11,8 @@ import { useAuthStore, type MembershipInfo, type AppRole } from '../../stores/au
 import { useThemeStore, resolveTheme } from '../../stores/theme.store';
 import { useLogout, useMe, useSelectInstitution } from '../../hooks/useAuth';
 import { useMyProfile, apiErrorMessage } from '../../hooks/useResources';
+import { useStudentDashboard } from '../../hooks/resources/student';
+import { countAr } from '../../lib/format';
 import { NAV_BY_ROLE, ROLE_LABELS, displayRoleLabel } from '../../lib/nav';
 // R320 §B: role display names come from the one source of truth
 // (lib/roleLabels.ts, shared with the backend twin).
@@ -64,6 +66,45 @@ function StudentScopeChip() {
     <span className="topbar-scope" title={`الكلّيّة: ${name}`}>
       {name}
     </span>
+  );
+}
+
+/** r369 slice 02: the collector chip — the student's real «نقاط إتقان»
+ *  total in the topbar, from useStudentDashboard (GET /me/dashboard,
+ *  kpi.totalXp — the same query the dashboard and the gamification
+ *  page already read; no new endpoint, the leaderboard-ranked scale).
+ *  Honest by construction: on error the chip hides rather than guess,
+ *  a zero balance renders «٠ نقطة إتقان» plainly, and the chip links
+ *  to /student/gamification where the number is explained. A streak
+ *  row was considered and rejected — no streak data exists anywhere
+ *  in the app, so faking one would lie. Rendered only for STUDENT
+ *  (the structural gate — same precedent as StudentScopeChip above);
+ *  the r369-shell.css sheet hides it below 921px. */
+function StudentXpChip() {
+  const dash = useStudentDashboard();
+  const navigate = useNavigate();
+  if (dash.isError) return null;
+  const totalXp = dash.data?.kpi?.totalXp;
+  if (totalXp === undefined) {
+    return (
+      <span className="topbar-xp topbar-xp-loading" aria-hidden="true">
+        <Icon icon={Sparkles} size={14} />
+        …
+      </span>
+    );
+  }
+  const label = countAr(totalXp, ['نقطة إتقان واحدة', 'نقطتا إتقان', 'نقاط إتقان', 'نقطة إتقان']);
+  return (
+    <button
+      type="button"
+      className="topbar-xp"
+      onClick={() => navigate('/student/gamification')}
+      title={`رصيدك: ${label} — افتح صفحة الإنجازات`}
+      aria-label={`${label} — افتح صفحة الإنجازات`}
+    >
+      <Icon icon={Sparkles} size={14} />
+      {label}
+    </button>
   );
 }
 
@@ -322,6 +363,9 @@ export function Topbar({ scrolled = false, onOpenCommandPalette }: TopbarProps) 
             flip lives in the user menu (the r350 «two toggles on one
             screen» defect dies). Actions budget: search · bell ·
             user (+ the burger on mobile). */}
+        {/* r369 slice 02: the collector chip between search and the
+            bell — student-only, hidden on the mobile band by CSS. */}
+        {role === 'STUDENT' && <StudentXpChip />}
         <NotificationDropdown alertsPath={alertsPath} />
 
         {user && (

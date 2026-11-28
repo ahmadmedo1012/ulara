@@ -135,9 +135,6 @@ export const updatePerson = (id: ID, input: Partial<PersonInput>) =>
 export const setPersonStatus = (id: ID, status: string, endedAt?: string) =>
   post<Person>(`/institutional/people/${id}/status`, { status, endedAt });
 
-export const listPersonAppointments = (personId: ID) =>
-  getOne<Appointment[]>(`/institutional/people/${personId}/appointments`);
-
 /* ── §5 appointments ────────────────────────────────────────────── */
 
 type AppointmentQuery = {

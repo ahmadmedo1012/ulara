@@ -51,7 +51,7 @@ const GUEST_ROUTES: HealthRoute[] = [
   {
     path: '/404',
     ready: async (page) => {
-      await expect(page.locator('.nf-title')).toHaveText('هذه الصفحة تغيّبت عن الحضور');
+      await expect(page.getByRole('heading', { level: 1 })).toHaveText('هذه الصفحة تغيّبت عن الحضور');
     },
   },
   {

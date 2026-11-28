@@ -38,7 +38,7 @@ const sizes: Record<TextVariant, TextStyle> = {
   h3: { fontSize: type.h3, lineHeight: 28 },
   h4: { fontSize: type.h4, lineHeight: 24 },
   bodyLg: { fontSize: type.bodyLg, lineHeight: 24 },
-  body: { fontSize: type.body, lineHeight: 20 },
+  body: { fontSize: type.body, lineHeight: 21 }, // r369: 14/21 — the ≥1.5 leading floor
   sm: { fontSize: type.sm, lineHeight: 18 },
   xs: { fontSize: type.xs, lineHeight: 16 },
   mono: { fontFamily: fonts.mono, fontSize: type.body, lineHeight: 20 },
@@ -105,20 +105,30 @@ export function T({ variant = "body", color = "text", weight, align, style, ...r
           gold: p.goldInk,
           danger: tones.rose.deep,
         }[color];
+  /* r369 slice 04 — the display face carries the heading rungs, matching
+     * the web canon (.pf-page-title rides var(--font-display) semibold):
+     * display/h1-h4 → Baloo Bhaijaan 2 (Display-*), body rungs → Readex
+     * Pro (Body-*), mono → Geist. An explicit weight picks the same rung
+     * inside the variant's family; an unweighted heading lands Semibold. */
+  const isHeading = variant === "display" || variant === "h1" || variant === "h2" || variant === "h3" || variant === "h4";
   const weightFamily =
     variant === "mono" || variant === "monoSm"
       ? weight === "medium"
         ? fonts.monoMedium
         : fonts.mono
-      : weight === "bold"
-        ? fonts.bodyBold
-        : weight === "semibold"
-          ? fonts.bodySemiBold
+      : isHeading
+        ? weight === "medium"
+          ? fonts.displayMedium
+          : weight === "bold"
+            ? fonts.displayBold
+            : fonts.display
+        : weight === "bold"
+          ? fonts.bodyBold
+          : weight === "semibold"
+            ? fonts.bodySemiBold
           : weight === "medium"
             ? fonts.bodyMedium
-            : variant === "display"
-              ? fonts.display
-              : undefined;
+            : undefined;
   const variantStyle = scaleLineHeight(sizes[variant], fontScale);
   const family: TextStyle = weightFamily
     ? { fontFamily: weightFamily }

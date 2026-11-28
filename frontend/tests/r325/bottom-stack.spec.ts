@@ -209,8 +209,14 @@ async function openToast(page: Page): Promise<void> {
   await page.waitForTimeout(450);
 }
 
-/** The consent gate's entrance is a 1.2s-delayed rise — wait for opacity 1. */
+/** The consent gate's entrance is a 1.2s-delayed rise — wait for opacity 1.
+ *  r363 — the gate seats INSIDE the footer's final row (the owner's
+ *  ruling) behind the lazy MountOnVisible placeholder, so it mounts
+ *  when the colophon nears the viewport, not at page load: scroll the
+ *  placeholder in first, wait for the footer, then settle. */
 async function awaitConsentSettled(page: Page): Promise<void> {
+  await page.locator('.lz-mount[data-lz="footer"]').scrollIntoViewIfNeeded();
+  await page.locator('.fo-footer').waitFor({ state: 'attached' });
   const banner = page.locator('.cb-banner');
   await banner.waitFor({ state: 'visible' });
   await expect

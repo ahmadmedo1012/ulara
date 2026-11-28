@@ -194,8 +194,8 @@ describe('r325 app grammar CSS contract — §R325 pins', () => {
     expect(stripped).not.toMatch(/!important/);
   });
 
-  it('names the three state primitives + the skeleton the grammar pins', () => {
-    for (const cls of ['.pat-hatch', '.pat-dots', '.pat-cross', '.pat-skeleton']) {
+  it('names the state primitives + the skeleton + the line-grid the grammar pins', () => {
+    for (const cls of ['.pat-hatch', '.pat-dots', '.pat-cross', '.pat-skeleton', '.pat-linegrid']) {
       expect(stripped).toMatch(new RegExp(`${cls.replace(/-/g, '\\-')}\\s*\\{`));
     }
   });

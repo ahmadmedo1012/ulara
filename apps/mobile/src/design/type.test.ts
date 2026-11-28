@@ -1,7 +1,8 @@
 /**
  * R334 2-f — Arabic typography helpers contract.
  *
- * Pins: the four roles sit on the LOADED IBM Plex Sans Arabic weights,
+ * Pins: the four roles sit on the LOADED Readex Pro weights (r369 slice
+ * 04 re-key — the family swapped under unchanged fontMap keys),
  * sizes come from the shared px ladder, the body leading survives the
  * 200% font-scale policy, direction helpers are explicit, and the scaled
  * touch floor never drops below 44.
@@ -12,7 +13,7 @@ import { FONT_SCALE_RANGE, ltrText, rtlText, scaledTouchFloor, typeStyles } from
 
 // The registered FAMILY NAMES are the fontMap KEYS ("Body-Bold"…) — the
 // map's VALUES are asset ids (mocked to 1 under jest), so pin on keys.
-const PLEX_FAMILIES = (Object.keys(fontMap) as (keyof typeof fontMap)[]).filter((k) =>
+const BODY_FAMILIES = (Object.keys(fontMap) as (keyof typeof fontMap)[]).filter((k) =>
   k.startsWith("Body-"),
 );
 
@@ -21,9 +22,9 @@ describe("typeStyles — the four composing roles", () => {
     expect(Object.keys(typeStyles).sort()).toEqual(["body", "display", "numeric", "title"]);
   });
 
-  it("uses ONLY the loaded IBM Plex Sans Arabic weights (never Alexandria/mono)", () => {
+  it("uses ONLY the loaded Readex Pro body weights (never the Baloo display face/mono)", () => {
     for (const role of Object.values(typeStyles)) {
-      expect(PLEX_FAMILIES).toContain(role.fontFamily);
+      expect(BODY_FAMILIES).toContain(role.fontFamily);
       expect(role.fontFamily).not.toBe(fonts.display);
       expect(role.fontFamily).not.toBe(fonts.mono);
     }
@@ -32,12 +33,12 @@ describe("typeStyles — the four composing roles", () => {
   it("sits on the shared px ladder rungs", () => {
     expect(typeStyles.display.fontSize).toBe(ladder.display); // 36
     expect(typeStyles.title.fontSize).toBe(ladder.sectionTitle); // 20
-    expect(typeStyles.body.fontSize).toBe(ladder.body); // 13 — the Arabic floor
+    expect(typeStyles.body.fontSize).toBe(ladder.body); // 14 — the r369 Arabic floor
     expect(typeStyles.numeric.fontSize).toBe(ladder.statNumber); // 44
   });
 
-  it("body matches <T variant=\"body\"> byte-for-byte (13/20 Regular)", () => {
-    expect(typeStyles.body).toEqual({ fontFamily: fonts.body, fontSize: 13, lineHeight: 20 });
+  it("body matches <T variant=\"body\"> byte-for-byte (14/21 Regular — r369 re-key: the ladder moved body to 14px, leading keeps the ≥1.5 floor)", () => {
+    expect(typeStyles.body).toEqual({ fontFamily: fonts.body, fontSize: 14, lineHeight: 21 });
   });
 
   it("weight rungs are the hierarchy: bold display > semibold title/numeric > regular body", () => {

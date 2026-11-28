@@ -23,3 +23,10 @@ frontend/public/lectures/se301-03-design.mp4
 apps/mobile/package-lock.json
 apps/mobile/src/api/schema.generated.ts
 
+
+# r369: the surface-audit baseline is a tracked test fixture (553 KB); it grew with the identity re-key.
+frontend/tests/audit/surface-baseline.json
+# r369 full-page evidence screenshots (regenerable by docs/redesign/r369/*.mjs)
+docs/redesign/r369/measure/desktop-full.png
+docs/redesign/r369/measure/phone-full.png
+docs/redesign/r369/evidence/r369-tablet.png

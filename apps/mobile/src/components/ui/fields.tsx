@@ -25,10 +25,11 @@ import EyeOff from "lucide-react-native/icons/eye-off";
 import Search from "lucide-react-native/icons/search";
 import X from "lucide-react-native/icons/x";
 import { usePalette, useStatusTones } from "@/design/theme";
-import { sp, touchFloor } from "@/design/tokens";
+import { radius, sp, touchFloor } from "@/design/tokens";
 import { T } from "./text";
 import { OptionSheet } from "./surfaces";
 import { InlineBusy } from "./boot";
+import { pressFeedback } from "@/motion";
 
 /**
  * Form fields — hairline inputs on paper, 44px floors, Arabic labels,
@@ -264,6 +265,7 @@ export function Field({
             {
               backgroundColor: p.surface,
               borderWidth: focused ? 1 : StyleSheet.hairlineWidth,
+              borderRadius: radius.md, // r369: the 14px field corner
               borderColor: error ? tones.rose.ink : focused ? p.text : p.rule,
               paddingHorizontal: sp[12],
               paddingLeft: leadingWidth ? leadingWidth + sp[8] : sp[12],
@@ -297,7 +299,7 @@ export function Field({
                 accessibilityRole="button"
                 accessibilityLabel={show ? "إخفاء كلمة المرور" : "إظهار كلمة المرور"}
                 onPress={() => setShow((v) => !v)}
-                style={{
+                style={({ pressed }) => [{
                   minHeight: 48,
                   minWidth: touchFloor,
                   paddingHorizontal: sp[4],
@@ -305,7 +307,7 @@ export function Field({
                   alignItems: "center",
                   justifyContent: "center",
                   gap: 2,
-                }}
+                }, pressed && { opacity: pressFeedback.linkOpacity }]}
               >
                 {show ? <EyeOff size={18} color={p.textMuted} /> : <Eye size={18} color={p.textMuted} />}
                 <T variant="xs" color="muted">
@@ -398,6 +400,7 @@ export function SelectField({
           gap: sp[8],
           backgroundColor: pressed ? p.surfaceHover : p.surface,
           borderWidth: StyleSheet.hairlineWidth,
+          borderRadius: radius.md, // r369: the 14px field corner
           borderColor: error ? tones.rose.ink : p.rule,
           paddingHorizontal: sp[12],
           minHeight: 48,
@@ -452,6 +455,7 @@ export function SearchBar({
         alignItems: "center",
         gap: sp[8],
         borderWidth: StyleSheet.hairlineWidth,
+        borderRadius: radius.md, // r369: the 14px field corner
         borderColor: p.rule,
         backgroundColor: p.surface,
         paddingHorizontal: sp[12],
@@ -475,7 +479,7 @@ export function SearchBar({
           accessibilityLabel="مسح البحث"
           onPress={() => (onClear ? onClear() : onChange(""))}
           hitSlop={4}
-          style={{ width: touchFloor, height: touchFloor, alignItems: "center", justifyContent: "center" }}
+          style={({ pressed }) => [{ width: touchFloor, height: touchFloor, alignItems: "center", justifyContent: "center" }, pressed && { opacity: pressFeedback.linkOpacity }]}
         >
           <X size={16} color={p.textMuted} />
         </Pressable>
@@ -503,6 +507,7 @@ export function Segmented({
         {
           flexDirection: "row",
           borderWidth: StyleSheet.hairlineWidth,
+          borderRadius: radius.md, // r369: the 14px field corner
           borderColor: p.rule,
           backgroundColor: p.surface,
         },
@@ -517,7 +522,7 @@ export function Segmented({
             accessibilityRole="tab"
             accessibilityState={{ selected: active }}
             onPress={() => onSelect(o.id)}
-            style={{
+            style={({ pressed }) => [{
               flex: 1,
               minHeight: touchFloor,
               alignItems: "center",
@@ -526,7 +531,7 @@ export function Segmented({
               borderStartWidth: i > 0 ? StyleSheet.hairlineWidth : 0,
               borderStartColor: p.border,
               paddingHorizontal: sp[8],
-            }}
+            }, pressed && { opacity: pressFeedback.linkOpacity }]}
           >
             <T variant="sm" weight="bold" style={{ color: active ? p.primaryFg : p.textSecondary }} numberOfLines={1}>
               {o.label}
@@ -569,14 +574,15 @@ export function ChipGroup({
             accessibilityRole="tab"
             accessibilityState={{ selected: active }}
             onPress={() => onSelect(o.id)}
-            style={{
+            style={({ pressed }) => [{
               minHeight: touchFloor,
               justifyContent: "center",
               paddingHorizontal: sp[12],
               borderWidth: StyleSheet.hairlineWidth,
+              borderRadius: radius.md, // r369: the 14px field corner
               borderColor: active ? p.primary : p.rule,
               backgroundColor: active ? p.primary : p.surface,
-            }}
+            }, pressed && { opacity: pressFeedback.linkOpacity }]}
           >
             <T variant="sm" weight="bold" style={{ color: active ? p.primaryFg : p.textSecondary }} numberOfLines={1}>
               {o.label}

@@ -15,8 +15,8 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 // family seats text inputs too; without it the keyboard covers the lower
 // fields/footer of short (non-scrolling) forms on iOS.
 import { KeyboardAvoidingView } from "react-native-keyboard-controller";
-import { usePalette, useStatusTones, useTheme } from "@/design/theme";
-import { sp, type StatusToneName } from "@/design/tokens";
+import { usePalette, useTheme, useStatusTones } from "@/design/theme";
+import { radius, sp, type StatusToneName } from "@/design/tokens";
 import { T } from "./text";
 import { Button } from "./pressables";
 
@@ -48,7 +48,8 @@ export function HairlineRows({ children, style }: { children: ReactNode; style?:
   );
 }
 
-/** Card — surface + hairline border, radius 0 (ds discipline). */
+/** Card — r369: the 22px warm card + soft indigo shadow (the drawing-sheet
+ * radius-0 discipline is retired). The hairline stays as the dark-ground frame. */
 export function Card({
   children,
   style,
@@ -61,12 +62,20 @@ export function Card({
   accessibilityLabel?: string;
 }) {
   const p = usePalette();
+  const { name } = useTheme();
   const box: StyleProp<ViewStyle> = [
     {
       backgroundColor: p.surface,
       borderWidth: StyleSheet.hairlineWidth,
       borderColor: p.border,
+      borderRadius: radius.xl, // 22 — the r369 card corner
       padding: sp[16],
+      // r369: the soft shadow — indigo-tinted on cream, deeper on night.
+      shadowColor: name === "light" ? "#1E1A3C" : "#000000",
+      shadowOffset: { width: 0, height: 6 },
+      shadowOpacity: name === "light" ? 0.08 : 0.35,
+      shadowRadius: 16,
+      elevation: name === "light" ? 3 : 6,
     },
     style,
   ];

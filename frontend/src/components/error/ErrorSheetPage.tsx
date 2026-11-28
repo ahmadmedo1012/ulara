@@ -4,6 +4,7 @@ import { Home, LogIn } from 'lucide-react';
 import { Icon } from '../Icon';
 import { Illustration } from '../illustrations/Illustration';
 import type { MkIllustrationName } from '../illustrations/names';
+import { RegCross } from '../patterns/RegCross';
 /* R341 D5 — the error sheets' own thin seat sheet: the edge390 mobile
  * inset + the primary way-home's hover channels (the .nf-* scene
  * family itself lives in patterns.css and is not touched here). */
@@ -50,13 +51,13 @@ export function ErrorSheetPage({
 }) {
   return (
     <main className="nf-shell nf-sheet">
-      {/* §A6: empty spans — the '+' glyph is CSS ::before content, so
-          the decorative marks never leak into innerText. */}
+      {/* §A6: the mark spans stay EMPTY (RegCross draws two CSS bars),
+          so the decorative marks never leak into innerText. */}
       <div className="nf-frame" aria-hidden="true">
-        <span className="nf-mark nf-mark-tl" />
-        <span className="nf-mark nf-mark-tr" />
-        <span className="nf-mark nf-mark-bl" />
-        <span className="nf-mark nf-mark-br" />
+        <RegCross className="nf-mark" corner="tl" />
+        <RegCross className="nf-mark" corner="tr" />
+        <RegCross className="nf-mark" corner="bl" />
+        <RegCross className="nf-mark" corner="br" />
       </div>
       <div className="auth-grain" aria-hidden="true" />
 

@@ -26,10 +26,9 @@ import { useLoaderState } from '../../lib/loaderOrchestrator';
 
 /** The rotating status lines — honest, calm, first-person plural. */
 const STATUS_LINES: readonly string[] = [
-  'الخادم يستيقظ… — عادةً يستغرق ٣٠–٦٠ ثانية',
+  'الخادم يستيقظ… — عادةً يستغرق 30–60 ثانية',
   'لا تقلق، بياناتك محفوظة',
-  'نُعيد المحاولة تلقائيًا كل بضع ثوانٍ',
-  'شكرًا لصبرك — الرحلة تكمل بعد قليل',
+  'التحميل ما زال جاريًا، لحظات من فضلك',
 ];
 
 const ROTATE_MS = 4000;

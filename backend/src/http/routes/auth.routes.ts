@@ -27,6 +27,8 @@ import {
   registerUser,
   selectInstitution,
 } from '../../modules/auth/auth.service.js';
+// P6 — session ledger surface (list + per-session revoke).
+import { listUserSessions, revokeSessionForOwner } from '../../modules/auth/sessions.js';
 import { requestPasswordReset, resetPassword, TOKEN_TTL_MS } from '../../modules/auth/password-reset.service.js';
 import { isTestAccountEmail } from '../../modules/auth/test-accounts.data.js';
 import { mailConfig, renderResetEmail, sendMail } from '../../lib/mail.js';
@@ -70,7 +72,10 @@ const setRefreshCookie = (res: import('express').Response, token: string) => {
 
 router.post('/register', authRateLimiter, validate(registerSchema), async (req, res, next) => {
   try {
-    const { user, accessToken, refreshToken } = await registerUser(req.body);
+    const { user, accessToken, refreshToken } = await registerUser(req.body, {
+      ip: req.ip,
+      userAgent: req.header('user-agent'),
+    });
     setRefreshCookie(res, refreshToken);
     // r359 A4 — verification mail rides the registration (best-effort,
     // fire-and-forget: a mail outage must never fail the signup).
@@ -120,6 +125,13 @@ router.post(
       const { user, accessToken, refreshToken } = await selectInstitution(
         req.user!.id,
         req.body.institutionId,
+        {
+          ip: req.ip,
+          userAgent: req.header('user-agent'),
+          // P6 — the presented cookie lets the mint keep the device's
+          // session-row identity (one row per device, not one per select).
+          refreshToken: req.cookies?.[REFRESH_COOKIE],
+        },
       );
       setRefreshCookie(res, refreshToken);
       res.json({ data: { user, accessToken } });
@@ -176,7 +188,10 @@ router.post('/refresh', authRateLimiter, async (req, res, next) => {
   try {
     const token = req.cookies?.[REFRESH_COOKIE] || '';
     if (!token) throw AppError.unauthenticated('جلسة غير صالحة — سجّل الدخول من جديد');
-    const { user, accessToken, refreshToken } = await refreshTokens(token);
+    const { user, accessToken, refreshToken } = await refreshTokens(token, {
+      ip: req.ip,
+      userAgent: req.header('user-agent'),
+    });
     setRefreshCookie(res, refreshToken);
     res.json({ data: { user, accessToken } });
   } catch (e) {
@@ -391,6 +406,84 @@ router.get('/me', authMiddleware, async (req, res, next) => {
     // claim (null = no context yet — client must select-institution).
     const user = await getCurrentUser(req.user!.id, req.user!.institutionId);
     res.json({ data: user });
+  } catch (e) {
+    next(e);
+  }
+});
+
+// ── P6 — session surface: list + per-session revocation ────────────
+
+/**
+ * GET /auth/sessions — the caller's ACTIVE sessions: one row per
+ * device lineage (id, createdAt, lastUsedAt, userAgent, ip, current).
+ *
+ * DESIGN DECISION — how "current" is resolved: the access token is a
+ * stateless HS256 JWT whose claims are sub/role/inst/type — there is
+ * NO jti and no session identity in it, so the bearer token alone
+ * cannot name a session row. The refresh cookie, however, rides EVERY
+ * /api/v1/auth request (path-scoped), and its sha-256 hash IS the
+ * UserSession row's identity — so the row matching the presented
+ * cookie's hash is flagged current. No cookie (or no matching row) →
+ * nothing is flagged (honest: e.g. the D3 bump has already killed
+ * this device's lineage).
+ *
+ * Liveness is revokedAt IS NULL **and** tokenVersionSnapshot = the
+ * user's CURRENT tokenVersion: the D3 global revocation events
+ * (logout/password change/role change/deactivation) bump only the
+ * user-level counter — the snapshot comparison hides their victims
+ * here without those call sites ever touching the session table.
+ */
+router.get('/sessions', authMiddleware, async (req, res, next) => {
+  try {
+    const sessions = await listUserSessions(req.user!.id, req.cookies?.[REFRESH_COOKIE]);
+    res.json({ data: sessions });
+  } catch (e) {
+    next(e);
+  }
+});
+
+/**
+ * DELETE /auth/sessions/:id — revoke ONE of the caller's sessions.
+ *
+ * DESIGN DECISION (the D3 nuance): this deliberately does NOT bump
+ * tokenVersion. The version is ONE user-level counter shared by every
+ * device — bumping it here would kill the user's OTHER sessions within
+ * one access-TTL, exactly the forced-logout bug D3 exists to prevent
+ * (rotation.ts). Per-session revocation works because the refresh
+ * route treats the session ROW as the source of truth: before issuing
+ * it checks the presented hash's row, and a revokedAt row never mints
+ * tokens again. The other devices keep sliding, untouched.
+ *
+ * Consequence (documented, intended): the revoked device's cookie is a
+ * DEAD credential. If that device presents it again at /auth/refresh,
+ * the reuse detector fires — all sessions revoked + tokenVersion
+ * bumped (the standard theft response). A legitimately recovered
+ * device must re-LOGIN (a fresh login opens a fresh lineage), never
+ * replay the revoked cookie.
+ *
+ * When the deleted row IS the caller's own (matched by the refresh
+ * cookie's hash, the same identity rule as GET /auth/sessions), the
+ * response also CLEARS the refresh cookie: the caller's next refresh
+ * becomes a plain "no session" 401 instead of a replay of a revoked
+ * credential — deleting your current session is a clean single-device
+ * logout that leaves the other devices alive.
+ *
+ * Ownership is enforced with a 404-shaped no-existence-leak: a foreign
+ * id and a missing id answer identically (NOT_FOUND envelope).
+ */
+router.delete('/sessions/:id', authMiddleware, async (req, res, next) => {
+  try {
+    const { status, current } = await revokeSessionForOwner(
+      req.user!.id,
+      req.params.id!,
+      req.cookies?.[REFRESH_COOKIE],
+    );
+    if (current) {
+      // The caller revoked its own lineage — clear the now-dead cookie
+      // so its next refresh is a plain reauth, not a theft replay.
+      res.clearCookie(REFRESH_COOKIE, { path: '/api/v1/auth' });
+    }
+    res.json({ data: { ok: true, revoked: status, current } });
   } catch (e) {
     next(e);
   }

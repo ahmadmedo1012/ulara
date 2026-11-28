@@ -70,7 +70,7 @@ import { subscribeSheetFrame } from './sheetConductor';
  * defaults this module relies on by omission, exactly like the reference
  * omits what it does not override.
  */
-export const DS_LENIS_PARAMS = {
+const DS_LENIS_PARAMS = {
   /** lerp mode (duration stays undefined) — the reference's 0.1 glide. */
   lerp: 0.1,
   /** undefined → the constructor's lerp branch, never a fixed duration. */
@@ -96,6 +96,13 @@ let lenis: Lenis | null = null;
 let unsubFrame: (() => void) | null = null;
 let offLenisScroll: (() => void) | null = null;
 let idleTimer = 0;
+
+function coarsePointer(): boolean {
+  if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') {
+    return false;
+  }
+  return window.matchMedia('(pointer: coarse)').matches;
+}
 
 function reducedMotion(): boolean {
   if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') {
@@ -196,11 +203,6 @@ function onVisibilityChange(): void {
  * existed; observability rides isGuestLenisIdle(). */
 let lenisIdle = false;
 
-/** R321 §A1 — the idle observability seat (was html[data-lenis-idle]). */
-export function isGuestLenisIdle(): boolean {
-  return lenisIdle;
-}
-
 function bumpIdle(): void {
   if (typeof window === 'undefined' || typeof document === 'undefined') return;
   if (idleTimer) window.clearTimeout(idleTimer);
@@ -218,11 +220,6 @@ function bumpIdle(): void {
 /** The live engine, or null (tests + ScrollResetOnPush's reset path). */
 export function getLenis(): Lenis | null {
   return lenis;
-}
-
-/** Introspection twin of getLenis() for cheap boolean assertions. */
-export function isGuestLenisOn(): boolean {
-  return lenis !== null;
 }
 
 /**
@@ -264,6 +261,13 @@ export function initGuestLenis(): boolean {
   }
   if (lenis) return true;
   if (reducedMotion()) return false; /* RM: NEVER init — native scroll */
+  /* r369 phone-smoothness: on a touch-first device (pointer: coarse) the
+   * engine's syncTouch mode replaces the browser's own momentum scroll
+   * with a JS-driven one, which reads layout every frame and is visibly
+   * choppy on iOS Safari (measured under a 4x CPU throttle: ~865ms of
+   * scroll-position reads across one 17k px scroll). Phones scroll
+   * natively; the glide stays for mouse/trackpad. */
+  if (coarsePointer()) return false;
 
   /* The ONE frame clock stays the conductor (r308/r313 pinned
    * contracts — Lenis's raf rides its subscriber slot). R342-final:

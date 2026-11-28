@@ -44,6 +44,23 @@ const STYLE_RULE_ID = 'ula-scroll-lock-rule';
 /** Currently-holding keys. Never exported. */
 const holders = new Set<string>();
 
+/** window scroll offset captured when the FIRST holder arrives. Released
+ *  back on the LAST release when anything moved the page meanwhile (the
+ *  smooth-scroll engine's stop/start cycle, a layout swap behind the
+ *  overlay). A no-op when the offset is unchanged, so native touch
+ *  scroll is never touched. */
+let savedScrollY: number | null = null;
+
+function restoreScrollY(): void {
+  if (savedScrollY === null || typeof window === 'undefined') return;
+  const y = savedScrollY;
+  savedScrollY = null;
+  if (Math.abs(window.scrollY - y) <= 1) return;
+  const engine = (window as { __ulaLenis?: { scrollTo: (v: number, o?: object) => void } }).__ulaLenis;
+  if (engine) engine.scrollTo(y, { immediate: true, force: true });
+  window.scrollTo({ top: y, behavior: 'instant' as ScrollBehavior });
+}
+
 function ensureLockRule(): void {
   if (typeof document === 'undefined') return;
   if (document.getElementById(STYLE_RULE_ID)) return;
@@ -73,6 +90,7 @@ export function acquireScrollLock(holder: string): void {
   const isNew = !holders.has(holder);
   holders.add(holder);
   if (!isNew) return;
+  if (holders.size === 1 && typeof window !== 'undefined') savedScrollY = window.scrollY;
   ensureLockRule();
   syncBodyClass();
 }
@@ -82,6 +100,7 @@ export function acquireScrollLock(holder: string): void {
 export function releaseScrollLock(holder: string): void {
   if (!holders.delete(holder)) return;
   syncBodyClass();
+  if (holders.size === 0) restoreScrollY();
 }
 
 /** True while at least one holder keeps the body locked. */

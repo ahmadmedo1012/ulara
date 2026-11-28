@@ -1,6 +1,7 @@
+import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
-  Trophy, Star, Medal, Activity, Crown,
+  Medal, Activity,
   Headset,
   Bell, AlertTriangle, BookOpen, Download, CalendarDays,
   CheckCircle2, Check, Heart, GraduationCap,
@@ -9,12 +10,12 @@ import {
 } from 'lucide-react';
 import { Bar, Radar } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Tooltip, RadialLinearScale, PointElement, LineElement, Filler } from 'chart.js';
-import { Card, ProgressBar, Badge, UserAvatar, AlertRow } from '../../components/primitives';
-import { ErrorState, EmptyState, Skeleton, ChartSkeleton, CardSkeleton, ListSkeleton } from '../../components/primitives/States';
+import { ProgressBar, Badge, UserAvatar, AlertRow } from '../../components/primitives';
+import { ErrorState, EmptyState, Skeleton, ChartSkeleton, ListSkeleton } from '../../components/primitives/States';
 import { ChartFrame } from '../../components/charts';
 import { Icon } from '../../components/Icon';
 import { EmojiIcon } from '../../components/EmojiIcon';
-import { useMyAchievements, useLeaderboard, useMySkills, useStudentResults, useMyEnrollments, useNotificationsFeed, useMarkNotifRead, useMarkAllNotifsRead, notifDeepLink, useArExperiences, useStudentMaterials, useFaculties, useCurrentInstitutionSlug, useStudentDashboard, useTrainingMe, submissionStatusAr, type StudentMaterial } from '../../hooks/useResources';
+import { useMyAchievements, useMySkills, useStudentResults, useMyEnrollments, useNotificationsFeed, useMarkNotifRead, useMarkAllNotifsRead, notifDeepLink, useArExperiences, useStudentMaterials, useFaculties, useCurrentInstitutionSlug, useStudentDashboard, useTrainingMe, submissionStatusAr, type StudentMaterial } from '../../hooks/useResources';
 import { materialHref } from '../../lib/materialHref';
 import { usePostsFeed } from '../../components/community/usePostsFeed';
 import { formatNum, formatPct1 } from '../../utils/numbers';
@@ -29,10 +30,15 @@ import { PageFrame, PageHeader as PatternPageHeader, RowList, RowItem, StatLine 
  * SectionBar seats (the roster exemplar's recomposition); ResultsPage's
  * summary StatLine keeps its test-pinned deep-band seat. */
 import { SheetSection, KpiBand, DataSheet, SheetEmpty, type DataSheetColumn } from '../../components/patterns';
+/* r369 slice 03 — the 20-level ladder: the landing's generated badge
+ * rule (same geometry, extracted) driven by the REAL training level —
+ * never a mock ladder. */
+import { LevelBadge, LEVEL_NAMES, LEVEL_TIER_GROUPS } from '../../components/gamification/LevelBadge';
+import { Celebrate } from '../../components/gamification/Celebrate';
 /* R319 (c3-S2) — the §B2 kit: the BarCount meta, the mono status chip +
  * the today week strip (the pages-B sweep's shared barrel for this
  * file's pages; the SectionBar seats retire onto the framed sheets). */
-import { BarCount, StatusChip, WeekStrip } from '../../components/student';
+import { BarCount, EmptyCell, StatusChip, WeekStrip } from '../../components/student';
 import '../../styles/training.css'; // gamification .tier-orb/.xp-*/.leaderboard-*/.achievement-* families (D11 css split, 12-15)
 import { formatDate } from '../../utils/numbers';
 /* ── r305-c (schedule family) + r305-d (supplemental family) imports —
@@ -66,16 +72,47 @@ function pointsAr(n: number): string {
 
 export function GamificationPage() {
   const ach = useMyAchievements();
-  const lb = useLeaderboard();
   // Real XP economy — same scale the leaderboard ranks by.
   const dash = useStudentDashboard();
   // Real self-development progression (level / tier / distance to next level).
   const training = useTrainingMe();
 
   const xp = dash.data?.kpi?.totalXp ?? null;
-  const rank = dash.data?.kpi?.rank ?? null;
-  const cohortSize = dash.data?.kpi?.cohortSize ?? 0;
   const me = training.data;
+  const authUser = useAuthStore((s) => s.user);
+
+  /* r369 slice 05 — <Celebrate/> fires on a REAL recorded level-up only:
+     the remembered level (localStorage per user) vs the level the
+     training payload reports. First-ever visit records silently (we
+     observed no change — inventing a celebration would be a lie); a
+     level drop (data correction) updates silently. The effect updates
+     memory before any paint that could re-fire, so the moment is
+     once-only across remounts, sessions and the celebration's own
+     re-render. */
+  const [celebration, setCelebration] = useState<{ id: string; rise?: string; label: string } | null>(null);
+  const levelNow = me?.level?.level ?? null;
+  const userId = authUser?.id ?? null;
+  useEffect(() => {
+    if (levelNow === null || !userId) return;
+    const key = `ula-level:${userId}`;
+    let remembered: number | null;
+    try {
+      const raw = window.localStorage.getItem(key);
+      remembered = raw !== null ? Number(raw) : null;
+      if (remembered !== null && !Number.isFinite(remembered)) remembered = null;
+    } catch { /* storage unavailable — no memory, no celebration */ return; }
+    if (remembered !== null && levelNow > remembered) {
+      const name = LEVEL_NAMES[Math.min(Math.max(levelNow, 1), LEVEL_NAMES.length) - 1];
+      setCelebration({
+        id: `${key}:${levelNow}`,
+        label: `تحديث المستوى: بلغت المستوى ${levelNow} — ${name}`,
+      });
+      /* r369 tone: a quiet text notice only — no sound, no rise counter. */
+    }
+    if (remembered !== levelNow) {
+      try { window.localStorage.setItem(key, String(levelNow)); } catch { /* ignore */ }
+    }
+  }, [levelNow, userId]);
 
   /* r224 (4A redesign — Superlist): the page opens with the pattern
      header + one calm stat line (points / tier / cohort rank), then the
@@ -86,8 +123,8 @@ export function GamificationPage() {
     <PageFrame width="default">
       <PatternPageHeader
         eyebrow="طلاب الجامعة"
-        title="الإنجازات والنقاط"
-        description="تقدّمك ومستواك مقارنة بزملائك في المنصة."
+        title="الإنجازات ونقاط الإتقان"
+        description="تقدّمك ومستواك في مسارات التطوير الذاتي."
         actions={
           /* 22-c (A5 P3-2): one unit voice — the page mixed «XP»,
              «نقطة/نقاط» and bare «+N». pointsAr everywhere.
@@ -101,7 +138,7 @@ export function GamificationPage() {
              law; the gold seat stays on medal glyphs alone). */
           <>
             <Link to="/achievements" className="btn primary sm">
-              <Icon icon={Trophy} size={13} />
+              <Icon icon={BadgeCheck} size={13} />
               الإنجازات والشهادات
             </Link>
             <Link to="/student/skills" className="btn ghost sm">
@@ -109,7 +146,7 @@ export function GamificationPage() {
               مهاراتي
             </Link>
             {xp !== null && (
-              <span className="sg-flag"><Icon icon={Star} size={11} aria-hidden /> {pointsAr(xp)}</span>
+              <span className="sg-flag"><Icon icon={BadgeCheck} size={11} aria-hidden /> {pointsAr(xp)}</span>
             )}
           </>
         }
@@ -146,12 +183,24 @@ export function GamificationPage() {
           },
           {
             index: '03',
-            caption: 'RANK',
-            label: 'مركزك على الدفعة',
-            value: rank !== null && cohortSize > 1 ? `${formatNum(rank)} / ${formatNum(cohortSize)}` : '—',
+            caption: 'BADGES',
+            label: 'الشارات الموثّقة',
+            value: me?.badgeCount ?? 0,
+            empty: !me,
           },
         ]}
       />
+
+      {/* slice 05 — the once-only celebration moment for a real,
+          freshly-recorded level-up (spec 05: never for an invented
+          event). */}
+      {celebration && (
+        <Celebrate
+          id={celebration.id}
+                    label={celebration.label}
+          onSettle={() => setCelebration(null)}
+        />
+      )}
 
       {/* r224 retries (the old deep band's affordances, preserved):
           a failed XP or level read keeps its honest retry verb. */}
@@ -175,9 +224,101 @@ export function GamificationPage() {
         </div>
       )}
 
-      <div className="grid-2">
+      {/* r369 slice 03 — the ladder section: the reference's 20-level
+          grammar made honest. The current level, the tier, the /N
+          progress into the next level and the remaining points all
+          come from useTrainingMe (the same payload the LEVEL cell
+          reads); when the read fails the section says so and offers
+          the same retry, and when the student has not started the
+          track the ladder renders fully locked — never a fabricated
+          rung. STREAK: no streak field exists in any payload the app
+          reads (verified hooks/resources/* — slice 02's finding), so
+          no streak row renders; the gap rides the LEDGER. */}
+      <SheetSection
+        index="01"
+        title="سلّم المستويات"
+        desc="عشرون مستوى من «بذرة» إلى «المعلّم» — تُفتح بنقاط التطوير الذاتي."
+      >
+        {(() => {
+          /* The real level, clamped to the ladder's twenty rungs — a
+             level past 20 keeps its number in the readout and lights
+             the full ladder (the honest reading of «ما بعد المعلّم»).
+             On a failed read the ladder still renders — fully locked —
+             under the honest error + retry (the grammar is never a
+             blank box). */
+          const real = training.isError ? 0 : (me?.level?.level ?? 0);
+          const current = Math.min(Math.max(real, 0), 20);
+          return (
+            <>
+              {training.isError && (
+                <SheetEmpty
+                  code="ERROR"
+                  title="تعذّر تحميل المستوى"
+                  desc="لم نستطع قراءة مستواك الحالي — السلّم يظهر كاملاً دون تحديد."
+                  action={<button type="button" className="btn ghost sm" onClick={() => training.refetch()}>إعادة المحاولة</button>}
+                />
+              )}
+              {!training.isError && (() => {
+            const pct = me?.level ? Math.max(0, Math.min(100, me.level.pctIntoLevel)) : 0;
+            const name = current >= 1 ? LEVEL_NAMES[current - 1] : null;
+            const group = current >= 1 ? LEVEL_TIER_GROUPS[Math.floor((current - 1) / 5)] : null;
+            return (
+              <div className="g369-progress">
+                <div className="g369-progress-read">
+                  <span className="g369-progress-name">
+                    {name ? `المستوى ${formatNum(real)} — ${name}` : 'لم يبدأ المسار بعد'}
+                  </span>
+                  {group && me?.level && (
+                    <span className="g369-progress-tier">
+                      {group} · {TIER_LABEL[me.level.tier]}
+                    </span>
+                  )}
+                </div>
+                {me?.level && (
+                  <>
+                    <ProgressBar
+                      value={pct}
+                      color="var(--gold)"
+                      ariaLabel={`التقدم نحو المستوى ${formatNum(real + 1)}`}
+                      label={`${formatNum(pct)}٪ من الطريق إلى المستوى ${formatNum(real + 1)}`}
+                      showValue={false}
+                    />
+                    <p className="g369-progress-note">
+                      {me.level.toNext > 0 && real < 20
+                        ? `متبقّي ${pointsAr(me.level.toNext)} لتفتح «${LEVEL_NAMES[real]}» — المستوى ${formatNum(real + 1)}.`
+                        : 'بلغت أعلى السلّم — إتقان موثّق.'}
+                    </p>
+                  </>
+                )}
+              </div>
+            );
+          })()}
+          <ol className="g369-ladder" aria-label="سلّم المستويات العشرون">
+            {LEVEL_NAMES.map((n, i) => {
+              const rung = i + 1;
+              return (
+                <li
+                  key={n}
+                  className="g369-level"
+                  data-earned={rung <= current ? 'true' : 'false'}
+                  data-current={rung === current ? 'true' : 'false'}
+                  aria-current={rung === current ? 'true' : undefined}
+                >
+                  <LevelBadge level={i} size={34} />
+                  <span className="g369-level-idx">{formatNum(rung)}</span>
+                  <span className="g369-level-name">{n}</span>
+                </li>
+              );
+            })}
+          </ol>
+            </>
+          );
+        })()}
+      </SheetSection>
+
+      <div>
         <SheetSection
-          index="01"
+          index="02"
           caption="ACHIEVEMENTS"
           title="الإنجازات المحققة"
           aside={!ach.isPending && !ach.isError && (ach.data?.length ?? 0) > 0 ? (
@@ -194,18 +335,20 @@ export function GamificationPage() {
               empty={
                 /* R359: the reserved-but-empty region — the hairline
                    placeholder frame (same copy, same one action). */
-                <SheetEmpty
-                  code="NO-DATA"
-                  title="لا إنجازات بعد"
-                  desc="أكمل دروساً ومسارات في التطوير الذاتي لتفتح أول إنجاز."
-                  action={<Link to="/training" className="btn primary sm">استكشف المسارات</Link>}
-                />
+                <>
+                  <SheetEmpty
+                    code="NO-DATA"
+                    title="لا إنجازات بعد"
+                    desc="أكمل دروساً ومسارات في التطوير الذاتي لتفتح أول إنجاز."
+                    action={<Link to="/training" className="btn primary sm">استكشف المسارات</Link>}
+                  />
+                </>
               }
             >
               {ach.data?.map((a) => (
                 <RowItem
                   key={a.achievement.id}
-                  leading={<span className="achievement-icon" aria-hidden><Icon icon={Trophy} size={16} /></span>}
+                  leading={<span className="achievement-icon" aria-hidden><Icon icon={BadgeCheck} size={16} /></span>}
                   title={a.achievement.name}
                   meta={a.achievement.description}
                   /* R359: the earned XP is an INK mono numeral — the
@@ -214,69 +357,6 @@ export function GamificationPage() {
                 />
               ))}
             </RowList>
-          )}
-        </SheetSection>
-
-        <SheetSection
-          index="02"
-          caption="LEADERBOARD"
-          title="لوحة المتصدرين"
-          aside={!lb.isPending && !lb.isError && (lb.data?.length ?? 0) > 0 ? (
-            <BarCount
-              n={lb.data!.length}
-              srLabel={countAr(lb.data!.length, ['طالب واحد مرتّب', 'طالبان مرتّبان', 'طلاب مرتّبون', 'طالباً مرتّباً'])}
-            />
-          ) : undefined}
-        >
-          {lb.isPending ? (
-            /* shape-matched skeleton: ranked rows */
-            <div className="flex-col gap-1" aria-busy="true">
-              {[0, 1, 2, 3, 4].map((i) => (
-                <div className="leaderboard-row" key={i} aria-hidden>
-                  <Skeleton width={30} height={30} rounded="var(--r-full)" />
-                  <Skeleton width={32} height={32} rounded="50%" />
-                  <Skeleton width="40%" height={13} />
-                  <Skeleton width={64} height={13} />
-                </div>
-              ))}
-            </div>
-          ) : lb.isError ? <ErrorState error={lb.error} onRetry={() => lb.refetch()} /> :
-           !lb.data?.length ? (
-            <SheetEmpty
-              code="NO-RANKING"
-              title="لا يوجد ترتيب بعد"
-              desc="اكسب النقاط بإكمال الدروس والمسارات — يظهر ترتيبك فور تسجيل أول نقطة."
-              action={<Link to="/training" className="btn primary sm">ابدأ من التطوير الذاتي</Link>}
-            />
-          ) : (
-            /* same ranked-list grammar as the training achievements page
-               (styles/training.css §achievements) — one system */
-            <ol className="leaderboard-list" aria-label="ترتيب الطلاب بالنقاط">
-              {lb.data.map((l, i) => (
-                <li className="leaderboard-row" key={l.id} style={{ ['--lb-i' as never]: Math.min(i, 6) }}>
-                  {/* r169a: role="img" — aria-label on a bare span has no
-                      valid meaning (axe aria-label-named); the rank badge
-                      is a self-contained visual token. */}
-                  <span className={`leaderboard-rank rank-${i + 1}`} role="img" aria-label={`المركز ${i + 1}`}>
-                    {i < 3
-                      ? <Icon icon={i === 0 ? Crown : i === 1 ? Star : Medal} size={16} />
-                      : <bdi className="font-mono">#{i + 1}</bdi>}
-                  </span>
-                  <UserAvatar
-                    initials={l.avatarInitials ?? `${l.firstName?.[0] ?? ''}${l.lastName?.[0] ?? ''}`}
-                    color={l.avatarColor ?? undefined}
-                    size={32}
-                  />
-                  <span className="leaderboard-name" title={`${l.firstName} ${l.lastName}`}>
-                    {l.firstName} {l.lastName}
-                  </span>
-                  {/* 22-c (A5 P3-1): «L2» Latin tier label → Arabic
-                      «المستوى ٢» (formatNum = ar-LY digits). */}
-                  <span className="leaderboard-tier">المستوى <bdi>{formatNum(l.level)}</bdi></span>
-                  <span className="leaderboard-points">{pointsAr(l.totalXp)}</span>
-                </li>
-              ))}
-            </ol>
           )}
         </SheetSection>
       </div>
@@ -650,6 +730,8 @@ export function AlertsPage() {
         ) : items.length === 0 ? (
           /* R359: the reserved-but-empty region — the hairline
              placeholder frame (same honest copy). */
+          /* r369 tone: no mascot in product empty states — a calm,
+             plain zero-state. */
           <SheetEmpty code="NO-DATA" title="لا توجد إشعارات بعد" desc="ستظهر التذكيرات والتحديثات الأكاديميّة هنا." />
         ) : (
           <div className="np-list">
@@ -774,12 +856,20 @@ export function SchedulePage() {
             RowList rows); two day skeletons hold the visible band so
             the data-land swap doesn't jump (A9 V1). r299: the mirror
             recomposed for the pattern anatomy. */}
+        {/* r365 batch-2: the mirror holds the settled page's own framed
+            day sheets (the r172b loading-closure law — the old
+            .pf-section-header bar encoded the pre-R359 seat). The
+            weekday title/index are payload facts, so the pending head
+            is a bar, never a lie. */}
         {[0, 1].map((d) => (
           <section key={d} aria-hidden>
-            <div className="pf-section-header">
-              <Skeleton width={90} height={16} />
-            </div>
-            <ListSkeleton rows={d === 0 ? 3 : 2} />
+            <SheetSection
+              pad="none"
+              title={<Skeleton width={90} height={16} />}
+              aside={<Skeleton width={44} height={14} />}
+            >
+              <ListSkeleton rows={d === 0 ? 3 : 2} />
+            </SheetSection>
           </section>
         ))}
       </PageFrame>
@@ -791,7 +881,11 @@ export function SchedulePage() {
       <div className="r319s-page">
       <PageFrame width="default">
         <PatternPageHeader eyebrow="طلاب الجامعة" title="الجدول الدراسي" />
-        <ErrorState error={q.error} onRetry={() => q.refetch()} />
+        {/* r365 batch-2: the error rides the framed day sheet like the
+            settled week (the calendar/matrix precedent). */}
+        <SheetSection index="01" caption="WEEK SHEET" title="جدول الأسبوع">
+          <ErrorState error={q.error} onRetry={() => q.refetch()} />
+        </SheetSection>
       </PageFrame>
       </div>
     );
@@ -969,6 +1063,7 @@ export function ResultsPage() {
 
   if (q.isPending) {
     return (
+      <div className="r319s-page">
       <PageFrame width="default">
         <PatternPageHeader eyebrow="طلاب الجامعة" title="النتائج والتقييمات" description="جارٍ جمع درجاتك…" />
         {/* 5-C3 (A9 P2-2): bare spinner → the shapes that land (A9 V1
@@ -979,7 +1074,12 @@ export function ResultsPage() {
             r305-c: the mirror lives INSIDE the summary deep band — the
             pending → resolved swap keeps the band's footprint.
             R341 (D7c): layout on utilities — the local band rules were
-            promoted to the shared .r305s-band--deep seat. */}
+            promoted to the shared .r305s-band--deep seat.
+            r365 batch-2: the page joins the family's .r319s-page root
+            (the app-density masthead register its siblings carry), and
+            the chart mirror holds the settled [01] framed sheet — the
+            ChartSkeleton's bar rows replace the retired CardSkeleton
+            card (the skeleton mirrors what actually lands). */}
         <div className="r305s-band r305s-band--deep results-summary flex-col gap-3">
           <p className="r305s-eyebrow">ملخّص الدرجات</p>
           <div className="pf-statline" aria-busy="true">
@@ -991,20 +1091,31 @@ export function ResultsPage() {
             ))}
           </div>
         </div>
-        <CardSkeleton lines={6} />
+        <SheetSection index="01" caption="GRADE CHART" title="درجاتك حسب المقرّر">
+          <div aria-busy="true" aria-live="polite">
+            <ChartSkeleton height={220} />
+          </div>
+        </SheetSection>
       </PageFrame>
+      </div>
     );
   }
   if (q.isError || !q.data) {
     return (
+      <div className="r319s-page">
       <PageFrame width="default">
         <PatternPageHeader eyebrow="طلاب الجامعة" title="النتائج والتقييمات" />
-        <ErrorState
+        {/* r365 batch-2: the error rides the framed sheet like every
+            other section on the page (the calendar/matrix precedent). */}
+        <SheetSection index="01" caption="RESULTS">
+          <ErrorState
           message="تعذَّر تحميل هذا القسم"
           error={q.error}
           onRetry={() => q.refetch()}
         />
+        </SheetSection>
       </PageFrame>
+      </div>
     );
   }
 
@@ -1043,6 +1154,7 @@ export function ResultsPage() {
   const baseOpts = cartesianOptions({ horizontal: true });
 
   return (
+    <div className="r319s-page">
     <PageFrame width="default">
       <PatternPageHeader
         eyebrow="طلاب الجامعة"
@@ -1082,17 +1194,23 @@ export function ResultsPage() {
           .results-summary hook with the layout on utilities. */}
       <div className="r305s-band r305s-band--deep results-summary flex-col gap-3">
         <p className="r305s-eyebrow">ملخّص الدرجات</p>
+        {/* r365 batch-2: the band IS the page's KPI seat - the three
+            headline stats spread across the full line (the r348 opt-in)
+            and a not-yet datum rides the honest-empty register. */}
         <StatLine
+        spread
         items={[
           {
             label: 'أعلى درجة',
             value: headline.highest ? <bdi>{formatPct1(headline.highest.gradePct)}%</bdi> : '—',
+            empty: !headline.highest,
             hint: headline.highest?.courseName ?? 'لا توجد درجات بعد',
             tone: headline.highest ? bandTone(headline.highest.gradePct) : 'neutral',
           },
           {
             label: 'المتوسّط',
             value: headline.avgGradePct !== null ? <bdi>{formatPct1(headline.avgGradePct)}%</bdi> : '—',
+            empty: headline.avgGradePct === null,
             hint: headline.courseCount > 0
               ? `عبر ${countAr(headline.courseCount, ['مقرّر واحد', 'مقرّرين', 'مقرّرات', 'مقرّراً'])}`
               : 'لا تقييمات بعد',
@@ -1101,6 +1219,7 @@ export function ResultsPage() {
           {
             label: 'أدنى درجة',
             value: headline.lowest ? <bdi>{formatPct1(headline.lowest.gradePct)}%</bdi> : '—',
+            empty: !headline.lowest,
             hint: headline.lowest?.courseName ?? '—',
             tone: headline.lowest ? bandTone(headline.lowest.gradePct) : 'neutral',
           },
@@ -1108,10 +1227,17 @@ export function ResultsPage() {
         />
       </div>
 
-      {/* 5-A6 P2-9 — the chart card carries its own hook class: on phone
-          (≤640px, student.css) it re-orders above the stacked KPI cards
-          so the page's one data visualization starts at the fold. */}
-      <Card title="درجاتك حسب المقرّر" icon={Activity} subtitle={hasGrades ? 'النسبة المرجَّحة لكل مقرّر' : 'ستظهر درجاتك هنا فور تسجيلها'} className="results-chart-card">
+      {/* 5-A6 P2-9 — r365 batch-2: the page's one data visualization
+          rides the framed sheet ([01] GRADE CHART) like every other
+          section — the §6.2 hairline anatomy, not a floating card. The
+          .results-chart-card hook class stays on the section. */}
+      <SheetSection
+        index="01"
+        caption="GRADE CHART"
+        title="درجاتك حسب المقرّر"
+        desc={hasGrades ? 'النسبة المرجَّحة لكل مقرّر' : 'ستظهر درجاتك هنا فور تسجيلها'}
+        className="results-chart-card"
+      >
         {!hasGrades ? (
           <EmptyState illustration="empty-list" title="لم تُسجَّل أي درجات بعد" description="يبدأ الحساب فور رصد أوّل تقييم في أي مقرّر." />
         ) : (
@@ -1167,7 +1293,7 @@ export function ResultsPage() {
             />
           </ChartFrame>
         )}
-      </Card>
+      </SheetSection>
 
       {/* r164-e (assessment loop) — the timeline's middle step. Submitted
           work that has not been graded yet had NO student surface at all:
@@ -1245,10 +1371,15 @@ export function ResultsPage() {
       )}
       </SheetSection>
 
-      <div className="grid-2">
-        <Card title="تفصيل النتائج" icon={Activity}>
+      {/* r365 batch-2 — the two §B2 Cards join the framed sheet
+          ([03] PER-COURSE BARS / [04] GRADED FEED): the ad-hoc card
+          grid was the §6.2 defect; the rows/bars keep their pinned
+          anatomy (the r164-a .progress-fill band tones are test law). */}
+      <SheetSection index="03" caption="PER-COURSE BARS" title="تفصيل النتائج">
           {!hasGrades ? (
-            <p className="text-sm text-muted" style={{ padding: 'var(--sp-3) 0' }}>لم تُسجَّل درجات بعد.</p>
+            <EmptyCell
+              label="لم تُسجَّل درجات بعد."
+            />
           ) : (
             <div className="flex-col gap-4">
               {courses.map((r) => (
@@ -1264,11 +1395,13 @@ export function ResultsPage() {
               ))}
             </div>
           )}
-        </Card>
+      </SheetSection>
 
-        <Card title="آخر الواجبات المقيَّمة">
+      <SheetSection index="04" caption="GRADED FEED" title="آخر الواجبات المقيَّمة">
           {recentAssignments.length === 0 ? (
-            <p className="text-sm text-muted" style={{ padding: 'var(--sp-3) 0' }}>لا توجد تقييمات حديثة.</p>
+            <EmptyCell
+              label="لا توجد تقييمات حديثة."
+            />
           ) : (
             <div className="flex-col gap-2">
               {recentAssignments.slice(0, 6).map((a) => {
@@ -1327,9 +1460,9 @@ export function ResultsPage() {
               })}
             </div>
           )}
-        </Card>
-      </div>
+      </SheetSection>
     </PageFrame>
+    </div>
   );
 }
 
@@ -2086,6 +2219,26 @@ export function UniversityInfoPage() {
         ]}
       />
 
+      {/* R305 DS: the identity card is the page's ONE deep band — the
+          authority surface. Facts ride the band-safe .r305u-fact anatomy
+          (the deep FactRow variant) inside the .r305u-facts grid.
+          R342-08: the section opener is the §B2 bar — [01] + the h2
+          (same heading semantics the r305s-kicker carried, on the
+          D7a family grammar).
+          r365 audit: [01] leads the DOM — the bracket indices must
+          follow reading order (the r351 A2 honesty law), so IDENTITY
+          sits before VISION & MISSION's [02]. */}
+      <SheetSection index="01" caption="IDENTITY" title="بطاقة تعريف">
+        <div className="r305u-facts">
+          <FactRow deep label="الاسم الرسميّ" value="مساحة عمل أُلارا التجريبية" />
+          <FactRow deep label="النطاق" value="اصطناعية" />
+          <FactRow deep label="النوع" value="تجريبية" />
+          <FactRow deep label="بريد العرض" value="demo.ulara.ly" mono />
+          <FactRow deep label="الموقع" value="افتراضية" />
+          <FactRow deep label="طابع البيانات" value="عرض فقط" />
+        </div>
+      </SheetSection>
+
       {/* Vision + Mission (the demo tenant's synthetic strategy —
           mirrors static-source.ts strategicPlan.*) */}
       <SheetSection index="02" caption="VISION & MISSION" title="الرؤية والرسالة">
@@ -2102,23 +2255,6 @@ export function UniversityInfoPage() {
               سير العمل الأكاديمي كاملًا: الطالب، الأستاذ، والجودة.
             </p>
           </div>
-        </div>
-      </SheetSection>
-
-      {/* R305 DS: the identity card is the page's ONE deep band — the
-          authority surface. Facts ride the band-safe .r305u-fact anatomy
-          (the deep FactRow variant) inside the .r305u-facts grid.
-          R342-08: the section opener is the §B2 bar — [01] + the h2
-          (same heading semantics the r305s-kicker carried, on the
-          D7a family grammar). */}
-      <SheetSection index="01" caption="IDENTITY" title="بطاقة تعريف">
-        <div className="r305u-facts">
-          <FactRow deep label="الاسم الرسميّ" value="مساحة عمل أُلارا التجريبية" />
-          <FactRow deep label="النطاق" value="اصطناعية" />
-          <FactRow deep label="النوع" value="تجريبية" />
-          <FactRow deep label="بريد العرض" value="demo.ulara.ly" mono />
-          <FactRow deep label="الموقع" value="افتراضية" />
-          <FactRow deep label="طابع البيانات" value="عرض فقط" />
         </div>
       </SheetSection>
 
@@ -2216,7 +2352,7 @@ export function UniversityInfoPage() {
       </SheetSection>
 
       <SheetSection index="06" caption="DEGREES" title="الشهادات والبرامج الأكاديميّة">
-        <div className="grid-3" style={{ gap: 'var(--sp-3)', marginBottom: 'var(--sp-4)' }}>
+        <div className="grid-3" style={{ gap: 'var(--sp-3)', marginBlockEnd: 'var(--sp-4)' }}>
           {[
             { ar: 'الإجازة الجامعيّة', en: 'Bachelor / Licence' },
             { ar: 'الدراسات العليا', en: "Master's" },

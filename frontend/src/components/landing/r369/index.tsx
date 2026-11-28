@@ -30,6 +30,8 @@ import { Link } from 'react-router-dom';
 import { Glyph, type GlyphName } from '../../icons';
 import { ROUTES } from '../../../lib/routes';
 import { ThemeToggle } from '../../layout/ThemeToggle';
+import { acquireScrollLock, releaseScrollLock } from '../../../lib/scrollLock';
+import { Logo } from '../../../brand';
 
 /* ─────────────────────────── motion helpers ─────────────────────────── */
 
@@ -83,7 +85,7 @@ function useInView<T extends HTMLElement>(rootMargin = '-12% 0px') {
  * The visual grammar lives in the sheet (`[data-reveal='pending']`), so
  * this hook carries no timing of its own.
  */
-function useReveal<T extends HTMLElement>() {
+export function useReveal<T extends HTMLElement>() {
   const ref = useRef<T | null>(null);
   useEffect(() => {
     const el = ref.current;
@@ -150,14 +152,18 @@ export function revealAllNow() {
  * subscribes to it — no element polls layout, no scroll listener inside
  * an animation loop, no `will-change` left behind.
  */
-function useScrollProgress() {
+function useScrollProgress(steps = 0) {
   const [p, setP] = useState(0);
   useEffect(() => {
     let raf = 0;
     const read = () => {
       raf = 0;
       const max = document.documentElement.scrollHeight - window.innerHeight;
-      setP(max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0);
+      const raw = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
+      /* r369 phone-smoothness: consumers that show a STEP (the section
+       * index) subscribe to the quantised value, so React re-renders only
+       * when the step changes, not on every scroll frame. */
+      setP(steps > 0 ? Math.round(raw * steps) / steps : raw);
     };
     const onScroll = () => { if (!raf) raf = requestAnimationFrame(read); };
     read();
@@ -168,7 +174,7 @@ function useScrollProgress() {
       window.removeEventListener('resize', onScroll);
       if (raf) cancelAnimationFrame(raf);
     };
-  }, []);
+  }, [steps]);
   return p;
 }
 
@@ -180,27 +186,23 @@ function useScrollProgress() {
 function useActiveStage() {
   const [active, setActive] = useState(0);
   useEffect(() => {
-    let raf = 0;
-    const read = () => {
-      raf = 0;
-      const nodes = [...document.querySelectorAll<HTMLElement>('[data-stage]')];
-      if (!nodes.length) return;
-      const mid = window.innerHeight * 0.45;
-      let next = 0;
-      nodes.forEach((el, i) => {
-        if (el.getBoundingClientRect().top <= mid) next = i;
-      });
-      setActive(next);
-    };
-    const onScroll = () => { if (!raf) raf = requestAnimationFrame(read); };
-    read();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', onScroll, { passive: true });
-    return () => {
-      window.removeEventListener('scroll', onScroll);
-      window.removeEventListener('resize', onScroll);
-      if (raf) cancelAnimationFrame(raf);
-    };
+    const nodes = [...document.querySelectorAll<HTMLElement>('[data-stage]')];
+    if (!nodes.length) return undefined;
+    /* r369 phone-smoothness: no scroll listener and no per-frame
+     * getBoundingClientRect. A thin observation line sits at 45% of the
+     * viewport; the band that crosses it is the active one. The browser
+     * reports crossings off the main thread's layout path. */
+    if (typeof IntersectionObserver === 'undefined') return undefined;
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((en) => {
+          if (en.isIntersecting) setActive(Math.max(0, nodes.indexOf(en.target as HTMLElement)));
+        });
+      },
+      { rootMargin: '-45% 0px -54.9% 0px', threshold: 0 },
+    );
+    nodes.forEach((n) => io.observe(n));
+    return () => io.disconnect();
   }, []);
   return active;
 }
@@ -238,10 +240,31 @@ function StageNav({ active }: { active: number }) {
 
 /** The slim progress rail: one 2px line in the signal colour. */
 function ScrollRail() {
-  const p = useScrollProgress();
+  /* r369 phone-smoothness: the rail writes its transform straight to the
+   * DOM from one passive rAF listener. It never goes through React state,
+   * so a scroll frame costs no render at all. */
+  const fill = useRef<HTMLSpanElement | null>(null);
+  useEffect(() => {
+    let raf = 0;
+    const read = () => {
+      raf = 0;
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      const p = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
+      if (fill.current) fill.current.style.transform = `scaleX(${p})`;
+    };
+    const onScroll = () => { if (!raf) raf = requestAnimationFrame(read); };
+    read();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onScroll);
+      if (raf) cancelAnimationFrame(raf);
+    };
+  }, []);
   return (
     <div className="w369-rail" aria-hidden="true">
-      <span className="w369-rail-fill" style={{ transform: `scaleX(${p})` }} />
+      <span className="w369-rail-fill" ref={fill} />
     </div>
   );
 }
@@ -259,7 +282,7 @@ function StarJar() {
   /* Continuous, not a one-shot trigger: the jar fills as you actually
    * read, and it empties again if you go back up — the number is your
    * position in the story, never a claim about the product. */
-  const progress = useScrollProgress();
+  const progress = useScrollProgress(JAR_TOTAL);
   const n = Math.min(JAR_TOTAL, Math.round(progress * JAR_TOTAL));
   /* the index names the section you are IN, so it starts at 1, not 0 */
   const at = Math.max(1, n);
@@ -331,6 +354,13 @@ export function LandingNav() {
     // the a11y contract: focus returns to the control that opened it
     burgerRef.current?.focus();
   }, []);
+  /* the open menu owns the scroll: the page never moves behind it
+   * (the shared ref-counted lock, so a nested overlay cannot drop it). */
+  useEffect(() => {
+    if (!open) return undefined;
+    acquireScrollLock('landing-mobile-menu');
+    return () => releaseScrollLock('landing-mobile-menu');
+  }, [open]);
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') close(); };
     window.addEventListener('keydown', onKey);
@@ -341,7 +371,7 @@ export function LandingNav() {
       <ScrollRail />
       <div className="w369-nav-inner">
         <Link to={ROUTES.root} className="w369-brand" aria-label="أُلارا — الصفحة الرئيسية">
-          <span className="w369-brand-mark" aria-hidden="true"><Glyph name="star" size={18} /></span>
+          <span className="w369-brand-mark" aria-hidden="true"><Logo variant="mark" size={36} /></span>
           <span className="w369-brand-word">أُلارا</span>
         </Link>
 
@@ -375,8 +405,8 @@ export function LandingNav() {
         <div className="w369-mobile-menu" id="w369-mobile-menu">
           {[...NAV_LINKS, ...MOBILE_EXTRA].map((l) => (
             l.external
-              ? <Link key={l.href} to={l.href} className="w369-mobile-link">{l.label}</Link>
-              : <a key={l.href} href={l.href} className="w369-mobile-link">{l.label}</a>
+              ? <Link key={l.href} to={l.href} className="w369-mobile-link" onClick={() => setOpen(false)}>{l.label}</Link>
+              : <a key={l.href} href={l.href} className="w369-mobile-link" onClick={() => setOpen(false)}>{l.label}</a>
           ))}
           <div
             className="w369-mobile-theme"
@@ -404,8 +434,8 @@ export function LandingNav() {
 
 const HERO_ROWS = [
   { title: 'واجب: تحليل النصّ الأدبي', meta: 'يُسلَّم غدًا · الأدب الحديث', tone: 'amber', icon: 'book' },
-  { title: 'محاضرة: مدخل إلى الإحصاء', meta: 'الأحد ٩:٠٠ · القاعة ٣', tone: 'sky', icon: 'graduation' },
-  { title: 'اختبار قصير: الجبر الخطّي', meta: 'بعد يومين · ٢٠ دقيقة', tone: 'rose', icon: 'target' },
+  { title: 'محاضرة: مدخل إلى الإحصاء', meta: 'الأحد 9:00 · القاعة 3', tone: 'sky', icon: 'graduation' },
+  { title: 'اختبار قصير: الجبر الخطّي', meta: 'بعد يومين · 20 دقيقة', tone: 'rose', icon: 'target' },
 ] as const;
 
 /**
@@ -418,8 +448,8 @@ const HERO_ROWS = [
 const TOUR_BEATS = [
   { icon: 'assignment' as const, title: 'تنجز مهمّة', body: 'واجب، محاضرة، اختبار — كلٌّ منها يظهر في يومك.' },
   { icon: 'target' as const, title: 'تُسجَّل النقطة', body: 'يُسجَّل الإنجاز فتظهر نقاطه فورًا في رصيدك.' },
-  { icon: 'leaderboard' as const, title: 'يرتفع التقدّم', body: 'النجوم تترتّب في شريط تقدّم المقرّر ومصفوفة الإتقان.' },
-  { icon: 'medal' as const, title: 'تفتح مكافأة', body: 'عند العتبة تُفتح الشارة، وتُبنى السلسلة يومًا بعد يوم.' },
+  { icon: 'leaderboard' as const, title: 'يظهر التقدّم', body: 'نقاط الإتقان تُسجَّل في شريط تقدّم المقرّر ومصفوفة الإتقان.' },
+  { icon: 'medal' as const, title: 'يُوثَّق الإنجاز', body: 'عند بلوغ العتبة تُسجَّل الشارة في سجلّ الطالب.' },
 ];
 
 function TourDialog({ onClose }: { onClose: () => void }) {
@@ -448,7 +478,7 @@ function TourDialog({ onClose }: { onClose: () => void }) {
           <Glyph name="close" size={20} />
         </button>
         <p className="w369-eyebrow">
-          <Glyph name="sparkle" size={15} /> جولة ٣٠ ثانية · نموذج توضيحي
+          <Glyph name="sparkle" size={15} /> جولة 30 ثانية · نموذج توضيحي
         </p>
         <div className="w369-tour-stage" key={beat}>
           <span className="w369-tour-icon" data-tone={beat}>
@@ -515,10 +545,6 @@ export function Hero() {
   return (
     <section className="w369-hero" ref={ref} data-jar="01" onPointerMove={onMove} onPointerLeave={onLeave}>
       <div className="w369-hero-copy">
-        <p className="w369-eyebrow">
-          <Glyph name="sparkle" size={15} />
-          نظام تشغيل الجامعة — عربي أولًا
-        </p>
         <h1 className="w369-h1">
           جامعةٌ تعمل
           <span className="w369-em">
@@ -529,9 +555,8 @@ export function Hero() {
           </span>
         </h1>
         <p className="w369-lead">
-          المقرّرات والمحاضرات والتقييم والحضور ومؤشّرات الجودة في نظام واحد يربط الطالب
-          وعضو الهيئة والإدارة. لا أدوات متناثرة، ولا أرقام لا تُقاس: كل ما يحدث في
-          المقرّر يُسجَّل، ويُقرأ، ويُبنى عليه.
+          المقرّرات والمحاضرات والتقييم والحضور ومؤشّرات الجودة في نظام واحد يجمع الطالب
+          وعضو الهيئة والإدارة. ما يحدث في المقرّر يُسجَّل ويظهر لصاحبه.
         </p>
         <div className="w369-hero-actions">
           <Link to={ROUTES.authRegister} className="w369-btn w369-btn-primary w369-btn-lg">
@@ -541,17 +566,14 @@ export function Hero() {
           <Link to={ROUTES.auth} className="w369-btn w369-btn-ghost">لديك حساب؟ تسجيل الدخول</Link>
           <button type="button" className="w369-tour-btn" onClick={() => setTour(true)}>
             <span className="w369-tour-play" aria-hidden="true"><Glyph name="live" size={16} /></span>
-            شاهد الجولة · ٠:٣٠
+            شاهد الجولة · 0:30
           </button>
         </div>
         {/* mounted only while open — the funnel counts exactly five primary
             doors in the page itself, and the dialog is a layer, not a sixth */}
         {tour && <TourDialog onClose={() => setTour(false)} />}
         <ul className="w369-hero-facts">
-          <li><Glyph name="certificate" size={16} /> للطلّاب وأعضاء الهيئة والإدارة</li>
           <li><Glyph name="target" size={16} /> نقاط إتقان من الإنجاز المسجَّل</li>
-          <li><Glyph name="leaderboard" size={16} /> مؤشّرات جودة قابلة للتتبّع</li>
-          <li><Glyph name="certificate" size={16} /> شهادات وسجلات موثّقة</li>
         </ul>
       </div>
 
@@ -565,13 +587,13 @@ export function Hero() {
              aria-label="عرض توضيحي لشاشة الطالب في أُلارا: قائمة واجبات ومحاضرات مع شريط تقدّم">
           <div className="w369-phone-top">
             <span className="w369-phone-dot" />
-            <span className="w369-phone-time">٩:٤١</span>
+            <span className="w369-phone-time">9:41</span>
           </div>
           <div className="w369-phone-screen">
             <div className="w369-phone-greet">
               <span className="w369-phone-avatar" aria-hidden="true">س</span>
               <div>
-                <p className="w369-phone-hi">الأحد · ٢٤ نوفمبر</p>
+                <p className="w369-phone-hi">الأحد · 24 نوفمبر</p>
                 <p className="w369-phone-sub">سارة العتيبي · الأدب الحديث</p>
               </div>
             </div>
@@ -594,9 +616,17 @@ export function Hero() {
             <div className="w369-phone-progress">
               <span>تقدّم المقرّر</span>
               <span className="w369-phone-bar"><i style={{ inlineSize: '62%' }} /></span>
-              <b>٦٢٪</b>
+              <b>62٪</b>
             </div>
           </div>
+        </div>
+        <div className="w369-float w369-float-a" aria-hidden="true">
+          <Glyph name="target" size={16} />
+          <span><b>12 / 30</b><em>نقطة إتقان في المقرّر</em></span>
+        </div>
+        <div className="w369-float w369-float-b" aria-hidden="true">
+          <Glyph name="live" size={16} />
+          <span><b>محاضرة 10:00</b><em>الحضور يُسجَّل تلقائيًا</em></span>
         </div>
         <p className="w369-art-note">عرض توضيحي للواجهة — لا يعرض بيانات طالب حقيقي.</p>
       </div>
@@ -640,13 +670,18 @@ interface BandProps {
   jar: string;
   /** anchor target for the nav (#story, #levels …) */
   id?: string;
+  /** 'night': the band is a full-bleed dark scene (the page's arrival moment) */
+  scene?: 'night';
   /** index in the top bar's stage navigator */
   stage?: string;
 }
 
-function Band({ n, kicker, title, body, tint, icon, children, jar, id, stage }: BandProps) {
+function Band({ n, kicker, title, body, tint, icon, children, jar, id, stage, scene }: BandProps) {
   return (
-    <section className="w369-band" id={id} data-tint={tint} data-jar={jar} data-stage={stage}>
+    <section
+      className="w369-band" id={id} data-tint={tint} data-jar={jar} data-stage={stage}
+      data-scene={scene} data-theme={scene === 'night' ? 'dark' : undefined}
+    >
       <div className="w369-band-head">
         <span className="w369-band-num" aria-hidden="true">{n}</span>
         <p className="w369-band-kicker"><Glyph name={icon} size={15} />{kicker}</p>
@@ -745,7 +780,7 @@ export function StarsBand() {
               ))}
             </span>
             <span className="w369-fine">
-              {goalMet ? 'اكتمل هدف الأسبوع — ٢٥ نقطة' : `هدف الأسبوع: ${WEEK_GOAL} نقطة`}
+              {goalMet ? 'اكتمل هدف الأسبوع — 25 نقطة' : `هدف الأسبوع: ${WEEK_GOAL} نقطة`}
             </span>
           </div>
         </div>
@@ -789,6 +824,9 @@ export function StarsBand() {
 
 /* ── 03 the rolling counter: /30, by scroll and by tap ── */
 
+/* the lane, in a 400x110 box; the CSS offset-path below is the SAME curve */
+const ROAD_D = 'M12 92 C 110 92, 110 22, 200 44 S 300 98, 388 22';
+
 const FIRST_STEP = { at: 0, msg: 'المسار يبدأ من هنا.' };
 const PROGRESS_STEPS = [
   FIRST_STEP,
@@ -825,11 +863,28 @@ function RollingDigits({ value, total }: { value: number; total: number }) {
   );
 }
 
+/* desktop + motion allowed: the stars band becomes a pinned scene (see
+   landing/r369.css "round 3 — the pinned scene"; the query is mirrored there) */
+const PINNED_Q = '(min-width: 900px) and (prefers-reduced-motion: no-preference)';
+
 export function ProgressBand() {
   const ref = useRef<HTMLDivElement | null>(null);
   const [byScroll, setByScroll] = useState(0);
   const [extra, setExtra] = useState(0);
   const TOTAL = 30;
+  /* the road is painted from the continuous scroll offset (a float), not
+   * from the rounded counter: a CSS custom property written straight on
+   * the element, no per-step React render, no transition to restart on
+   * every step. Taps on the button get a short eased tween (data-tap). */
+  const roadEl = useRef<HTMLDivElement | null>(null);
+  const scrollF = useRef(0);
+  const extraRef = useRef(0);
+  const paintRoad = () => {
+    const el = roadEl.current;
+    if (!el) return;
+    const v = Math.min(TOTAL, Math.max(0, scrollF.current + extraRef.current));
+    el.style.setProperty('--p', String((v / TOTAL) * 100));
+  };
 
   /* scroll drives the counter: how far this card has travelled through
    * the viewport, 0 → 30. Reduce-motion readers still get the number
@@ -840,24 +895,81 @@ export function ProgressBand() {
     let raf = 0;
     const read = () => {
       raf = 0;
-      const box = el.getBoundingClientRect();
-      const span = window.innerHeight + box.height;
-      const p = Math.min(1, Math.max(0, (window.innerHeight - box.top) / span));
+      const sec = el.closest('section');
+      const pinned = !!sec && window.matchMedia(PINNED_Q).matches;
+      let p: number;
+      if (pinned && sec) {
+        /* r369 round 3 — the pinned scene: the band is ~2 screens tall
+         * and its card stays seated while the page scrolls past, so the
+         * counter reads the band's own travel (0 when its top reaches the
+         * bar, 30 when its bottom leaves). */
+        const b = sec.getBoundingClientRect();
+        const travel = Math.max(1, b.height - window.innerHeight);
+        p = Math.min(1, Math.max(0, -b.top / travel));
+      } else {
+        const box = el.getBoundingClientRect();
+        const span = window.innerHeight + box.height;
+        p = Math.min(1, Math.max(0, (window.innerHeight - box.top) / span));
+      }
+      scrollF.current = p * TOTAL;
+      paintRoad();
       setByScroll(Math.round(p * TOTAL));
     };
     const onScroll = () => { if (!raf) raf = requestAnimationFrame(read); };
     read();
-    window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('resize', onScroll, { passive: true });
-    return () => {
+    /* r369 phone-smoothness: the scroll listener is attached only while
+     * the band is on screen (an observer toggles it), so the other
+     * screens of the page pay nothing for this counter. */
+    let listening = false;
+    const on = () => {
+      if (listening) return;
+      listening = true;
+      window.addEventListener('scroll', onScroll, { passive: true });
+      window.addEventListener('resize', onScroll, { passive: true });
+    };
+    const off = () => {
+      if (!listening) return;
+      listening = false;
       window.removeEventListener('scroll', onScroll);
       window.removeEventListener('resize', onScroll);
+    };
+    const host = el.closest('section') ?? el;
+    const io = typeof IntersectionObserver === 'undefined'
+      ? null
+      : new IntersectionObserver((es) => { if (es.some((e) => e.isIntersecting)) { on(); onScroll(); } else off(); }, { rootMargin: '100px 0px' });
+    if (io) io.observe(host); else on();
+    return () => {
+      io?.disconnect();
+      off();
       if (raf) cancelAnimationFrame(raf);
     };
   }, []);
 
   const value = Math.min(TOTAL, Math.max(0, byScroll + extra));
+  useEffect(() => {
+    extraRef.current = extra;
+    const el = roadEl.current;
+    if (el) {
+      el.setAttribute('data-tap', '');
+      window.setTimeout(() => el.removeAttribute('data-tap'), 700);
+    }
+    paintRoad();
+  }, [extra]);
   const step = [...PROGRESS_STEPS].reverse().find((x) => value >= x.at) ?? FIRST_STEP;
+
+  /* the road's geometry is read off the SVG path itself (one curve, one
+     truth): a point at pct% of its length, expressed as % of the 400x110
+     box so it scales with the container. Before the path mounts, the
+     start point. */
+  const roadRef = useRef<SVGPathElement>(null);
+  const roadAt = (pct: number): React.CSSProperties => {
+    const el = roadRef.current;
+    const len = el?.getTotalLength?.() ?? 0;
+    const pt = el && len ? el.getPointAtLength((pct / 100) * len) : { x: 12, y: 92 };
+    return { left: `${(pt.x / 400) * 100}%`, top: `${(pt.y / 110) * 100}%` };
+  };
+  const [, setRoadReady] = useState(false);
+  useEffect(() => setRoadReady(true), []);
 
   return (
     <Band
@@ -885,6 +997,32 @@ export function ProgressBand() {
               {extra >= TOTAL ? 'أعد من البداية' : 'أضف نقطة'}
             </button>
           </div>
+        </div>
+        {/* r369 round 3 — the mastery road (the reference's "progress you
+            can actually see" road, in our unit): ONE winding lane from
+            the start to the course certificate. The gold fill, the
+            marker and the milestone stars all read the SAME `value` the
+            counter shows (pathLength=100 -> % of 30), so the road is the
+            number drawn, never a second figure. Decorative: the counter
+            and the rows already carry the information for assistive tech. */}
+        <div className="w369-road" aria-hidden="true" ref={roadEl}>
+          <svg viewBox="0 0 400 110" preserveAspectRatio="none" className="w369-road-svg">
+            <path ref={roadRef} className="w369-road-lane" d={ROAD_D} pathLength={100} />
+            <path className="w369-road-fill" d={ROAD_D} pathLength={100} />
+            {/* the marker rides the SAME curve through CSS motion path
+                (offset-distance), so it never leaves the gold line and
+                animates off the layout thread */}
+            <circle className="w369-road-halo" r="17" cx="0" cy="0" />
+            <circle className="w369-road-dot" r="10" cx="0" cy="0" />
+          </svg>
+          {PROGRESS_STEPS.slice(1).map((x) => (
+            <span
+              key={x.at}
+              className="w369-road-stop"
+              data-hit={value >= x.at ? 'true' : 'false'}
+              style={roadAt((x.at / TOTAL) * 100)}
+            />
+          ))}
         </div>
         <ul className="w369-meter-rows">
           {PROGRESS_STEPS.slice(1).map((x) => (
@@ -942,7 +1080,7 @@ export function RewardsBand() {
       n="04" jar="04" tint="coral" icon="medal" id="progress" stage="2"
       kicker="من التقدّم إلى التوثيق"
       title={<>والتقدّم؟<br /><span className="w369-em">يُوثَّق</span></>}
-      body="عندما يتراكم الإتقان تصبح له علامات موثّقة: شارة إنجاز، وموضع في لوحة تقدّم المقرّر، وشهادة عند إكماله. الأخيرة تُفتح عند ١٨ نقطة."
+      body="عندما يتراكم الإتقان تصبح له علامات موثّقة: شارة إنجاز، وموضع في لوحة تقدّم المقرّر، وشهادة عند إكماله. الأخيرة تُفتح عند 18 نقطة."
     >
       <div className="w369-wallet" data-opened={String(opened)}>
         <div className="w369-wallet-head">
@@ -979,9 +1117,9 @@ export function RewardsBand() {
         </ul>
         <div className="w369-wallet-note">
           <span className="w369-wallet-note-label">كيف تُحتسب؟</span>
-          <span className="w369-wallet-note-chip">واجب مُسلَّم · ٣</span>
-          <span className="w369-wallet-note-chip">اختبار مُجتاز · ٤</span>
-          <span className="w369-wallet-note-chip">محاضرة محضورة · ٢</span>
+          <span className="w369-wallet-note-chip">واجب مُسلَّم · 3</span>
+          <span className="w369-wallet-note-chip">اختبار مُجتاز · 4</span>
+          <span className="w369-wallet-note-chip">محاضرة محضورة · 2</span>
           <span className="w369-fine">من السجل الأكاديمي نفسه، بلا إدخال يدوي.</span>
         </div>
       </div>
@@ -1085,21 +1223,21 @@ export function LevelsBand() {
   const name = LEVELS[picked];
   return (
     <Band
-      n="06" jar="06" tint="leaf" icon="admin" id="levels" stage="4"
+      n="06" jar="06" tint="leaf" icon="admin" id="levels" stage="4" scene="night"
       kicker="سلّم الإتقان — عشرون مستوى"
       title={<>سلّمٌ من<br /><span className="w369-em">عشرين مستوى</span></>}
       body="من «بذرة» إلى «المعلّم»: تدرّج إتقان بأسماء عربية أصيلة، ولكل مستوى شارة مرسومة له وحده. اختر مستوى لترى تعريفه."
     >
       <div className="w369-levels">
         <div className="w369-levels-head">
-          <span className="w369-chip w369-chip-amber"><Glyph name="star" size={14} />المستوى {picked + 1} من ٢٠</span>
+          <span className="w369-chip w369-chip-amber"><Glyph name="star" size={14} />المستوى {picked + 1} من 20</span>
           <span className="w369-fine">أسماء السلّم وشاراته من تصميم أُلارا، وتُمنح حسب نقاط الإتقان.</span>
         </div>
         <div className="w369-levels-stage">
           <span className="w369-levels-big" aria-hidden="true"><LevelBadge level={picked} size={132} /></span>
           <div className="w369-levels-read">
             <b className="w369-levels-name">{name}</b>
-            <span className="w369-levels-idx">المستوى {picked + 1} / ٢٠</span>
+            <span className="w369-levels-idx">المستوى {picked + 1} / 20</span>
             <span className="w369-levels-tier">
               {['بذور', 'مسارات', 'منائر', 'قمم'][Math.floor(picked / 5)]}
             </span>
@@ -1107,10 +1245,10 @@ export function LevelsBand() {
         </div>
         <ul className="w369-tiers">
           {[
-            { name: 'بذور', range: '١–٥' },
-            { name: 'مسارات', range: '٦–١٠' },
-            { name: 'منائر', range: '١١–١٥' },
-            { name: 'قمم', range: '١٦–٢٠' },
+            { name: 'بذور', range: '1–5' },
+            { name: 'مسارات', range: '6–10' },
+            { name: 'منائر', range: '11–15' },
+            { name: 'قمم', range: '16–20' },
           ].map((t, i) => (
             <li key={t.name} data-on={Math.floor(picked / 5) === i ? 'true' : 'false'}>
               <b>{t.name}</b>
@@ -1144,7 +1282,7 @@ export function LevelsBand() {
 
 const HANDOFF = [
   { n: '01', title: 'الطالب يُنجز', body: 'يُسلّم الواجب أو يُكمل الاختبار داخل أُلارا، فتُسجَّل النتيجة فورًا.' },
-  { n: '02', title: 'النجوم تُضاف', body: 'نقاط الإتقان تُحسب تلقائيًّا من الإنجاز — لا إدخال يدوي ولا انتظار.' },
+  { n: '02', title: 'تُحتسب النقاط', body: 'نقاط الإتقان تُحسب تلقائيًّا من الإنجاز — لا إدخال يدوي ولا انتظار.' },
   { n: '03', title: 'عضو الهيئة يرى', body: 'تصل المتابعة إلى صفّه: من أنجز، ومن يحتاج تدخّلًا، وأين الإتقان الحقيقي.' },
   { n: '04', title: 'الإدارة تُعتمد', body: 'البرنامج والمقرّر والمؤشّرات تُدار من مساحة واحدة، والاعتماد يمرّ بخطوة واحدة.' },
 ] as const;
@@ -1158,7 +1296,7 @@ export function ShowcaseBand() {
         <p className="w369-band-kicker"><Glyph name="users" size={15} />كيف ينتقل الإنجاز بين الأدوار</p>
         <h2 className="w369-h2">خطوةٌ من الطالب،<br /><span className="w369-em">تصل إلى الإدارة</span></h2>
         <p className="w369-body">
-          أربع خطوات لا أكثر: يُنجز الطالب، فتُحسب النجوم، فيراها عضو الهيئة، فتعتمدها الإدارة.
+          أربع خطوات لا أكثر: يُنجز الطالب، فتُحتسب نقاط الإتقان، فيراها عضو الهيئة، فتعتمدها الإدارة.
           بدّل بين الهاتفين لترى الطرفين.
         </p>
       </header>
@@ -1193,17 +1331,22 @@ export function ShowcaseBand() {
           <div className="w369-phone w369-phone-back" aria-hidden={role === 'student'}>
             <div className="w369-phone-screen">
               <div className="w369-mini-head">
-                <b>متابعة الصفّ</b><span>الأدب الحديث · ٢٤ طالبًا</span>
+                <b>متابعة الصفّ</b><span>الأدب الحديث · 24 طالبًا</span>
               </div>
               <ul className="w369-mini-list">
-                <li><span>نورة الحربي</span><b>١٢ نقطة</b></li>
-                <li><span>سلمان القحطاني</span><b>٩ نقاط</b></li>
+                <li><span>نورة الحربي</span><b>12 نقطة</b></li>
+                <li><span>سلمان القحطاني</span><b>9 نقاط</b></li>
                 <li data-warn="true"><span>ريم الزهراني</span><b>تحتاج متابعة</b></li>
               </ul>
               <button
                 type="button"
                 className="w369-btn w369-btn-small w369-mini-cta"
-                disabled={approval === 'approved'}
+                /* r369 slice 06 (Lighthouse aria-hidden-focus): when the
+                   role toggle hides this phone (student mode), the CTA
+                   must leave the tab order with it — an aria-hidden
+                   ancestor may never hold a focusable. The demo itself
+                   is unchanged in teacher mode. */
+                disabled={role === 'student' || approval === 'approved'}
                 onClick={() => setApproval(approval === 'idle' ? 'sent' : 'approved')}
               >
                 {approval === 'idle' && <><Glyph name="check" size={14} />أرسل طلب اعتماد</>}
@@ -1223,15 +1366,15 @@ export function ShowcaseBand() {
           <div className="w369-phone w369-phone-front">
             <div className="w369-phone-screen">
               <div className="w369-mini-head">
-                <b>صباح الخير، سارة</b><span>اليوم · ٣ مهامّ</span>
+                <b>صباح الخير، سارة</b><span>اليوم · 3 مهامّ</span>
               </div>
               <ul className="w369-mini-list">
-                <li data-done="true"><span>واجب تحليل النصّ</span><b>✓ ٣</b></li>
-                <li data-done="true"><span>اختبار الجبر</span><b>✓ ٤</b></li>
-                <li><span>ورشة الكتابة</span><b>٦</b></li>
+                <li data-done="true"><span>واجب تحليل النصّ</span><b>✓ 3</b></li>
+                <li data-done="true"><span>اختبار الجبر</span><b>✓ 4</b></li>
+                <li><span>ورشة الكتابة</span><b>6</b></li>
               </ul>
               <div className="w369-mini-progress">
-                <span>تقدّم المقرّر</span><b>٪٧٨</b>
+                <span>تقدّم المقرّر</span><b>78٪</b>
               </div>
               <p className="w369-mini-note">نموذج توضيحي لواجهة الطالب.</p>
             </div>
@@ -1244,12 +1387,12 @@ export function ShowcaseBand() {
 
 /* ── 08 the showcase: seven real surfaces, one at a time ── */
 
-const FIRST_SLIDE = { title: 'لوحة الطالب', body: 'المهامّ والنجوم والتقدّم في شاشة واحدة.', screen: 'dashboard' };
+const FIRST_SLIDE = { title: 'لوحة الطالب', body: 'المهامّ ونقاط الإتقان والتقدّم في شاشة واحدة.', screen: 'dashboard' };
 const SLIDES = [
   FIRST_SLIDE,
   { title: 'قائمة اليوم', body: 'ما يجب أن يُنجز الآن، مرتّبًا بالأولوية.', screen: 'today' },
   { title: 'مصفوفة الإتقان', body: 'ما أتقنته وما يحتاج مراجعة، بمقرّر.', screen: 'mastery' },
-  { title: 'لوحة المتصدّرين', body: 'ترتيب الصفّ بنقاط الإتقان، لا بالحظّ.', screen: 'leaderboard' },
+  { title: 'لوحة تقدّم المقرّر', body: 'تقدّم الصفّ بنقاط الإتقان، يراه عضو الهيئة ويتابعه.', screen: 'leaderboard' },
   { title: 'سلّم المستويات', body: 'عشرون مستوى وشارة لكل واحد.', screen: 'levels' },
   { title: 'مساحة عضو الهيئة', body: 'الصفّ كاملًا في شاشة، والمتابعة بخطوة.', screen: 'teacher' },
   { title: 'لوحة الجودة', body: 'مؤشّرات البرنامج والمقرّر في مكان واحد.', screen: 'quality' },
@@ -1264,8 +1407,8 @@ const SLIDES = [
  */
 interface MiniView { head: string; meta: string; rows: [string, string][] }
 const DEFAULT_VIEW: MiniView = {
-  head: 'اليوم', meta: '٣ مهامّ · ٢٤ نقطة',
-  rows: [['واجب تحليل النصّ', '✓ ٣'], ['اختبار الجبر الخطّي', '✓ ٤'], ['ورشة الكتابة', '٦']],
+  head: 'اليوم', meta: '3 مهامّ · 24 نقطة',
+  rows: [['واجب تحليل النصّ', '✓ 3'], ['اختبار الجبر الخطّي', '✓ 4'], ['ورشة الكتابة', '6']],
 };
 
 function MiniScreen({ screen }: { screen: string }) {
@@ -1273,27 +1416,27 @@ function MiniScreen({ screen }: { screen: string }) {
     dashboard: DEFAULT_VIEW,
     today: {
       head: 'قائمة اليوم', meta: 'مرتّبة بالأولوية',
-      rows: [['الواجب — الأدب الحديث', '٣'], ['المحاضرة — ٩:٠٠', '٢'], ['الاختبار — غدًا', '٤']],
+      rows: [['الواجب — الأدب الحديث', '3'], ['المحاضرة — 9:00', '2'], ['الاختبار — غدًا', '4']],
     },
     mastery: {
       head: 'مصفوفة الإتقان', meta: 'الأدب الحديث',
-      rows: [['التحليل السردي', '٩٢٪'], ['الشعر الحديث', '٧٨٪'], ['النقد التطبيقي', '٥٤٪']],
+      rows: [['التحليل السردي', '92٪'], ['الشعر الحديث', '78٪'], ['النقد التطبيقي', '54٪']],
     },
     leaderboard: {
-      head: 'لوحة تقدّم المقرّر', meta: '٢٤ طالبًا',
-      rows: [['نورة الحربي', '٤٢'], ['سلمان القحطاني', '٣٨'], ['سارة العتيبي', '٣٤']],
+      head: 'لوحة تقدّم المقرّر', meta: '24 طالبًا',
+      rows: [['نورة الحربي', '42'], ['سلمان القحطاني', '38'], ['سارة العتيبي', '34']],
     },
     levels: {
-      head: 'سلّم الإتقان', meta: 'المستوى ٧ من ٢٠',
+      head: 'سلّم الإتقان', meta: 'المستوى 7 من 20',
       rows: [['فجر', 'مُكتمل'], ['شمس', 'الحالي'], ['مدار', 'مقفل']],
     },
     teacher: {
       head: 'متابعة الصفّ', meta: 'الأدب الحديث',
-      rows: [['أنجزوا الواجب', '١٩ / ٢٤'], ['تحتاج متابعة', '٣'], ['متوسّط الإتقان', '٧١٪']],
+      rows: [['أنجزوا الواجب', '19 / 24'], ['تحتاج متابعة', '3'], ['متوسّط الإتقان', '71٪']],
     },
     quality: {
       head: 'مؤشّرات البرنامج', meta: 'الفصل الأول',
-      rows: [['نسبة الاكتمال', '٨٦٪'], ['رضا الطلّاب', '٤٫٢ / ٥'], ['مقرّرات تحت المراجعة', '٢']],
+      rows: [['نسبة الاكتمال', '86٪'], ['رضا الطلّاب', '4.2 / 5'], ['مقرّرات تحت المراجعة', '2']],
     },
   };
   const view = views[screen] ?? DEFAULT_VIEW;
@@ -1380,8 +1523,8 @@ export function CarouselBand() {
 
 const PRINCIPLES = [
   { icon: 'shield', title: 'بياناتك لك', body: 'لا إعلانات، ولا بيع بيانات، وحذف حسابك متاح في أي وقت من إعداداتك.' },
-  { icon: 'compass', title: 'عربية أولًا', body: 'الواجهة كلها من اليمين إلى اليسار، والأرقام والمصطلحات كما تُكتب في جامعاتنا.' },
-  { icon: 'target', title: 'لا أرقام مُجمّلة', body: 'كل رقم في المنصّة مشتقّ من إنجاز مسجّل — لا تقديرات ولا نقاط تُدخل يدويًّا.' },
+  { icon: 'compass', title: 'واجهة من اليمين إلى اليسار', body: 'كل الشاشات مكتوبة للعربية من الأساس، بأرقام لاتينية ومصطلحات جامعية معتادة.' },
+  { icon: 'target', title: 'الأرقام من الإنجاز المسجَّل', body: 'كل رقم في المنصّة مشتقّ من إنجاز مسجّل — لا تقديرات ولا نقاط تُدخل يدويًّا.' },
   { icon: 'users', title: 'أدوار واضحة', body: 'الطالب وعضو الهيئة والإدارة والجودة يروْن ما يخصّهم فقط، بصلاحيات محدّدة.' },
 ] as const;
 
@@ -1395,8 +1538,8 @@ export function PrinciplesBand() {
   return (
     <section className="w369-principles" id="principles">
       <header className="w369-band-head">
-        <p className="w369-band-kicker"><Glyph name="shield" size={15} />ما لا نتنازل عنه</p>
-        <h2 className="w369-h2">أربعة مبادئ،<br /><span className="w369-em">مكتوبة لا معلّقة</span></h2>
+        <p className="w369-band-kicker"><Glyph name="shield" size={15} />عن المنصّة</p>
+        <h2 className="w369-h2">أربع نقاط<br /><span className="w369-em">عن البيانات والأدوار</span></h2>
       </header>
       <ul className="w369-principle-grid" data-stagger="">
         {PRINCIPLES.map((p) => (
@@ -1408,7 +1551,7 @@ export function PrinciplesBand() {
         ))}
       </ul>
       <p className="w369-fine">
-        كل ادّعاء هنا مطابق لما تنصّ عليه صفحاتنا القانونية فعليًّا —{' '}
+        التفاصيل في{' '}
         <Link to="/legal/privacy" className="w369-link">سياسة الخصوصية</Link>.
       </p>
 
@@ -1416,7 +1559,6 @@ export function PrinciplesBand() {
         <span className="w369-trust-item"><Glyph name="shield" size={16} />بلا إعلانات</span>
         <span className="w369-trust-item"><Glyph name="lock" size={16} />بلا بيع بيانات</span>
         <span className="w369-trust-item"><Glyph name="close" size={16} />حذف الحساب في أي وقت</span>
-        <span className="w369-trust-item"><Glyph name="compass" size={16} />عربي RTL بالكامل</span>
       </div>
 
       <ul className="w369-audience-grid" data-stagger="">
@@ -1438,7 +1580,7 @@ export function PrinciplesBand() {
 /* ── together: the three views ── */
 
 const ROLES = [
-  { icon: 'student', title: 'الطالب', body: 'يرى مهامّه، نجومه، تقدّمه، وسلسلته في مكان واحد — ويعرف الخطوة التالية دائمًا.' },
+  { icon: 'student', title: 'الطالب', body: 'يرى مهامّه ونقاط إتقانه وتقدّمه في مكان واحد — ويعرف الخطوة التالية دائمًا.' },
   { icon: 'teacher', title: 'عضو الهيئة', body: 'يرى صفّه كاملًا: من أنجز، ومن يحتاج متابعة، وأين يقع الإتقان الحقيقي، بمصفوفة واحدة.' },
   { icon: 'admin', title: 'الإدارة والجودة', body: 'ترى المقرّرات والبرامج والمؤشّرات، وتُدير الصلاحيات والتقارير من مساحة واحدة.' },
 ] as const;
@@ -1537,7 +1679,7 @@ export function CtaBand() {
     return () => window.removeEventListener('ulara:stars', on as EventListener);
   }, []);
   return (
-    <section className="w369-cta" data-jar="06">
+    <section className="w369-cta" data-jar="06" data-scene="night" data-theme="dark">
       <div className="w369-cta-inner">
         <p className="w369-cta-tally" data-full={read >= JAR_TOTAL ? 'true' : 'false'}>
           <Glyph name="compass" size={15} />
@@ -1604,12 +1746,12 @@ export function Footer({ year }: { year: number }) {
       <div className="w369-footer-grid">
         <div className="w369-footer-brand">
           <Link to={ROUTES.root} className="w369-brand">
-            <span className="w369-brand-mark" aria-hidden="true"><Glyph name="star" size={18} /></span>
+            <span className="w369-brand-mark" aria-hidden="true"><Logo variant="mark" size={36} /></span>
             <span className="w369-brand-word">أُلارا</span>
           </Link>
           {/* the honest identity statement — the SAME sentence /about and
               /legal render (one text, three seats; tests pin the equality). */}
-          <p className="w369-footer-note">منصّة تعليمية تقنية مستقلّة، عربية أولًا. لا تنتمي إلى أيّ مؤسّسة تعليمية ولا تمثّلها؛ وبيانات العرض داخلها تخصّ «مساحة عمل أُلارا التجريبية» — مساحة اصطناعية بالكامل لأغراض العرض، لا تحاكي أي جامعة.</p>
+          <p className="w369-footer-note">منصّة تعليمية تقنية مستقلّة. لا تنتمي إلى أيّ مؤسّسة تعليمية ولا تمثّلها؛ وبيانات العرض داخلها تخصّ «مساحة عمل أُلارا التجريبية» — مساحة اصطناعية بالكامل لأغراض العرض، لا تحاكي أي جامعة.</p>
           <div className="w369-footer-cta">
             <Link to={ROUTES.authRegister} className="w369-btn w369-btn-primary">أنشئ حسابك</Link>
             <Link to={ROUTES.auth} className="w369-btn w369-btn-ghost">تسجيل الدخول</Link>
@@ -1644,7 +1786,7 @@ export function Footer({ year }: { year: number }) {
 /* ───────────────────────────── preloader ───────────────────────────── */
 
 /**
- * The entrance: a short star-burst, once per session, skippable and
+ * The entrance: the brand mark drawing itself, once per session, skippable and
  * entirely skipped under reduced motion. It never blocks the page —
  * the sheet renders underneath and the overlay fades itself out.
  */
@@ -1659,10 +1801,10 @@ export function Preloader({ onDone }: { onDone: () => void }) {
   return (
     <div className="w369-pre" data-leaving={leaving ? 'true' : 'false'} aria-hidden="true">
       <div className="w369-pre-burst">
-        {Array.from({ length: 8 }).map((_, i) => (
-          <span key={i} className="w369-pre-ray" style={{ rotate: `${i * 45}deg` }} />
-        ))}
-        <span className="w369-pre-star"><Glyph name="star" size={34} /></span>
+        {/* r369 loader unification: the same animated mark the app's boot
+            splash draws (hairline vessel first, cornerstone last), not a
+            star burst. */}
+        <Logo variant="mark" size={72} animated />
       </div>
       <p className="w369-pre-word">أُلارا</p>
     </div>

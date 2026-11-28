@@ -87,3 +87,24 @@ describe('scrollLock', () => {
     document.body.style.overflow = '';
   });
 });
+
+describe('scrollLock — position restore on the last release', () => {
+  it('puts the page back at the offset it had when the first holder arrived', () => {
+    const calls: unknown[] = [];
+    const orig = window.scrollTo;
+    let y = 592;
+    Object.defineProperty(window, 'scrollY', { configurable: true, get: () => y });
+    window.scrollTo = ((o: ScrollToOptions) => { calls.push(o); y = o.top ?? y; }) as typeof window.scrollTo;
+    acquireScrollLock('menu');
+    y = 0; /* something reset the page while the overlay was open */
+    releaseScrollLock('menu');
+    expect(y).toBe(592);
+    expect(calls).toHaveLength(1);
+    /* unchanged offset → no write at all */
+    acquireScrollLock('menu');
+    releaseScrollLock('menu');
+    expect(calls).toHaveLength(1);
+    window.scrollTo = orig;
+    delete (window as { scrollY?: number }).scrollY;
+  });
+});

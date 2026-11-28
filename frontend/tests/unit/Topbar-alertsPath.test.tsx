@@ -48,6 +48,13 @@ vi.mock('../../src/hooks/useAuth', () => ({
 vi.mock('../../src/hooks/useResources', () => ({
   useMyProfile: () => ({ data: undefined }),
 }));
+/* r369 slice 02 re-key: the topbar's new نقاط إتقان chip
+ * (StudentXpChip) reads useStudentDashboard — stubbed here like
+ * useMyProfile above so this decision pin stays outside react-query.
+ * The chip's own contract is pinned in Topbar-xp-chip.test.tsx. */
+vi.mock('../../src/hooks/resources/student', () => ({
+  useStudentDashboard: () => ({ data: undefined, isError: false }),
+}));
 
 import { Topbar } from '../../src/components/layout/Topbar';
 import { useAuthStore, type AuthUser, type AppRole } from '../../src/stores/auth.store';

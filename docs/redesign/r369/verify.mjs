@@ -1,5 +1,5 @@
 import { chromium } from 'playwright';
-const b = await chromium.launch({ channel: 'chrome' });
+const b = await chromium.launch(process.env.PW_CHROME_CHANNEL === 'bundled' ? {} : { channel: 'chrome' });
 const ctx = await b.newContext({ viewport: { width: 1440, height: 900 }, locale: 'ar-LY' });
 const page = await ctx.newPage();
 await page.addInitScript(() => sessionStorage.setItem('ulara-intro-skip', '1'));

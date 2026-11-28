@@ -60,7 +60,7 @@ export const MARK_GRID_POINTS: readonly (readonly [number, number])[] = [
  * non-scaling uniform hairline (vector-effect), the favicon carries a
  * thicker PROPORTIONAL ratio for 16 px legibility — the only sanctioned
  * deviation (BRAND.md §min-sizes). */
-export const MARK_STROKE_COMPONENT = 1.5; /* px, non-scaling */
+const MARK_STROKE_COMPONENT = 1.5; /* px, non-scaling */
 export const MARK_STROKE_FAVICON = 2.25;  /* viewBox units, proportional */
 
 /** The optical-size ramp (R324/X11). A CONSTANT 1.5 px screen stroke

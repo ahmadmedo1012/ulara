@@ -145,7 +145,7 @@ describe('Button loading × labelMotion — spinner path wins', () => {
   it('renders the spinner markup with no motion wrapper while busy', () => {
     const { container } = render(<Button labelMotion loading>حفظ التغييرات</Button>);
     const btn = screen.getByRole('button', { name: 'حفظ التغييرات' });
-    expect(btn.querySelector('.motion-spinner')).not.toBeNull();
+    expect(btn.querySelector('.spinner')).not.toBeNull();
     expect(container.querySelector('.btn-motion-label')).toBeNull();
     expect(btn.querySelector('.visually-hidden')?.textContent).toBe('حفظ التغييرات');
     expect(btn).toHaveAttribute('aria-busy', 'true');
@@ -158,7 +158,7 @@ describe('Button loading × labelMotion — spinner path wins', () => {
       </Button>,
     );
     rerender(<Button labelMotion loading={false}>إرسال</Button>);
-    expect(container.querySelector('.motion-spinner')).toBeNull();
+    expect(container.querySelector('.spinner')).toBeNull();
     expect(container.querySelector('.btn-motion-label')).not.toBeNull();
     expect(screen.getByRole('button', { name: 'إرسال' })).not.toBeDisabled();
   });

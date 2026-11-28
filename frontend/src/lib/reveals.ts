@@ -73,6 +73,21 @@ import { PREFERS_REDUCED_MOTION } from '../lib/motion-media';
  *      scrollend (the useReveal T-11b1 trap); plain scroll-quiet is
  *      the only tail that always comes. A reveal must never hold
  *      content below its start.
+ *
+ * ── r363 — the late-mount seam (the lazy-chunk fix) ─────────────────
+ * initReveals() runs ONCE at the landing's mount — but the landing's
+ * second half (Vision, Roles, Chapters, Product and the FOOTER with
+ * its skyline strip and giant wordmark) rides React.lazy boundaries
+ * and mounts AFTER this pass. Those elements were never armed, never
+ * observed: `.fo-fstrip` never received `.in-view`, and footer.css
+ * keys the skyline's armed clip off the ROOT seam class
+ * (`.js-reveal-armed .fo-strip-media`) — so the strip stood at
+ * `inset(100% 0 0 0)` forever for JS-on visitors: the round's own
+ * 1440 footer capture shows the band blank. The engine now keeps one
+ * debounced MutationObserver: any element matching a family selector
+ * that mounts later is armed on the spot — same classes, same IO
+ * bucket, same pending pool — so a root-class-keyed CSS armed state is
+ * now GUARANTEED its release, whenever its section happens to mount.
  */
 
 /** Root seam class — added BEFORE any hiding class lands (the arm order). */
@@ -96,8 +111,12 @@ const CARD_SEL = '.pm-artzone .pm-art, .fo-cta-sketch, .pr-shots .pr-shot'; // d
    `--ty` variant (instant opacity — run.mjs's final snapshot lands
    mid-fade on their 800ms opacity otherwise; see shared.css). Targets
    deliberately avoid census-pinned transition seats (.fo-mark,
-   .fo-col3, .fo-form, bgroup.2 keep their recorded transitions). ── */
-const RISE_SEL = '.fo-c1-top, .fo-c2-top, .fo-c2-bottom';
+   .fo-col3, .fo-form, bgroup.2 keep their recorded transitions).
+   r363 (R21) — `.fo-giant-banner`, the giant wordmark row, joins the
+   family: it is the footer's last structural block and the ruling's
+   "scroll reveal" reaches the wordmark like every sibling (the accent
+   fill twin rides inside — one whole-block rise, no inner splits). ── */
+const RISE_SEL = '.fo-c1-top, .fo-c2-top, .fo-c2-bottom, .fo-giant-banner';
 const RISE_TY_SEL = '.fo-c1-sub, .fo-fstrip, .fo-footer-bottom';
 /** the rise family's stagger step — the reference's recorded 20ms ladder. */
 const RISE_STAGGER_MS = 20;
@@ -137,6 +156,63 @@ interface RevealsWindow extends Window {
 const OBSERVER_ROOT_MARGIN_LINES = '0px 0px -15% 0px'; // the 85% entry line
 const OBSERVER_ROOT_MARGIN_ITEMS = '0px 0px -12% 0px'; // the 88% entry line
 
+/* ── r363 — the family table ─────────────────────────────────────────
+ * One declarative table drives BOTH passes (the mount-time sweep and
+ * the late-mount rescan): selector, the hiding classes the family
+ * arms (module-added only — the progressive-enhancement contract),
+ * and the IO root-margin bucket (the house bucket rule). The two
+ * keyed families keep their per-element class decision (the --ty
+ * variant, the -w/-x pair). */
+interface Family {
+  sel: string;
+  classes(el: Element): string[];
+  margin: string;
+}
+
+const FAMILIES: Family[] = [
+  /* Lines — display headings, whole blocks, 80ms steps. */
+  { sel: LINES_SEL, classes: () => ['reveal-up'], margin: OBSERVER_ROOT_MARGIN_LINES },
+  /* Items — rows and copy blocks (y-only + fade: no x — direction-safe
+   * in RTL; groups enter as one beat with internal stagger). */
+  { sel: ITEM_SEL, classes: () => ['reveal-up'], margin: OBSERVER_ROOT_MARGIN_ITEMS },
+  /* Cards — the reference imgCardReveal: scale 0.8→1 + fade. Scale and
+   * opacity only — direction-agnostic. */
+  { sel: CARD_SEL, classes: () => ['reveal-card'], margin: OBSERVER_ROOT_MARGIN_LINES },
+  /* T-11b — the footer rise: the structural blocks on the reference
+   * register; the last three add `--ty` (instant opacity, rise-only). */
+  {
+    sel: `${RISE_SEL}, ${RISE_TY_SEL}`,
+    classes: (el) => {
+      const cls = ['reveal-up', 'reveal-rise-h'];
+      if (RISE_TY_SEL.split(', ').some((s) => el.matches(s.trim()))) {
+        cls.push('reveal-rise-h--ty');
+      }
+      return cls;
+    },
+    margin: OBSERVER_ROOT_MARGIN_ITEMS,
+  },
+  /* T-11b1 — the intro beat: the SAME rise seat at the band's own
+   * clock (--beat modifier) + its own ladder step. */
+  {
+    sel: BEAT_SEL,
+    classes: () => ['reveal-up', 'reveal-rise-h', 'reveal-rise-h--beat'],
+    margin: OBSERVER_ROOT_MARGIN_ITEMS,
+  },
+  /* T-11b1 — the usecase rules: the rows' bottom hairlines WIDEN
+   * (.rl-rule-w), the frame pair DRAWS (.rl-rule-x). Keyframe seats —
+   * `.in-view` fires them; they ride the lines entry margin with the
+   * headings. */
+  {
+    sel: `${RULE_W_SEL}, ${RULE_X_SEL}`,
+    classes: (el) => [el.matches(RULE_X_SEL) ? 'rl-rule-x' : 'rl-rule-w'],
+    margin: OBSERVER_ROOT_MARGIN_LINES,
+  },
+];
+
+/** The late-mount rescan's debounce — one sweep per quiet 60ms, no
+ * matter how many chunks mount in a burst. */
+const RESCAN_QUIET_MS = 60;
+
 export function initReveals(): RevealsHandle {
   const noop: RevealsHandle = { destroy() {} };
   if (typeof window === 'undefined' || typeof document === 'undefined') {
@@ -151,12 +227,13 @@ export function initReveals(): RevealsHandle {
   // The ARM SEAM comes first: root class, then hiding classes, then observers.
   document.documentElement.classList.add(ARMED_CLASS);
 
-  const lines = toArray(document, LINES_SEL);
-  const items = toArray(document, ITEM_SEL);
-  const cards = toArray(document, CARD_SEL);
   const observers: IntersectionObserver[] = [];
   /** every class this module added — destroy() removes exactly these. */
   const touched: Array<{ el: Element; cls: string }> = [];
+  /** everything this module has SEEN — the rescan admits only new nodes. */
+  const seen = new WeakSet<Element>();
+  /** every armed-but-unrevealed element, across both passes. */
+  const pending: Element[] = [];
 
   const arm = (el: Element, cls: string) => {
     el.classList.add(cls);
@@ -199,74 +276,71 @@ export function initReveals(): RevealsHandle {
     el.getBoundingClientRect().bottom <= 0 ||
     el.getBoundingClientRect().top < window.innerHeight * 0.12;
 
-  /* ── Lines — display headings, whole blocks, 80ms steps ─────────── */
-  const pendingLines = lines.filter((el) => !isPassed(el));
-  lines.filter(isPassed).forEach(reveal);
-  pendingLines.forEach((el) => arm(el, 'reveal-up'));
-  observe(pendingLines, OBSERVER_ROOT_MARGIN_LINES);
+  /** ONE observer per root-margin bucket (the house bucket rule —
+   * hooks/useReveal.ts): entries sharing a margin share one IO. The
+   * late-mount rescan reuses the SAME buckets — no observer
+   * proliferation when chunks trickle in. */
+  const buckets = new Map<string, IntersectionObserver>();
 
-  /* ── Items — rows and copy blocks, 80ms steps within each group ────
-   * (y-only + fade: no x — direction-safe in RTL. Groups enter as one
-   * beat with internal stagger, like the reference.) */
-  const pendingItems = items.filter((el) => !isPassed(el));
-  items.filter(isPassed).forEach(reveal);
-  pendingItems.forEach((el) => arm(el, 'reveal-up'));
-  observe(pendingItems, OBSERVER_ROOT_MARGIN_ITEMS);
-
-  /* ── Cards — the reference imgCardReveal: scale 0.8→1 + fade on the
-   * dedicated card rung. Scale/opacity only — direction-agnostic. ── */
-  const pendingCards = cards.filter((el) => !isPassed(el));
-  cards.filter(isPassed).forEach(reveal);
-  pendingCards.forEach((el) => arm(el, 'reveal-card'));
-  observe(pendingCards, OBSERVER_ROOT_MARGIN_LINES);
-
-  /* ── T-11b — the footer rise: the six structural blocks on the
-   * the reference register (see RISE_SEL). `.reveal-up` rides along for the
-   * grammar + house contract; `.reveal-rise-h` owns the tween (it
-   * wins the cascade — later in shared.css); the last three blocks
-   * add `--ty` (instant opacity, rise-only). Same IO bucket as the
-   * items; the 20ms ladder lands at reveal time. ── */
-  const rises = [...toArray(document, RISE_SEL), ...toArray(document, RISE_TY_SEL)];
-  const pendingRises = rises.filter((el) => !isPassed(el));
-  rises.filter(isPassed).forEach(reveal);
-  pendingRises.forEach((el) => {
-    arm(el, 'reveal-up');
-    arm(el, 'reveal-rise-h');
-    if (RISE_TY_SEL.split(', ').some((s) => el.matches(s.trim()))) {
-      arm(el, 'reveal-rise-h--ty');
+  function observe(els: Element[], rootMargin: string) {
+    if (!els.length) return;
+    let io = buckets.get(rootMargin);
+    if (!io) {
+      io = new IntersectionObserver(
+        (entries) => {
+          const batch = entries
+            /* T-11b1 — the flung-past clause (the belt's (b), verbatim):
+             * a non-intersecting entry fully above the viewport means the
+             * user jumped past this element between observation frames;
+             * one-shot semantics: passed ⇒ revealed. */
+            .filter((e) => e.isIntersecting || e.boundingClientRect.bottom < 0)
+            .map((e) => e.target)
+            .sort(byDocumentOrder);
+          if (batch.length) {
+            revealBatch(batch);
+            batch.forEach((el) => {
+              const i = pending.indexOf(el);
+              if (i >= 0) pending.splice(i, 1);
+            });
+          }
+          batch.forEach((el) => {
+            const b = buckets.get(rootMargin);
+            b?.unobserve(el); // once:true — never replays
+          });
+        },
+        { rootMargin },
+      );
+      buckets.set(rootMargin, io);
+      observers.push(io);
     }
-  });
-  observe(pendingRises, OBSERVER_ROOT_MARGIN_ITEMS);
+    els.forEach((el) => io!.observe(el));
+  }
 
-  /* ── T-11b1 — the intro beat: the SAME rise seat at the band's own
-   * 600ms clock (--beat modifier, shared.css) + the 4ms ladder. */
-  const beats = toArray(document, BEAT_SEL);
-  const pendingBeats = beats.filter((el) => !isPassed(el));
-  beats.filter(isPassed).forEach(reveal);
-  pendingBeats.forEach((el) => {
-    arm(el, 'reveal-up');
-    arm(el, 'reveal-rise-h');
-    arm(el, 'reveal-rise-h--beat');
-  });
-  observe(pendingBeats, OBSERVER_ROOT_MARGIN_ITEMS);
+  /* ── The admit pass — shared by mount-time and late-mount ──────────
+   * For one family: take the not-yet-seen elements, mark them seen,
+   * reveal whatever is already passed (no entrance for passed
+   * content), arm + observe the rest, and join the pending pool. */
+  function admit(family: Family) {
+    const els = toArray(document, family.sel).filter((el) => !seen.has(el));
+    if (!els.length) return;
+    els.forEach((el) => seen.add(el));
+    const passed = els.filter(isPassed);
+    passed.forEach(reveal);
+    const waiting = els.filter((el) => !isPassed(el));
+    waiting.forEach((el) => {
+      family.classes(el).forEach((cls) => arm(el, cls));
+    });
+    observe(waiting, family.margin);
+    pending.push(...waiting);
+  }
 
-  /* ── T-11b1 — the usecase rules: the rows' bottom hairlines WIDEN
-   * (width 0→100%, roles.css .rl-rule-w), the frame pair DRAWS
-   * (scale 0 1→1 1, roles.css .rl-rule-x). Keyframe seats — `.in-view`
-   * fires them; no transition to stagger, so they ride the lines
-   * entry margin with the headings. */
-  const rules = [...toArray(document, RULE_W_SEL), ...toArray(document, RULE_X_SEL)];
-  const pendingRules = rules.filter((el) => !isPassed(el));
-  rules.filter(isPassed).forEach(reveal);
-  pendingRules.forEach((el) =>
-    arm(el, el.matches(RULE_X_SEL) ? 'rl-rule-x' : 'rl-rule-w'),
-  );
-  observe(pendingRules, OBSERVER_ROOT_MARGIN_LINES);
+  /* ── Mount-time pass ─────────────────────────────────────────────── */
+  FAMILIES.forEach(admit);
 
   /* ── T-11b1 — the pending pool + the settle belt ─────────────
    * Every armed-but-unrevealed element, rescued by scroll-quiet (see
-   * the header block). The pool drains as the IO reveals. */
-  const pending: Element[] = [...pendingLines, ...pendingItems, ...pendingCards, ...pendingRises, ...pendingBeats, ...pendingRules];
+   * the header block). The pool drains as the IO reveals (and grows
+   * again when the rescan admits late mounts). */
   const SETTLE_QUIET_MS = 120;
   let settleTimer = 0;
   const settle = () => {
@@ -292,34 +366,23 @@ export function initReveals(): RevealsHandle {
   };
   window.addEventListener('scroll', onScrollQuiet, { passive: true });
 
-  /** ONE observer per root-margin bucket (the house bucket rule —
-   * hooks/useReveal.ts): entries sharing a margin share one IO. */
-  function observe(els: Element[], rootMargin: string) {
-    if (!els.length) return;
-    const io = new IntersectionObserver(
-      (entries) => {
-        const batch = entries
-          /* T-11b1 — the flung-past clause (the belt's (b), verbatim):
-           * a non-intersecting entry fully above the viewport means the
-           * user jumped past this element between observation frames;
-           * one-shot semantics: passed ⇒ revealed. */
-          .filter((e) => e.isIntersecting || e.boundingClientRect.bottom < 0)
-          .map((e) => e.target)
-          .sort(byDocumentOrder);
-        if (batch.length) {
-          revealBatch(batch);
-          batch.forEach((el) => {
-            const i = pending.indexOf(el);
-            if (i >= 0) pending.splice(i, 1);
-          });
-        }
-        batch.forEach((el) => io.unobserve(el)); // once:true — never replays
-      },
-      { rootMargin },
-    );
-    els.forEach((el) => io.observe(el));
-    observers.push(io);
-  }
+  /* ── r363 — the late-mount seam ────────────────────────────────────
+   * The lazy chunks (Vision, Roles, Chapters, Product, the footer)
+   * mount after this pass; a debounced MutationObserver re-admits
+   * through the SAME table so their elements arm, observe, and reveal
+   * exactly like mount-time ones. Debounced because a chunk mount
+   * inserts many nodes at once — one sweep per quiet 60ms. */
+  let rescanTimer = 0;
+  const rescan = () => {
+    rescanTimer = 0;
+    FAMILIES.forEach(admit);
+  };
+  const scheduleRescan = () => {
+    if (rescanTimer) return;
+    rescanTimer = window.setTimeout(rescan, RESCAN_QUIET_MS);
+  };
+  const mo = new MutationObserver(scheduleRescan);
+  mo.observe(document.body, { childList: true, subtree: true });
 
   function toArray(doc: Document, sel: string): HTMLElement[] {
     return Array.from(doc.querySelectorAll<HTMLElement>(sel));
@@ -336,6 +399,9 @@ export function initReveals(): RevealsHandle {
   const handle: RevealsHandle = {
     destroy() {
       observers.forEach((io) => io.disconnect());
+      buckets.clear();
+      mo.disconnect();
+      if (rescanTimer) window.clearTimeout(rescanTimer);
       if (settleTimer) window.clearTimeout(settleTimer);
       window.removeEventListener('scroll', onScrollQuiet);
       touched.forEach(({ el, cls }) => el.classList.remove(cls));

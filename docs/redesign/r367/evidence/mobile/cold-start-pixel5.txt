@@ -1,0 +1,7 @@
+Starting: Intent { cmp=ly.ulara.app/.MainActivity }
+Status: ok
+LaunchState: COLD
+Activity: ly.ulara.app/.MainActivity
+TotalTime: 1509
+WaitTime: 1549
+Complete

@@ -2,7 +2,7 @@
  * R334 2-a — the ds motion presets (reanimated 4.7 / worklets 0.13).
  *
  * The DURATION scale is the shared one from @/design/tokens (generated from
- * shared/design-tokens.json — micro 160 · fast 320 · base/slow/slower/cinema 640, plus the mobile-added durationPress 120 /
+ * shared/design-tokens.json — r369: micro 120 · fast 220 · base 380 · slow 520 · slower/cinema 700, plus the mobile-added durationPress /
  * durationNav 240). Everything here imports those numbers; the few values
  * the shared scale doesn't model (shimmer sweep, indeterminate spin, exit
  * fade, stagger step) are defined BELOW as mobile-only motion tokens and
@@ -25,11 +25,11 @@ import { dsEase, motion } from "@/design/tokens";
 
 /** Duration scale — ms. Shared tokens where they exist, mobile-only rest. */
 export const durations = {
-  /** 160 — micro feedback ticks (a11y focus flash). */
+  /** 120 — micro feedback ticks (a11y focus flash). */
   micro: motion.micro,
   /** 120 — press-in settle (token durationPress). */
   press: motion.durationPress,
-  /** 320 — quick state change (token fast). */
+  /** 220 — quick state change (token fast). */
   fast: motion.fast,
   /** 240 — slide/navigation entrances (token durationNav). */
   entrance: motion.durationNav,
@@ -56,7 +56,7 @@ export type EasingFn = EasingFunction | EasingFunctionFactory;
 
 /** The single easing family — the ds curve leads everywhere. */
 export const easings = {
-  /** cubic-bezier(0.23, 1, 0.32, 1) — the shared dsEase token. */
+  /** cubic-bezier(0.34, 1.56, 0.64, 1) — the shared dsEase token (r369's ONE overshoot). */
   ds: Easing.bezier(dsEase[0], dsEase[1], dsEase[2], dsEase[3]),
   /** for content that settles into place. */
   outCubic: Easing.out(Easing.cubic),
@@ -89,6 +89,8 @@ export function timing(duration: number, easingFn: EasingFn = easings.ds): WithT
 export const pressFeedback = {
   scale: 0.98,
   opacity: 0.9,
+  /** text links, chips and bare rows: no scale, a clear fade (the app's 0.55-0.6 convention). */
+  linkOpacity: 0.6,
 } as const;
 
 /** Local clamp (reanimated's `clamp` is a worklet util — jest-mocked to a

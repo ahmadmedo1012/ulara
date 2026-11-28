@@ -217,9 +217,13 @@ for (const theme of THEMES) {
         tapRatio = await contrastRatio(page, tapped.fg, tapGround);
         if (tapRatio < 4.5) await page.waitForTimeout(100);
       }
-      expect(tapped.bg, 'tapped row paints NO ghost wash — B1 is dead').toBe(
-        'rgba(0, 0, 0, 0)',
-      );
+      /* R369: the tapped row IS the active page, which paints the one
+       * amber active tint (α .18, a token). A hover-sticky ghost would be a
+       * different paint; the ratio below proves the label stays readable. */
+      expect(
+        tapped.bg === 'rgba(0, 0, 0, 0)' || /^color\(srgb [\d. ]+\/ 0\.18\)$/.test(tapped.bg),
+        `tapped row paints no sticky ghost wash — only the active tint (got ${tapped.bg})`,
+      ).toBe(true);
       expect(
         tapRatio,
         `tapped «${GHOST_ROW_TEXT}»: ${tapped.fg} on ${tapGround} = ${tapRatio.toFixed(2)}:1 (≥4.5)`,

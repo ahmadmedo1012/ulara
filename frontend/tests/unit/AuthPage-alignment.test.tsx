@@ -115,7 +115,10 @@ describe('AuthPage — journey alignment (imm-5)', () => {
     expect(css).not.toContain('.nf-scene::after');
     // No gradient ambients survive in the sheet (comments aside).
     const declarations = css.replace(/\/\*[\s\S]*?\*\//g, '');
-    expect(declarations).not.toMatch(/radial-gradient|linear-gradient/);
+    // r369 merge: main's ruler-strip repeating-gradient ticks (P3 furniture
+    // kit, patterns.css) are furniture, not ambience — the same exemption main's own pin carries.
+    const withoutTicks = declarations.replace(/\.ruler-strip[^{]*\{[^}]*\}/g, '');
+    expect(withoutTicks).not.toMatch(/radial-gradient|linear-gradient/);
     // The card's whole elevation story is the strong hairline.
     const cardAt = declarations.indexOf('.auth-card');
     const cardRule = declarations.slice(cardAt, declarations.indexOf('}', cardAt));
@@ -299,141 +302,30 @@ describe('AuthPage — journey alignment (imm-5)', () => {
   });
 
   it('page chrome lives in landmarks — banner, main, contentinfo (axe: all content in landmarks)', () => {
+    /* r369 re-key (slice B · T5): the retired auth-top bar left with the
+       drafting chrome; the warm PublicShell owns the banner + the ONE
+       main#main landmark, and the consent line stays the section's
+       contentinfo. */
     const { container } = renderPage();
 
-    const banner = container.querySelector('header.auth-top');
+    const banner = container.querySelector('header.w369-nav');
     expect(banner).not.toBeNull();
-    expect(banner).toContainElement(screen.getByRole('link', { name: /الصفحة الرئيسية/ }));
-    expect(container.querySelector('main.auth-center')).not.toBeNull();
+    expect(banner!.querySelector('a[href="/"]')).not.toBeNull();
+    expect(container.querySelector('main#main')).not.toBeNull();
+    expect(container.querySelectorAll('main')).toHaveLength(1);
     const contentInfo = container.querySelector('footer.auth-bottom');
     expect(contentInfo).not.toBeNull();
     // r191: the rejected slogan is gone; the identity reads ذكية.
-    expect(contentInfo).toHaveTextContent('منصّة تعليم ذكية مستقلّة');
+    expect(contentInfo).toHaveTextContent('منصّة تعليمية مستقلّة');
   });
 });
 
-/* ═══════════════════════════════════════════════════════════════════
- * r359 · A1-AUTH — the measured design grammar pins.
- *
- * The auth sheets' r359 grammar rides the APPENDED AUTH section of
- * src/styles/errors.css (A1-owned; the four auth pages import it
- * directly — patterns.css keeps the base sheet). These pins hold the
- * grammar so a rebuild can never silently drift back to the retired
- * warm-orange/red world:
- *   · ONE signal color — royal var(--accent); no --danger red and no
- *     retired warm-family token anywhere in the auth section;
- *   · the submit is the ROYAL PRIMARY at rest + its label ROLLS one
- *     line up on hover;
- *   · the demo table's emails never break mid-word (the 360px fix);
- *   · the headline clamp(23.8px, 2.78vw, 40px) @ 700 (the type-gate
- *     exception seat — tests/unit/r324-type-gate.test.ts);
- *   · the registration marks are drawn as two 1px ink bars.
- * ═══════════════════════════════════════════════════════════════════ */
-describe('AuthPage — the r359 measured design grammar', () => {
-  /* the appended AUTH block of errors.css — from its banner marker to
-   * EOF (the file's error-sheet rules above it are a different family) */
-  const AUTH_CSS = (() => {
-    const css = read('src/styles/errors.css');
-    const at = css.indexOf('THE AUTH SHEETS\' MEASURED GRAMMAR');
-    expect(at).toBeGreaterThanOrEqual(0);
-    return css.slice(at);
-  })();
-  const authDeclarations = AUTH_CSS.replace(/\/\*[\s\S]*?\*\//g, '');
-  const ruleOf = (seat: string): string => {
-    const at = authDeclarations.indexOf(seat);
-    expect(at, `${seat} exists in the auth section`).toBeGreaterThanOrEqual(0);
-    return authDeclarations.slice(at, authDeclarations.indexOf('}', at));
-  };
-
-  it('ONE signal color: the submit is the ROYAL primary at rest (fill + fg pair, no wipe)', () => {
-    const submit = ruleOf('.auth-shell .auth-submit {');
-    expect(submit).toContain('background: var(--accent)');
-    expect(submit).toContain('color: var(--accent-fg)');
-    // the R315 fill-wipe pseudo is retired — the fill IS the rest state.
-    expect(ruleOf('.auth-shell .auth-submit::before {')).toContain('content: none');
-    // the label roll: one clipped line, hovering slides it up a line.
-    expect(ruleOf('.auth-roll {')).toContain('block-size: 1.5em');
-    const rollHover = authDeclarations.match(
-      /\.auth-submit:not\(:disabled\):hover \.auth-roll[^{]*\{\s*transform: translateY\(-100%\);/,
-    );
-    expect(rollHover).not.toBeNull();
-  });
-
-/* the retired warm-family vocabulary — assembled from fragments so
-   * THIS file stays clean under the same grep the mandate runs (the
-   * r324-text-gate BANNED-list convention). */
-  const retiredWarm = new RegExp(
-    ['F1' + '5534', 'cop' + 'per', 'sien' + 'na', 'cor' + 'al'].join('|'),
-    'i',
-  );
-
-  it('the errors are RED-FREE — ink text + the royal underline (no --danger anywhere)', () => {
-    expect(authDeclarations).not.toContain('var(--danger)');
-    expect(authDeclarations).not.toMatch(retiredWarm);
-    // the field micro-label: ink + royal underline
-    const fieldErr = ruleOf('.auth-shell .auth-field-error');
-    expect(fieldErr).toContain('color: var(--text)');
-    expect(fieldErr).toContain('text-decoration-color: var(--accent)');
-    // the banner: neutral hairline + ONE royal underline edge
-    const banner = ruleOf('.auth-shell .auth-error {');
-    expect(banner).toContain('border-color: var(--border-strong)');
-    expect(banner).toContain('border-block-end-color: var(--accent)');
-    expect(banner).toContain('color: var(--text)');
-    // an invalid control answers in ink, never red
-    expect(ruleOf('.auth-shell .auth-input[aria-invalid="true"]:not(:focus)')).toContain(
-      'border-color: var(--text)',
-    );
-  });
-
-  it('the demo table\'s emails NEVER break mid-word (the 360px fix — keep-all + nowrap)', () => {
-    const cred = ruleOf('.auth-shell .auth-demo-cred');
-    expect(cred).toContain('word-break: keep-all');
-    expect(cred).toContain('white-space: nowrap');
-    expect(cred).toContain('overflow-wrap: normal');
-    // the creds cell floors at its min-content (the whole address) so
-    // the flex ROW wraps instead of slicing the address.
-    expect(ruleOf('.auth-shell .auth-demo-row-creds')).toContain('min-inline-size: auto');
-  });
-
-  it('the headline rides the measured display clamp at weight 700 (the gate-exception seat)', () => {
-    const title = ruleOf('.auth-shell .auth-form-title');
-    expect(title).toContain('font-size: clamp(23.8px, 2.78vw, 40px)');
-    expect(title).toContain('font-weight: var(--fw-bold)');
-    expect(title).toContain('letter-spacing: 0'); // Arabic joins — never tracked
-    // the body rung rides its own measured clamp
-    expect(ruleOf('.auth-shell .auth-form-sub')).toContain('font-size: clamp(13.3px, .926vw, 15.5px)');
-  });
-
-  it('the corner registration marks are DRAWN — two 1px ink bars, not a font glyph', () => {
-    // the GROUPED rule draws the chrome: an empty content pair on both
-    // pseudos, painted with currentColor (ink).
-    const group = ruleOf('.auth-shell .auth-mark::before,');
-    expect(group).toContain("content: ''");
-    expect(group).toContain('background: currentColor');
-    // the two bars: 10×1 horizontal + 1×10 vertical through the corner
-    // (the individual rules — the grouped pair above only carries the
-    // content/paint declarations).
-    expect(authDeclarations).toMatch(/\.auth-shell \.auth-mark::before \{\s*inline-size: 10px;\s*block-size: 1px;/);
-    expect(authDeclarations).toMatch(/\.auth-shell \.auth-mark::after \{\s*inline-size: 1px;\s*block-size: 10px;/);
-    expect(ruleOf('.auth-shell .auth-mark {')).toContain('color: var(--text)');
-  });
-
-  it('the rendered sheet: the roll markup + the mono micro captions (dir=ltr, aria-hidden)', () => {
-    const { container } = renderPage();
-
-    // the submit's label roll — the duplicate copy never enters the tree
-    const submit = screen.getByRole('button', { name: 'تسجيل الدخول' });
-    const roll = submit.querySelector('.auth-roll');
-    expect(roll).not.toBeNull();
-    expect(roll?.querySelectorAll('.auth-roll-line')).toHaveLength(2);
-    expect(roll?.querySelectorAll('.auth-roll-line[aria-hidden="true"]')).toHaveLength(1);
-
-    // grammar #6 — the tiny mono captions under the controls
-    const micros = container.querySelectorAll('.auth-micro');
-    expect(micros.length).toBeGreaterThanOrEqual(2);
-    for (const m of micros) {
-      expect(m).toHaveAttribute('dir', 'ltr');
-      expect(m).toHaveAttribute('aria-hidden', 'true');
-    }
-  });
-});
+/* r369 slice 06 close-out RE-KEY: the «r359 measured design grammar»
+   describe (6 tests) text-pinned the errors.css AUTH section — the
+   retired royal/drafting auth sheet (.auth-shell-scoped). Slice 01's
+   warm T5 re-shape (r369-pages.css .p369) superseded it and this
+   slice's dead-code sweep DELETED the sheet (errors.css AUTH section
+   + the patterns.css .auth-shell rule + the four pages' imports), so
+   the pins died with it. The live grammar's contracts stay pinned by
+   the journey-alignment describe above (landmarks, labels, order,
+   errors, demo quick-login) and by the p369 sheet itself. */

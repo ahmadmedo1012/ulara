@@ -20,7 +20,7 @@ runbook, roadmap); the generated English reference is `docs/api/openapi.json`
 | `scripts/conformance/` | NOT PRESENT in this repository (R342-final audit: never landed — no trace in git history; earlier AGENTS text described it aspirationally). The visual-verification instruments of record are the pixel-exact E2E belts (`tests/e2e/r309-*, r308-*, r311-*, r312-*`) + the r305/audit suites. Do not cite conformance percentages. |
 | `shared/` | `design-tokens.json` (source of generated tokens), `brand/`, `testAccounts.ts` |
 | `tools/` | `boot-pg.sh` (local postgres), `daemon.js` |
-| `docs/` | Arabic topic files (`architecture`, `deployment`, `mobile`, `testing`, `design-system`, `runbook`, `roadmap`) + `api/openapi.json` (generated) + `ops/` + `redesign/` (`redesign/r352/` = current program — institutional backend + frontend; `r342/` = wave log/BACKLOG/OWNERSHIP; `r351*` = the palette + experience rounds; r341 = closed — runtime verdict run 43465697203; rounds r305–r340 predate the 1.0 squash and are not on disk). LOST-DOC PATHS: citations to `specs/**`, the numbered `docs/12-*`/`docs/16-*` tree, `docs/design/`, and pre-squash `docs/redesign/r30x–r33x` files refer to contracts that were lost in the 1.0 squash — their collective key (what survived, what R357 reconstructed, where the living truth lives) is `docs/redesign/r357/LOST-DOCS.md`; three ledgers were reconstructed from their citing code (`r320/LEGAL-TODO.md`, `r320/PAGES-GAP.md`, `r323/brand/BRAND.md`) and are living docs again |
+| `docs/` | Arabic topic files (`architecture`, `deployment`, `mobile`, `testing`, `design-system`, `runbook`, `roadmap`) + `api/openapi.json` (generated) + `ops/` + `redesign/` (`redesign/r363/` = the latest landed round — ledger + evidence; `r342/` = wave log/BACKLOG/OWNERSHIP, the standing ownership anchor; `r352/` = the institutional program; rounds r305–r362 are on-disk history). LOST-DOC PATHS: citations to `specs/**`, the numbered `docs/12-*`/`docs/16-*` tree, `docs/design/`, and pre-squash `docs/redesign/r30x–r33x` files refer to contracts that were lost in the 1.0 squash — their collective key (what survived, what R357 reconstructed, where the living truth lives) is `docs/redesign/r357/LOST-DOCS.md`; three ledgers were reconstructed from their citing code (`r320/LEGAL-TODO.md`, `r320/PAGES-GAP.md`, `r323/brand/BRAND.md`) and are living docs again |
 | `.github/workflows/` | `ci.yml` (full gate matrix), `size-gate.yml`, `mobile.yml`, `android-apk.yml`, `deploy.yml` (Vercel), `deploy-smoke.yml`, `build-ios-sidestore.yml`, `mobile-builds-ledger.yml`, `deadcode.yml` — runners pinned to `ubuntu-24.04` |
 
 Sources of truth (don't guess, read): endpoints → `backend/src/app.ts` + `http/routes/`
@@ -65,8 +65,8 @@ bash scripts/verify.sh --specs r305-shell-ds   # scope e2e by spec file stem
 Conformance instrument — RETIRED (R342-final): the `scripts/conformance/` tree this
 section once described never existed in this repository (verified across the full git
 history; the text was aspirational). Visual conformance rides the pixel-exact E2E belts
-(`tests/e2e/r309-recovery`, `r308-landing-instruments`, `r311-cursor-ownership`,
-`r312-*`, `r305/*`) + `tests/audit/` (surface drift) — measured, never self-reported.
+(`tests/e2e/r309-recovery`, `r312-guest-reveal`, `r349-*`, `r354-final`,
+`r305/*`) + `tests/audit/` (surface drift) — measured, never self-reported.
 
 CSS: `npm run lint:css -w frontend` (stylelint 16), `npm run gate:css-coverage -w frontend`.
 
@@ -77,10 +77,10 @@ db-integration, e2e, ios-webkit, design-gates, surface-drift; plus `size-gate.ym
 mirrors these local gates — all runners pinned `ubuntu-24.04`:
 
 - **Bundle** — `scripts/check-bundle-size.mjs`, gz, `dist/assets/*.js` ONLY (CSS is not in
-  the gate): **total ≤ 832 KB HARD** (R359 raised 815 → 832, +2.1%, documented in the
-  gate header: the institutional workspace's 15 lazy page chunks + inst kit + API clients
-  measured 809.6 KB gz on the branch head vs 746.9 on its merge base — a 62.7 KB statutory
-  feature that 23 KB of headroom could not hold; entry stayed 65.0), entry ≤ 92,
+  the gate): **total ≤ 866 KB HARD** (R360-F1 raised 845 → 866, +2.4%, documented in the
+  gate header: the F1 boot diet moved the authed shell + six below-fold landing sections
+  behind lazy boundaries — per-boot weight DROPPED while the all-route total grew to the
+  measured 865.6; the full raise ledger lives in the gate header), entry ≤ 92,
   pdf ≤ 110. It
   sums ALL js chunks **including async chunks** — lazy-splitting only moves weight; the
   honest lever is real code cuts (e.g. the axios→native-fetch diet, −17.9 KB).

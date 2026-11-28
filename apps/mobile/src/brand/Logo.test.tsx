@@ -78,8 +78,8 @@ describe("Logo (the R326 M0.4 RN port)", () => {
 
   it("auto tone rides the live palette (light default: the ink · the primary cornerstone)", async () => {
     const { toJSON } = await render(<Logo variant="mark" size={32} />);
-    expect(collectProp(toJSON(), "stroke")).toContainEqual(processed("#282828")); // the light palette ink (2026)
-    expect(collectProp(toJSON(), "fill")).toContainEqual(processed("#2540D9")); // the light palette accent — the royal cornerstone
+    expect(collectProp(toJSON(), "stroke")).toContainEqual(processed("#1E1A3C")); // r369 re-key: the light palette ink
+    expect(collectProp(toJSON(), "fill")).toContainEqual(processed("#1E1A3C")); // r369 re-key: the cornerstone rides var(--accent) ≡ the indigo ink (the web's r369 seat collapses the same way)
   });
 
   it("tone=ink pins BOTH slots to the brand ink (fixed-ground recipe)", async () => {

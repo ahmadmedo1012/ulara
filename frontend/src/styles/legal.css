@@ -174,14 +174,16 @@
   /* ══ 5 · PRINT — ONE clean column, the black-ink contract ════════ */
 
   @media print {
-    /* the chrome + the film + the frame go; the document stays as ONE
-       column of numbered headings, hairline rules and the stamp —
-       PAGES-GAP §7: policies print as honest one-sheet documents.
-       Pure black on white is the print contract (screen tokens would
-       tint the sheet); the literals carry the color-gate note. */
-    .lg-header,
-    .auth-frame,
-    .auth-grain,
+    /* r369: the warm chrome goes (nav, footer, mobile menu); the
+       document stays as ONE column of circled-number headings, world
+       cards flattened to rules, and the stamp — PAGES-GAP §7: policies
+       print as honest one-sheet documents. Pure black on white is the
+       print contract (screen tokens would tint the sheet); the
+       literals carry the color-gate note. */
+    .p369-nav,
+    .w369-footer,
+    .w369-mobile-menu,
+    .p369-head-actions,
     .skip-link {
       display: none !important;
     }
@@ -194,13 +196,21 @@
     /* un-hoisted from §G·PRINT in the w7-dedup repair — the R320 §D
        print pin reads legal.css's own block (.lg-main's one-column
        collapse); same declarations as the original. */
-    .lg-main {
+    .p369-t1 {
       max-inline-size: none;
       padding: 0;
       break-after: page;
     }
 
-    .pf-page-title,
+    .lg-cell,
+    .p369-faq-item {
+      box-shadow: none;
+      border-color: #000000; /* color-gate: allow — print contract: black ink rules (PAGES-GAP §7) */
+    }
+
+    .p369-h1,
+    .w369-lead,
+    .w369-band-kicker,
     .lg-bar,
     .lg-bar-title,
     .lg-p,

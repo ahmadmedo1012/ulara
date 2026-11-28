@@ -114,6 +114,11 @@
        converge on one band-safe ink: 13.05:1 on the light ink pole,
        7.72:1 on the dark paper pole. */
     --text-subtle: color-mix(in srgb, var(--neutral-0) 85%, var(--neutral-900));
+    /* r369 merge: the StatLine labels (.pf-stat-label) read --text-secondary,
+       a seat this band never re-derived — they painted page-ground gray on
+       the ink band (2.85:1 light / 1.36:1 dark on /student/results). Same
+       85/15 band-safe mix as --text-subtle above. */
+    --text-secondary: color-mix(in srgb, var(--neutral-0) 85%, var(--neutral-900));
     --success-ink: color-mix(in srgb, var(--success) 62%, var(--neutral-0));
     --warning-ink: color-mix(in srgb, var(--warning) 62%, var(--neutral-0));
     --danger-ink: color-mix(in srgb, var(--danger) 62%, var(--neutral-0));

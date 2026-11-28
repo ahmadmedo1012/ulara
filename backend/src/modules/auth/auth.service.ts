@@ -1,4 +1,4 @@
-import { AcademicRank, Role, type User } from '@prisma/client';
+import { AcademicRank, Prisma, Role, type User } from '@prisma/client';
 import { prisma } from '../../db.js';
 import { hashPassword, verifyPassword } from '../../lib/password.js';
 import { signAccessToken, signRefreshToken, verifyRefreshToken } from '../../lib/jwt.js';
@@ -7,6 +7,14 @@ import { logger } from '../../logger.js';
 import { decideRefresh, interpretRevocationBump } from './rotation.js';
 import { lockDurationFor, MAX_FAILED_LOGINS, shouldLock } from './lockout.js';
 import { passwordSchema } from './auth.dto.js';
+// P6 — the UserSession ledger (listing / per-session revoke / reuse detection).
+import {
+  createSessionForToken,
+  handleRefreshTokenReuse,
+  hashRefreshToken,
+  revokeAllSessions,
+  rollSessionForToken,
+} from './sessions.js';
 // r323 B3.1 — the invite-code grammar rides the SAME pure layer the
 // public validate endpoint uses, so the register-time verdict is the
 // one truth (no divergent copy of the rules here).
@@ -16,10 +24,16 @@ import { resolveMemberships, type ActiveMembership } from '../../http/middleware
 /**
  * Login-attempt context captured by the route layer for telemetry.
  * Optional so programmatic/service-level callers stay ergonomic.
+ *
+ * P6: `refreshToken` is the caller's PRESENTED refresh cookie, when it
+ * has one — the mint paths use it to keep the device's UserSession row
+ * identity across select-institution/change-password mints (a missing
+ * value simply mints a fresh lineage; nothing breaks).
  */
 export interface LoginContext {
   ip?: string;
   userAgent?: string;
+  refreshToken?: string;
 }
 
 // ─────────────────────────────────────────────────────────────────────
@@ -175,7 +189,7 @@ export interface RegisterInput {
   inviteCode?: string;
 }
 
-export const registerUser = async (input: RegisterInput) => {
+export const registerUser = async (input: RegisterInput, ctx: LoginContext = {}) => {
   // Defensive guard: even if the DTO drifted, never let public registration mint
   // ADMIN / QUALITY / OWNER accounts. Those are invitation-only.
   if (input.role !== Role.STUDENT && input.role !== Role.TEACHER) {
@@ -373,7 +387,7 @@ export const registerUser = async (input: RegisterInput) => {
 
   // Token minted WITH the registered institution's context (exactly the
   // one membership the account now holds).
-  return issueTokens(created, input.institutionId, [
+  const tokens = issueTokens(created, input.institutionId, [
     {
       id: membership.id,
       userId: created.id,
@@ -389,6 +403,10 @@ export const registerUser = async (input: RegisterInput) => {
       },
     },
   ]);
+  // P6 — open the account's first session lineage (best-effort
+  // bookkeeping; a failed write self-heals at the next refresh).
+  await createSessionForToken(created.id, created.tokenVersion, tokens.refreshToken, ctx);
+  return tokens;
 };
 
 /**
@@ -559,7 +577,11 @@ export const loginUser = async (
   // r178: resolve the institution context (single active membership →
   // auto-select; multiple/none → null + the client picks).
   const { institutionId, memberships } = await resolveDefaultContext(user.id);
-  return issueTokens(user, institutionId, memberships);
+  const tokens = issueTokens(user, institutionId, memberships);
+  // P6 — a login opens a NEW session lineage (best-effort bookkeeping;
+  // the row is what GET /auth/sessions lists and DELETE revokes).
+  await createSessionForToken(user.id, user.tokenVersion, tokens.refreshToken, ctx);
+  return tokens;
 };
 
 /**
@@ -568,7 +590,11 @@ export const loginUser = async (
  * ACTIVE institution — the token never grants what the DB denies.
  * Same refresh version (no bump: selecting is not a revocation event).
  */
-export const selectInstitution = async (userId: string, institutionId: string) => {
+export const selectInstitution = async (
+  userId: string,
+  institutionId: string,
+  ctx: LoginContext = {},
+) => {
   const user = await prisma.user.findUnique({ where: { id: userId } });
   if (!user || !user.isActive) throw AppError.unauthenticated();
   const memberships = await resolveMemberships(userId);
@@ -576,7 +602,22 @@ export const selectInstitution = async (userId: string, institutionId: string) =
   if (!membership) {
     throw new AppError('INSTITUTION_CONTEXT_INVALID', 'عضوية المؤسسة غير نشطة أو غير صالحة', 403);
   }
-  return issueTokens(user, membership.institutionId, memberships);
+  const tokens = issueTokens(user, membership.institutionId, memberships);
+  // P6 — keep the device's session-row identity across the re-mint
+  // when the caller presented its cookie; without one, open a fresh
+  // lineage (both best-effort; a missing row self-heals at refresh).
+  if (ctx.refreshToken) {
+    await rollSessionForToken(
+      user.id,
+      user.tokenVersion,
+      ctx.refreshToken,
+      tokens.refreshToken,
+      ctx,
+    );
+  } else {
+    await createSessionForToken(user.id, user.tokenVersion, tokens.refreshToken, ctx);
+  }
+  return tokens;
 };
 
 /**
@@ -596,11 +637,22 @@ export const selectInstitution = async (userId: string, institutionId: string) =
  * carries no inst claim, so this is the only coherent semantics — and
  * it means membership revocation takes effect at refresh time too.
  *
- * Honest tradeoff: the PREVIOUS refresh token stays valid until its own
- * 7-day expiry (no blacklisting). Per-session revocation would need a
- * RefreshToken table — schema change, reported to the orchestrator.
+ * Honest tradeoff (D3, unchanged): the PREVIOUS refresh token stays
+ * valid until its own 7-day expiry — the sliding session never kills
+ * its own lineage, so superseded-but-unrevoked duplicates stay live
+ * until TTL (the documented D3 tradeoff, now NARROWED: any explicitly
+ * REVOKED credential presented again is theft — see below).
+ *
+ * P6 — the session-row gate, evaluated AFTER the user-level D3 checks
+ * (a cookie already dead by version never reaches this table): the
+ * presented hash is looked up in UserSession and
+ *  · row live  → issue + roll the row onto the new token;
+ *  · row absent→ issue + ADOPT the lineage (pre-table cookie, a lost
+ *    mint response, or a pruned row — the deploy-day fleet included);
+ *  · row revoked/reused → THEFT: all sessions revoked + atomic
+ *    tokenVersion bump + reusedAt stamped, then 401.
  */
-export const refreshTokens = async (refreshToken: string) => {
+export const refreshTokens = async (refreshToken: string, ctx: LoginContext = {}) => {
   let payload;
   try {
     payload = verifyRefreshToken(refreshToken);
@@ -619,8 +671,48 @@ export const refreshTokens = async (refreshToken: string) => {
       ? AppError.unauthenticated('انتهت صلاحية هذه الجلسة — سجّل الدخول من جديد')
       : AppError.unauthenticated();
   }
+  // P6 — the per-session gate (see docblock). handleRefreshTokenReuse
+  // is deliberately NOT error-swallowed: if the theft response cannot
+  // be written we fail CLOSED (500) rather than ever issuing tokens.
+  // A database that has not yet received migration 0008 (the
+  // user_sessions table: P2021 missing table / P2022 missing column)
+  // must not turn every refresh into a 500 — that logged people out
+  // right after a successful sign-in. Only that exact "schema not
+  // migrated" class is treated as "no ledger row" (legacy behaviour,
+  // the tokenVersion revocation in decideRefresh still applies); any
+  // other database error still fails closed.
+  let sessionRow: Awaited<ReturnType<typeof prisma.userSession.findUnique>> = null;
+  try {
+    sessionRow = await prisma.userSession.findUnique({
+      where: { refreshTokenHash: hashRefreshToken(refreshToken) },
+    });
+  } catch (err) {
+    if (
+      err instanceof Prisma.PrismaClientKnownRequestError &&
+      (err.code === 'P2021' || err.code === 'P2022')
+    ) {
+      logger.error({ err }, 'user_sessions ledger missing — run prisma migrate deploy (0008_p6_auth_sessions); refresh continuing without it');
+    } else {
+      throw err;
+    }
+  }
+  if (sessionRow) {
+    // Hash-collision paranoia across users (sha-256 makes this
+    // unreachable; the check costs nothing and fails closed).
+    if (sessionRow.userId !== user.id) throw AppError.unauthenticated();
+    if (sessionRow.revokedAt || sessionRow.reusedAt) {
+      await handleRefreshTokenReuse(user.id, sessionRow.id, user.tokenVersion);
+      // Same message class as the D3 'revoked' rejection — the client
+      // hard-logs-out either way; the difference is the atomic
+      // family-kill the detector just performed.
+      throw AppError.unauthenticated('انتهت صلاحية هذه الجلسة — سجّل الدخول من جديد');
+    }
+  }
   const { institutionId, memberships } = await resolveDefaultContext(user.id);
-  return issueTokens(user, institutionId, memberships);
+  const tokens = issueTokens(user, institutionId, memberships);
+  // Roll (or adopt) the lineage — best-effort bookkeeping.
+  await rollSessionForToken(user.id, user.tokenVersion, refreshToken, tokens.refreshToken, ctx);
+  return tokens;
 };
 
 /**
@@ -649,6 +741,10 @@ export const logoutUser = async (userId: string) => {
     // never fail because someone else revoked first.
     logger.debug({ userId }, 'logout revocation superseded by a concurrent writer');
   }
+  // P6 — the ledger half of logout (best-effort; the bump above is the
+  // authoritative kill): revoke ALL rows so the sessions list is
+  // truthful and a post-logout replay lands in the reuse detector.
+  await revokeAllSessions(userId);
 };
 
 /**

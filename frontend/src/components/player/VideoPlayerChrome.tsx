@@ -527,7 +527,7 @@ export function VideoPlayerChrome({
       {/* Loading — while the element buffers. */}
       {waiting && !failed && (
         <div className="vpc-busy">
-          <span className="vpc-spinner" role="status" aria-label="جارٍ التحميل" />
+          <span className="spinner vpc-spinner" role="status" aria-label="جارٍ التحميل" />
         </div>
       )}
 

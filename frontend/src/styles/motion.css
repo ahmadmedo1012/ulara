@@ -239,16 +239,23 @@
     to { transform: rotate(360deg); }
   }
 
-  .motion-spinner {
+  /* THE busy indicator: one ring for buttons, inputs, inline states, the
+     auth submit and the player dial (r369 unification — these were five
+     look-alikes, and .spinner itself was unstyled in the live bundle).
+     currentColor, so it reads on every surface; reduced motion is owned
+     by the global base.css belt below. */
+  .spinner {
     display: inline-block;
-    width: var(--state-loading-spinner-size);
-    height: var(--state-loading-spinner-size);
+    inline-size: var(--state-loading-spinner-size);
+    block-size: var(--state-loading-spinner-size);
     border: var(--state-loading-spinner-stroke) solid currentColor;
     border-right-color: transparent;
     border-radius: var(--r-full, 9999px);
     animation: motion-spin var(--motion-duration-stat) var(--ease-linear) infinite;
     vertical-align: -0.125em;
+    flex-shrink: 0;
   }
+
 
   /* r149 (R3-A3 R4): حُذف تعديل الـ2s تحت reduced-motion — كان ميتًا
      أصلًا: حزام base.css العالمي (animation-duration: 0.01ms

@@ -21,6 +21,7 @@
 .w369 {
   --w369-gutter: clamp(var(--sp-5), 4vw, var(--sp-13));
   --w369-max: 1240px;
+  --w369-foot-ground: var(--text); /* round 2: footer ground seat (see footer) */
   background: var(--bg);
   color: var(--text);
   font-family: var(--font-sans);
@@ -143,7 +144,9 @@
   gap: var(--sp-2);
   font-size: var(--fs-chrome);
   font-weight: var(--fw-semibold);
-  color: var(--gold-ink);
+  /* 88% gold-ink toward the ink: the tinted bands (#showcase, #roles) read
+     the plain gold-ink at 4.41:1 (axe serious at 390); this clears 4.5 */
+  color: color-mix(in srgb, var(--gold-ink) 88%, var(--text));
   margin: 0 0 var(--sp-4);
 }
 
@@ -241,15 +244,13 @@
   color: var(--text);
 }
 
+/* r369 identity unification: the nav carries the ONE brand mark (the
+ * U-vessel, same as favicon / manifest / app sidebar), not a star in a
+ * gold disc. Ink on the page, the cornerstone rides --accent. */
 .w369-brand-mark {
-  display: grid;
-  place-items: center;
-  inline-size: 34px;
-  block-size: 34px;
-  border-radius: var(--r-full);
-  background: var(--gold);
-  color: var(--accent-ink);
-  box-shadow: var(--shadow-signal);
+  display: inline-flex;
+  align-items: center;
+  color: var(--text);
 }
 
 .w369-brand-word {
@@ -343,6 +344,21 @@
   min-block-size: calc(100svh - 76px);
 }
 
+/* the reference's hero ground: a full-bleed peach-to-lavender wash that
+ * ends in the cream of the next band (token colors, so dark stays dark) */
+.w369-hero { isolation: isolate; }
+.w369-hero::before {
+  content: '';
+  position: absolute;
+  inset-block: 0;
+  inset-inline: calc(50% - 50vw);
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 60% 70% at 85% 10%, color-mix(in srgb, var(--c-peach-bg) 85%, transparent), transparent 70%),
+    linear-gradient(180deg, transparent 35%, color-mix(in srgb, var(--c-lavender-bg) 80%, transparent) 100%);
+}
+
 .w369-hero-copy { min-inline-size: 0; }
 
 .w369-hero-actions {
@@ -363,6 +379,32 @@
   gap: var(--sp-3);
   transform: translate3d(var(--px, 0px), var(--py, 0px), 0);
   transition: transform var(--t-base) var(--ease-out);
+}
+
+/* P3 layered cards: real-content floats overlapping the phone edge.
+ * Entry uses the spring ease; reduced motion shows them in place. */
+.w369-hero-art { position: relative; }
+.w369-float {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+  padding: var(--sp-3) var(--sp-4);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  box-shadow: var(--elev-3);
+  color: var(--ink);
+}
+.w369-float span { display: grid; gap: var(--sp-1); }
+.w369-float b { font-weight: 700; }
+.w369-float em { font-style: normal; font-size: 0.8em; color: var(--ink-soft, var(--ink)); opacity: 0.75; }
+.w369-float-a { inset-block-start: 36%; inset-inline-end: -14%; }
+.w369-float-b { inset-block-end: 4%; inset-inline-end: -14%; }
+@media (max-width: 760px) { .w369-float { display: none; } }
+@media (prefers-reduced-motion: no-preference) {
+  .w369-float { animation: w369-float-in var(--t-slow) var(--ease-spring) 400ms both; }
+  @keyframes w369-float-in { from { opacity: 0; transform: translateY(var(--sp-5)); } }
 }
 
 .w369-phone {
@@ -588,10 +630,22 @@
   from { transform: translateX(0); }
   to { transform: translateX(-50%); }
 }
+/* RTL reading flow: the ticker travels left to right, so new items enter
+   from the leading (left) edge the way an Arabic news strip does. The track
+   is anchored at the right in RTL, so +50% lands exactly one run over. */
+@keyframes w369-marquee-rtl {
+  from { transform: translateX(0); }
+  to { transform: translateX(50%); }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .w369-marquee-track:dir(rtl) { animation-name: w369-marquee-rtl; }
+}
 
 /* ── story bands ──────────────────────────────────────────────────── */
 
 .w369-band {
+  position: relative; /* round 2: hosts the scene wash (::before) */
+  isolation: isolate;
   display: grid;
   grid-template-columns: 0.8fr 1.2fr;
   align-items: start;
@@ -603,6 +657,29 @@
    * bands alternate sides so the eye is never asked to scan a column
    * twice in a row. */
   padding-block: clamp(var(--sp-9), 5.5vw, var(--sp-13));
+}
+
+/* P2 rhythm: on desktop each band is a full-viewport beat with one focal
+ * subject centred; phones keep natural height (no pinning, native scroll). */
+@media (min-width: 1024px) {
+  .w369-band { min-block-size: min(100svh, 56rem); align-items: center; }
+}
+/* P2b: two beats per band on desktop — the headline alone first (centred,
+ * large), then the one focal subject. The page gains real scroll length
+ * without losing a word; phones keep the single stacked column. */
+@media (min-width: 1024px) {
+  .w369-band { grid-template-columns: minmax(0, 1fr); row-gap: clamp(var(--sp-9), 7vw, var(--sp-12)); align-items: start; }
+  .w369-band-head,
+  .w369-band:nth-of-type(even) .w369-band-head,
+  .w369-band:nth-of-type(odd) .w369-band-head {
+    order: 0; max-inline-size: 40ch; margin-inline: auto; text-align: center;
+    padding-inline: 0; justify-items: center;
+    min-block-size: min(70svh, 40rem); display: grid; align-content: center;
+  }
+  .w369-band-head .w369-h2 { font-size: clamp(2.6rem, 5vw, 4.4rem); }
+}
+@media (max-width: 1023px) {
+  .w369-band { min-block-size: min(80svh, 40rem); align-content: center; }
 }
 
 .w369-band:nth-of-type(even) .w369-band-head {
@@ -648,12 +725,12 @@
   /* only an ARMED body (below the fold, JS confirmed) animates at all */
   transition:
     opacity var(--motion-duration-medium) var(--ease-out),
-    transform var(--motion-duration-medium) var(--ease-out);
+    transform var(--motion-duration-card) var(--ease-spring); /* P2b: the reference's springy settle */
 }
 
 .w369-band-body[data-reveal='pending'] {
   opacity: 0;
-  transform: translateY(20px);
+  transform: translateY(var(--sp-8));
 }
 
 .w369-band-body[data-reveal='in'] {
@@ -1190,9 +1267,26 @@
 
 /* ── footer ───────────────────────────────────────────────────────── */
 
+/* r369 round 2 — the reference closes every page on a deep ground (its
+ * footer is a dark band). Ours: the indigo ink in light, the raised
+ * night surface in dark, with the ink tokens re-seated INSIDE the footer
+ * only (cream text, softened secondary, faint rules, inverted accent) so
+ * every child rule keeps working unchanged. The ground is read from the
+ * theme tokens before the re-seat, via the --w369-foot-ground seat. */
+[data-theme='dark'] .w369 { --w369-foot-ground: var(--surface); }
+
 .w369-footer {
-  border-block-start: 1px solid var(--border);
-  background: color-mix(in srgb, var(--surface) 60%, var(--bg));
+  background: var(--w369-foot-ground);
+  color: var(--text);
+}
+/* light only: dark already IS a night ground, nothing to re-seat */
+html:not([data-theme='dark']) .w369-footer {
+  --text: var(--bg);
+  --text-secondary: color-mix(in srgb, var(--bg) 80%, transparent);
+  --text-muted: color-mix(in srgb, var(--bg) 66%, transparent);
+  --border: color-mix(in srgb, var(--bg) 20%, transparent);
+  --accent: var(--bg);
+  --accent-fg: var(--w369-foot-ground);
 }
 
 .w369-footer-grid {
@@ -1222,6 +1316,7 @@
   display: inline-flex;
   align-items: center;
   min-block-size: 44px;
+  min-inline-size: 44px;
   font-size: var(--fs-sm);
   color: var(--text-secondary);
   text-decoration: none;
@@ -1253,14 +1348,25 @@
   color: var(--text-secondary);
   text-decoration: none;
   min-block-size: 44px;
+  min-inline-size: 44px;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
 }
 
 .w369-legal-links a:hover { color: var(--text); }
 
 @media (max-width: 900px) {
   .w369-footer-grid { grid-template-columns: 1fr; gap: var(--sp-7); }
+}
+
+/* r369 phone-smoothness/legibility: on a real phone the two-line section
+ * head (a shadda on line 1, a damma + shadda on the emphasised line 2)
+ * collided at 1.06 leading. Phones get 1.22 and the emphasised word gets
+ * head-room, so every mark paints inside its own line. */
+@media (max-width: 700px) {
+  .w369-h2 { line-height: 1.22; }
+  .w369-h2 .w369-em { padding-block-start: var(--sp-1); }
 }
 
 /* ── star jar (the scroll counter) ────────────────────────────────── */
@@ -1308,13 +1414,15 @@
 }
 
 @media (max-width: 700px) {
-  .w369-jar { inset-block-end: var(--sp-3); inset-inline-start: var(--sp-3); font-size: var(--fs-xxs); }
+  /* r369 phone-smoothness: the floating section index covered cards and
+   * text on real phones, so it is not shown here; the stage bar already
+   * says where you are. */
+  .w369-jar { display: none; }
   /* the floating jar must never sit on top of the closing CTA */
   .w369-cta { padding-block-end: calc(var(--sp-8) + var(--sp-7)); }
-  .w369-jar-track { display: none; }
 }
 
-/* ── preloader (the star burst) ───────────────────────────────────── */
+/* ── preloader (the brand mark) ───────────────────────────────────── */
 
 .w369-pre {
   position: fixed;
@@ -1341,38 +1449,6 @@
   place-items: center;
 }
 
-.w369-pre-ray {
-  position: absolute;
-  inset: 0;
-  border-radius: var(--r-full);
-  border-block-start: 3px solid var(--gold);
-  opacity: 0.5;
-  animation: w369-ray var(--motion-duration-long) var(--ease-out) both;
-}
-
-@keyframes w369-ray {
-  from { scale: 0.35; opacity: 0; }
-  to { scale: 1; opacity: 0.5; }
-}
-
-.w369-pre-star {
-  display: grid;
-  place-items: center;
-  inline-size: 76px;
-  block-size: 76px;
-  border-radius: var(--r-full);
-  background: var(--gold);
-  color: var(--accent-ink);
-  box-shadow: var(--shadow-signal);
-  animation: w369-pop var(--motion-duration-medium) var(--ease-out) both;
-}
-
-@keyframes w369-pop {
-  from { transform: scale(0.2); opacity: 0; }
-  60% { transform: scale(1.12); opacity: 1; }
-  to { transform: scale(1); opacity: 1; }
-}
-
 .w369-pre-word {
   font-family: var(--font-display);
   font-weight: var(--fw-black);
@@ -1385,9 +1461,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .w369-marquee-track,
-  .w369-cta-mascot,
-  .w369-pre-ray,
-  .w369-pre-star {
+  .w369-cta-mascot {
     animation: none;
   }
   .w369-band-body[data-reveal='pending'] {
@@ -1545,6 +1619,225 @@
   background: var(--gold);
   /* scale only: the rail never reflows and never triggers layout */
   transition: transform var(--motion-duration-micro) var(--ease-linear);
+}
+
+/* ── r369 round 2 — the scene wash ───────────────────────────────────
+ * The reference gives every band its own soft ambient ground (peach →
+ * sky → blush) edge to edge; ours was one flat cream. Each band now
+ * carries a full-bleed wash keyed to its tint token: two radial blooms
+ * (inline-start high, inline-end low) fading to the page ground. Pure
+ * paint behind content (z-index -1, pointer-events none), token colours
+ * only via color-mix, so both themes resolve; reduced-motion unaffected
+ * (static). */
+.w369-band::before {
+  content: '';
+  position: absolute;
+  inset-block: 0;
+  inset-inline: calc(50% - 50vw);
+  z-index: -1;
+  pointer-events: none;
+  /* feather the top/bottom seams so adjacent bands melt, never cut */
+  mask-image: linear-gradient(to bottom, transparent, CanvasText 22%, CanvasText 78%, transparent);
+  background:
+    radial-gradient(60% 55% at 12% 8%, color-mix(in srgb, var(--w369-tint-bg, var(--gold)) 85%, transparent), transparent 70%),
+    radial-gradient(55% 60% at 90% 92%, color-mix(in srgb, var(--gold) 14%, transparent), transparent 72%);
+}
+[data-theme='dark'] .w369-band::before {
+  background:
+    radial-gradient(60% 55% at 12% 8%, color-mix(in srgb, var(--w369-tint-deep, var(--gold)) 38%, transparent), transparent 70%),
+    radial-gradient(55% 60% at 90% 92%, color-mix(in srgb, var(--gold) 10%, transparent), transparent 72%);
+}
+
+/* ── r369 round 4 — the night scene ───────────────────────────────────
+ * The reference crosses from daylight into a deep indigo night with a
+ * sparse star field at the habits scene, then returns to light: an
+ * arrival moment between the cream scenes. data-theme="dark" on the
+ * band scopes the dark token set to its subtree (every var() inside
+ * resolves to the night values); the backdrop is the band's own
+ * full-bleed ::before, solid ground plus a faint star field made of
+ * token-coloured radial dots. Static: no animation, so reduced motion
+ * has nothing to remove. */
+.w369-band[data-scene='night'] {
+  color: var(--text);
+  padding-block: clamp(var(--sp-11), 8vw, var(--sp-13));
+}
+.w369-band[data-scene='night']::before {
+  mask-image: none;
+  background:
+    radial-gradient(1.5px 1.5px at 8% 18%, color-mix(in srgb, var(--text) 80%, transparent), transparent),
+    radial-gradient(1.5px 1.5px at 22% 62%, color-mix(in srgb, var(--text) 60%, transparent), transparent),
+    radial-gradient(2px 2px at 37% 12%, color-mix(in srgb, var(--gold) 90%, transparent), transparent),
+    radial-gradient(1.5px 1.5px at 51% 80%, color-mix(in srgb, var(--text) 55%, transparent), transparent),
+    radial-gradient(1.5px 1.5px at 66% 30%, color-mix(in srgb, var(--text) 75%, transparent), transparent),
+    radial-gradient(1.5px 1.5px at 78% 70%, color-mix(in srgb, var(--text) 60%, transparent), transparent),
+    radial-gradient(2px 2px at 91% 14%, color-mix(in srgb, var(--gold) 85%, transparent), transparent),
+    radial-gradient(1px 1px at 95% 88%, color-mix(in srgb, var(--text) 55%, transparent), transparent),
+    radial-gradient(60% 55% at 12% 8%, color-mix(in srgb, var(--c-lavender-deep) 34%, transparent), transparent 70%),
+    radial-gradient(55% 60% at 90% 92%, color-mix(in srgb, var(--gold) 12%, transparent), transparent 72%),
+    var(--bg);
+}
+.w369-band[data-scene='night'] + .w369-band,
+.w369-band[data-scene='night'] {
+  border-block-start: 0;
+}
+
+/* the closing scene: the same night as the levels band, edge to edge,
+ * so the page ends the way the reference does, on a dark arrival with the
+ * one action. The card frame and its inner box give way to the ground. */
+.w369-cta[data-scene='night'] {
+  inline-size: 100%;
+  margin: var(--sp-11) 0 0;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  color: var(--text);
+  padding-block: clamp(var(--sp-11), 8vw, var(--sp-12));
+  background:
+    radial-gradient(1.5px 1.5px at 8% 22%, color-mix(in srgb, var(--text) 80%, transparent), transparent),
+    radial-gradient(1.5px 1.5px at 19% 70%, color-mix(in srgb, var(--text) 60%, transparent), transparent),
+    radial-gradient(2px 2px at 31% 14%, color-mix(in srgb, var(--gold) 90%, transparent), transparent),
+    radial-gradient(1.5px 1.5px at 44% 84%, color-mix(in srgb, var(--text) 55%, transparent), transparent),
+    radial-gradient(1.5px 1.5px at 58% 26%, color-mix(in srgb, var(--text) 75%, transparent), transparent),
+    radial-gradient(2px 2px at 69% 76%, color-mix(in srgb, var(--gold) 80%, transparent), transparent),
+    radial-gradient(1.5px 1.5px at 83% 18%, color-mix(in srgb, var(--text) 70%, transparent), transparent),
+    radial-gradient(1.5px 1.5px at 93% 64%, color-mix(in srgb, var(--text) 60%, transparent), transparent),
+    radial-gradient(70% 90% at 50% 0%, color-mix(in srgb, var(--c-lavender-deep) 34%, transparent), transparent 72%),
+    radial-gradient(50% 60% at 50% 100%, color-mix(in srgb, var(--gold) 16%, transparent), transparent 74%),
+    var(--bg);
+}
+.w369-cta[data-scene='night'] .w369-cta-inner {
+  border: 0;
+  background: transparent;
+  overflow: visible;
+}
+
+/* ── r369 round 2 — the reward fan ────────────────────────────────────
+ * The reference lays its wishes as a tilted deck, the chosen one
+ * squared up. Ours: at ≥900px the three reward cards fan (±3deg, the
+ * middle lifted a touch, small overlap), and a card that has OPENED
+ * (wallet >= cost) squares up and lifts — the state reads as a pose,
+ * not only a colour. Individual `rotate`/`translate` properties so the
+ * hover `transform` and the reveal animation never fight it. Static
+ * under reduced motion (a pose, not movement); no text rotates out of
+ * its box at these angles. */
+@media (min-width: 900px) {
+  .w369-reward-grid { gap: 0; }
+  .w369-reward:nth-child(3n + 1) { rotate: -3deg; translate: 0 var(--sp-2); }
+  .w369-reward:nth-child(3n + 2) { translate: 0 calc(var(--sp-2) * -1); z-index: 1; }
+  .w369-reward:nth-child(3n) { rotate: 3deg; translate: 0 var(--sp-2); }
+  .w369-reward[data-open='true'] { rotate: 0deg; z-index: 2; }
+  .w369-reward {
+    margin-inline: calc(var(--sp-1) * -1);
+    transition-property: transform, box-shadow, border-color, rotate, translate;
+  }
+}
+@media (min-width: 900px) and (prefers-reduced-motion: reduce) {
+  .w369-reward { transition: none; }
+}
+
+/* ── r369 round 3 — the mastery road ───────────────────────────────────
+ * The reference's progress road, drawn in our unit. Lane = a soft
+ * rounded stroke; fill = the gold stretch already travelled (dashoffset
+ * on pathLength 100); stops = the 10/20/30 milestones; dot = where the
+ * counter is NOW. Dot and stops ride CSS offset-path on the same curve
+ * as the SVG (400x110 box scaled to the container by aspect ratio).
+ * Motion = the shared fast token; reduced-motion = jump, no tween. */
+.w369-road {
+  position: relative;
+  inline-size: 100%;
+  aspect-ratio: 400 / 110;
+  margin-block: var(--sp-5) var(--sp-2);
+}
+.w369-road:dir(rtl) { scale: -1 1; } /* progress reads right to left, like the page; geometry is physical */
+.w369-road-svg { position: absolute; inset: 0; inline-size: 100%; block-size: 100%; overflow: visible; }
+.w369-road-lane,
+.w369-road-fill {
+  fill: none;
+  stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
+}
+.w369-road-lane {
+  stroke: color-mix(in srgb, var(--text) 12%, transparent);
+  stroke-width: 14;
+}
+.w369-road-fill {
+  stroke: var(--gold);
+  stroke-width: 6;
+  stroke-dasharray: 100;
+  stroke-dashoffset: calc(100 - var(--p, 0));
+}
+/* scroll writes --p continuously, so scroll-driven frames carry NO
+ * transition (nothing to restart per step); only a tap on the button
+ * gets the eased tween, fill and marker on the same curve and clock. */
+.w369-road[data-tap] .w369-road-fill {
+  transition: stroke-dashoffset var(--motion-duration-slow) var(--ease-out);
+}
+.w369-road[data-tap] .w369-road-dot,
+.w369-road[data-tap] .w369-road-halo {
+  transition: offset-distance var(--motion-duration-slow) var(--ease-out);
+}
+.w369-road-stop {
+  position: absolute;
+  inline-size: 0;
+  block-size: 0;
+}
+.w369-road-stop::after {
+  content: '';
+  position: absolute;
+  translate: -50% -50%;
+  border-radius: var(--r-full);
+}
+.w369-road-dot,
+.w369-road-halo {
+  offset-path: path('M12 92 C 110 92, 110 22, 200 44 S 300 98, 388 22');
+  offset-rotate: 0deg;
+  offset-distance: calc(var(--p, 0) * 1%);
+}
+.w369-road-dot {
+  fill: var(--gold);
+  stroke: var(--surface);
+  stroke-width: 3;
+}
+.w369-road-halo {
+  fill: var(--gold);
+  opacity: 0.22;
+}
+.w369-road-stop::after {
+  inline-size: 12px;
+  block-size: 12px;
+  background: var(--surface);
+  border: 2px solid color-mix(in srgb, var(--text) 30%, transparent);
+}
+.w369-road-stop[data-hit='true']::after {
+  background: var(--gold);
+  border-color: var(--gold-ink);
+}
+@media (prefers-reduced-motion: reduce) {
+  .w369-road[data-tap] .w369-road-fill,
+  .w369-road[data-tap] .w369-road-dot,
+  .w369-road[data-tap] .w369-road-halo { transition: none; }
+}
+
+/* ── r369 round 3 — the pinned scene ───────────────────────────────────
+ * The reference pins each scene's stage (sticky, 100svh) while a tall
+ * track scrolls past and the scene's value follows the scroll. Ours does
+ * it for the ONE band whose content is scroll-driven — the stars band
+ * (03, #stars): the band is ~2 screens tall and its meter card stays
+ * seated under the bar while the counter, the road and the matrix climb
+ * with the page. Desktop only, and only when motion is allowed (the
+ * query is mirrored in index.tsx PINNED_Q); on phones and under
+ * reduced-motion the band stays the normal flow it was. */
+@media (min-width: 900px) and (prefers-reduced-motion: no-preference) {
+  #stars.w369-band {
+    min-block-size: 190svh;
+    align-items: start;
+  }
+  #stars .w369-band-head,
+  #stars .w369-band-body {
+    position: sticky;
+    inset-block-start: calc(var(--sp-11) + var(--sp-4));
+    align-self: start;
+  }
 }
 
 /* ── anchors land under the sticky bar, never beneath it ─────────── */
@@ -2394,10 +2687,10 @@
 .w369-arrow:hover { background: var(--accent-soft); }
 .w369-arrow:active { transform: scale(var(--state-card-pressed-scale)); }
 
-.w369-dots { list-style: none; display: flex; gap: 6px; margin: var(--sp-4) 0 0; padding: 0; }
+.w369-dots { list-style: none; display: flex; gap: 0; margin: var(--sp-4) 0 0; padding: 0; }
 .w369-dot {
-  inline-size: 26px;
-  block-size: 26px;
+  inline-size: var(--touch-floor, 44px);
+  block-size: var(--touch-floor, 44px);
   border: 0;
   padding: 0;
   border-radius: var(--r-full);
@@ -2408,7 +2701,7 @@
 .w369-dot::after {
   content: '';
   position: absolute;
-  inset: 9px 4px;
+  inset: 18px 13px;
   border-radius: var(--r-full);
   background: var(--border-strong);
   transition: background-color var(--t-micro) var(--ease-out);
@@ -2842,4 +3135,41 @@
 .w369-streak-total {
   direction: ltr;
   unicode-bidi: isolate;
+}
+
+/* press feedback: every tappable landing surface answers the finger.
+   Hover already lifts the cards; a press settles them back and dips the
+   control, so a tap never feels dead on a phone where hover does not exist. */
+.w369-principle:active,
+.w369-audience:active,
+.w369-step:active,
+.w369-reward:active,
+.w369-role:active,
+.w369-source:active {
+  transform: translateY(0) scale(var(--state-card-pressed-scale));
+  box-shadow: var(--shadow-card);
+}
+.w369-nav-link:active,
+.w369-footer-link:active,
+.w369-link:active,
+.w369-mobile-link:active,
+.w369-faq-q:active,
+.w369-tour-btn:active {
+  opacity: 0.72;
+}
+.w369-mobile-link:active { background: var(--surface-3, var(--surface-2)); }
+:where(.w369-nav-link, .w369-footer-link, .w369-link, .w369-mobile-link, .w369-faq-q, .w369-tour-btn) {
+  transition:
+    color var(--t-fast) var(--ease-out),
+    background-color var(--t-fast) var(--ease-out),
+    opacity var(--t-micro) var(--ease-out);
+}
+@media (prefers-reduced-motion: reduce) {
+  .w369-principle:active,
+  .w369-audience:active,
+  .w369-step:active,
+  .w369-reward:active,
+  .w369-role:active,
+  .w369-source:active { transform: none; }
+  :where(.w369-nav-link, .w369-footer-link, .w369-link, .w369-mobile-link, .w369-faq-q, .w369-tour-btn) { transition: none; }
 }

@@ -30,7 +30,7 @@
     <link rel="apple-touch-icon" sizes="180x180" href="/brand/icon-180.png" />
     <meta name="theme-color" content="#14122B" media="(prefers-color-scheme: dark)" />
     <meta name="theme-color" content="#FBF6EC" media="(prefers-color-scheme: light)" />
-    <meta name="description" content="أُلارا — نظام تشغيل الجامعة: منظومة متكاملة، عربية أولًا، لإدارة المؤسّسة الأكاديمية والتعلّم والبحث — كليات وأقسام ومقرّرات ومحاضرات واختبارات ومصفوفة إتقان وبحوث" />
+    <meta name="description" content="أُلارا — نظام تشغيل الجامعة: منظومة لإدارة المؤسّسة الأكاديمية والتعلّم والبحث — كليات وأقسام ومقرّرات ومحاضرات واختبارات ومصفوفة إتقان وبحوث" />
     <title>أُلارا · نظام تشغيل الجامعة</title>
     <!-- 8-a (0-b P2-17) — canonical + Open Graph / Twitter card. og:image
          is the ULARA social card (public/brand/ulara-og.jpg, 1200×630 jpg) —
@@ -43,7 +43,7 @@
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="أُلارا — نظام تشغيل الجامعة" />
     <meta property="og:title" content="أُلارا · نظام تشغيل الجامعة" />
-    <meta property="og:description" content="أُلارا — نظام تشغيل الجامعة: منظومة متكاملة، عربية أولًا، لإدارة المؤسّسة الأكاديمية والتعلّم والبحث — كليات وأقسام ومقرّرات ومحاضرات واختبارات ومصفوفة إتقان وبحوث" />
+    <meta property="og:description" content="أُلارا — نظام تشغيل الجامعة: منظومة لإدارة المؤسّسة الأكاديمية والتعلّم والبحث — كليات وأقسام ومقرّرات ومحاضرات واختبارات ومصفوفة إتقان وبحوث" />
     <meta property="og:url" content="https://ulara.vercel.app/" />
     <meta property="og:image" content="https://ulara.vercel.app/brand/ulara-og.jpg" />
     <meta property="og:image:width" content="1200" />
@@ -52,7 +52,7 @@
     <meta property="og:locale" content="ar_AR" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="أُلارا · نظام تشغيل الجامعة" />
-    <meta name="twitter:description" content="أُلارا — نظام تشغيل الجامعة: منظومة متكاملة، عربية أولًا، لإدارة المؤسّسة الأكاديمية والتعلّم والبحث — كليات وأقسام ومقرّرات ومحاضرات واختبارات ومصفوفة إتقان وبحوث" />
+    <meta name="twitter:description" content="أُلارا — نظام تشغيل الجامعة: منظومة لإدارة المؤسّسة الأكاديمية والتعلّم والبحث — كليات وأقسام ومقرّرات ومحاضرات واختبارات ومصفوفة إتقان وبحوث" />
     <meta name="twitter:image" content="https://ulara.vercel.app/brand/ulara-og.jpg" />
     <!-- 8-a — structured data. r188: the site node describes the
          INDEPENDENT ULARA platform alone. The retired pre-ULARA demo
@@ -67,7 +67,7 @@
       "alternateName": ["Ulara", "أُلارا — نظام تشغيل الجامعة"],
       "url": "https://ulara.vercel.app/",
       "logo": "https://ulara.vercel.app/brand/ulara-mark.svg",
-      "description": "أُلارا — نظام تشغيل الجامعة: منظومة متكاملة عربية أولًا. بيانات العرض داخل المنصّة تخصّ «مساحة عمل أُلارا التجريبية» — مساحة اصطناعية بالكامل لأغراض العرض، لا تحاكي أي جامعة.",
+      "description": "أُلارا — نظام تشغيل الجامعة: منظومة لإدارة المؤسّسة الأكاديمية. بيانات العرض داخل المنصّة تخصّ «مساحة عمل أُلارا التجريبية» — مساحة اصطناعية بالكامل لأغراض العرض، لا تحاكي أي جامعة.",
       "inLanguage": "ar"
     }
     </script>
@@ -81,18 +81,10 @@
          LCP h1 waited — the single cheapest LCP cut on first visit). -->
     <link rel="preload" href="/fonts/readex-pro-arabic-400-normal.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/baloo-bhaijaan-2-arabic-800-normal.woff2" as="font" type="font/woff2" crossorigin />
-    <template id="home-elevation-preload">
-      <link rel="preload" as="image" href="../shared/art/svg/hero-elevation-mobile.svg" media="(max-width: 767px)" fetchpriority="high" />
-      <link rel="preload" as="image" href="../shared/art/svg/hero-elevation.svg" media="(min-width: 768px)" fetchpriority="high" />
-    </template>
+    <!-- r369: no hero-image preload — the landing has no LCP image (the r369 hero is type + CSS). -->
     <script>
       (function () {
         try {
-          // Discover the matching hero before React starts, only on the landing.
-          if (location.pathname === '/') {
-            var heroLinks = document.getElementById('home-elevation-preload');
-            if (heroLinks) document.head.appendChild(heroLinks.content);
-          }
           /* 23-a (A5 P2-5): resolve the theme BEFORE first paint from
              BOTH localStorage signals —
                1. the theme store ('ulara-theme', zustand persist):
@@ -196,6 +188,19 @@
               if (rootHas && cssReady) {
                 faded = true;
                 bootPlate.classList.add('is-done');
+                /* r363 P4 (the sweep's forensics): once the handoff fade
+                   completes the plate must LEAVE THE LAYOUT, not just
+                   turn transparent — its unbreakable brand line is
+                   wider than a 320px phone and an opacity-only hide
+                   kept feeding the document scrollWidth invisibly (in
+                   RTL the overflow runs left, past the viewport edge).
+                   display:none lands AFTER the fade (transitionend),
+                   so the LCP entry — recorded at paint — is untouched;
+                   the timeout is the reduced-motion/no-transition
+                   fallback. */
+                var retire = function () { bootPlate.style.display = 'none'; };
+                bootPlate.addEventListener('transitionend', retire, { once: true });
+                window.setTimeout(retire, 900);
               }
             };
             var asyncLinks = document.querySelectorAll('link[data-ula-async-css]');

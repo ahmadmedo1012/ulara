@@ -1,0 +1,10 @@
+# r366 capture rig — QUALITY routes (quality@test.ly)
+# format: NAME|route-path
+dashboard|quality/dashboard
+courses|quality/courses
+curriculum|quality/curriculum
+engagement|quality/engagement
+reports|quality/reports
+professors|quality/professors
+exam-moderation|quality/exam-moderation
+alerts|quality/alerts

@@ -11,6 +11,7 @@ import { Logo } from "@/brand";
 import { latn } from "@/lib/format";
 import { useUnreadCount } from "@/hooks/useNotifications";
 import { COLLAPSE } from "./collapse";
+import { pressFeedback } from "@/motion";
 
 /**
  * AppTopBar — the compact role-shell header (R334 3-a policy):
@@ -112,7 +113,7 @@ export function AppTopBar({
         accessibilityRole="button"
         accessibilityLabel="البحث"
         onPress={() => router.push("/search")}
-        style={{ width: 44, height: 44, alignItems: "center", justifyContent: "center" }}
+        style={({ pressed }) => [{ width: 44, height: 44, alignItems: "center", justifyContent: "center" }, pressed && { opacity: pressFeedback.linkOpacity }]}
       >
         <Search size={20} color={p.text} />
       </Pressable>
@@ -120,7 +121,7 @@ export function AppTopBar({
         accessibilityRole="button"
         accessibilityLabel={unread > 0 ? `الإشعارات — ${latn(unread)} غير مقروءة` : "الإشعارات"}
         onPress={() => router.push(alertsPath as never)}
-        style={{ width: 44, height: 44, alignItems: "center", justifyContent: "center" }}
+        style={({ pressed }) => [{ width: 44, height: 44, alignItems: "center", justifyContent: "center" }, pressed && { opacity: pressFeedback.linkOpacity }]}
       >
         <View>
           <Bell size={20} color={p.text} />
@@ -190,7 +191,7 @@ export function StackHeader({
         accessibilityRole="button"
         accessibilityLabel="رجوع"
         onPress={() => (onBack ? onBack() : router.back())}
-        style={{ width: 44, height: 44, alignItems: "center", justifyContent: "center" }}
+        style={({ pressed }) => [{ width: 44, height: 44, alignItems: "center", justifyContent: "center" }, pressed && { opacity: pressFeedback.linkOpacity }]}
       >
         <ArrowRight size={22} color={p.text} />
       </Pressable>

@@ -16,8 +16,9 @@ import '../../styles/shell/sheet-frame.css';
 // R325 (P2.1 · DESIGN.md §R325): the app grammar tokens — --app-*
 // (grid/shell chrome, forms, tables, chips, role identity, motion) +
 // the .pat-* state primitives (.pat-hatch/.pat-dots/.pat-cross/
-// .pat-skeleton). Same cascade contract as the two sheets above
-// (unlayered, shell-imported); P2.2/P2.3 consume the --app-* seats.
+// .pat-skeleton/.pat-linegrid). Same cascade contract as the two
+// sheets above (unlayered, shell-imported); P2.2/P2.3 consume the
+// --app-* seats.
 import '../../styles/shared/app-grammar.css';
 // R325 (P2.3 · DESIGN.md §R325): the shell grammar itself — the
 // active-nav tick/fill-wipe, the role identity seat, the topbar/bottom
@@ -42,6 +43,18 @@ import '../../styles/shared/r359-grammar.css';
 // every ink is currentColor/theme-token, so the instruments are
 // theme-proof and deep-band-proof by construction.
 import '../../styles/shared/indicators.css';
+/* r369 slice 02 — the warm product shell: pill rail rows with the
+ * amber active pill, the honest نقاط إتقان chip, and the mobile
+ * dock's amber active destination. Imported LAST so its unlayered
+ * rules take the final word over layout/notifications/chrome twins
+ * (the same cascade contract indicators.css above documents). */
+import '../../styles/landing/r369-shell.css';
+/* r369 slice 03 — the world re-shape for the role families: the
+ * elevation ladder returns under .has-shell, cards answer the hand,
+ * the .sg instruments (indices/captions/crosses/rules) retire, KPI
+ * numerals take the display face, fields and tables take the world's
+ * corners. Last word, same cascade contract. */
+import '../../styles/landing/r369-app.css';
 import { SheetFrame, SheetGrain } from './SheetFrame';
 import { Sidebar } from './Sidebar';
 import { Topbar } from './Topbar';
@@ -314,6 +327,10 @@ export function AppShell({ children }: { children?: ReactNode }) {
     onboardingAutoStarted.current = true;
     openOnboarding();
   }, [isRoleHome, onboardingShouldAutoStart, onboardingOpen, openOnboarding]);
+
+  /* r369 tone: the per-button «tap» sound seat is retired (a click
+     sound on every press reads as a game). Sound stays opt-in and
+     limited to the success «confirm». */
 
   const title = resolveTitle(location.pathname);
   /* r324 X10 — the sheet-code ambient context is RETIRED with the

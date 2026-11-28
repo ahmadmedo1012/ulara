@@ -82,13 +82,13 @@
 
     /* ─── Radius — Notion-soft, 7 rungs + full ────────────────────── */
     /* R313 override: radius ladder collapsed to 0 (owner decision — the reference parity) */
-    --r-xs: 0px;
-    --r-sm: 0px;
-    --r-md: 0px;
-    --r-lg: 0px;
-    --r-xl: 0px;
-    --r-2xl: 0px;
-    --r-3xl: 0px;
+    --r-xs: 8px;
+    --r-sm: 10px;
+    --r-md: 14px;
+    --r-lg: 18px;
+    --r-xl: 22px;
+    --r-2xl: 28px;
+    --r-3xl: 36px;
     --r-full: 9999px;   /* circular primitives only: avatars, status dots */
 
     /* (r136: --st-r-* deleted with the canon — see tokens.css.
@@ -96,8 +96,7 @@
        zero-consumer verdict, mirrored from tokens.css.) */
 
     /* ─── Type — IBM Plex Sans Arabic first ───────────────────────── */
-    --font-sans:    'IBM Plex Sans Arabic', 'Tajawal', system-ui, -apple-system,
-                    'Segoe UI', Roboto, sans-serif;
+    --font-sans: 'readex pro','ibm plex sans arabic','tajawal',system-ui,-apple-system,'segoe ui',roboto,sans-serif;
     --font-display: 'IBM Plex Sans Arabic', system-ui, sans-serif;
     /* (--font-serif retired r148-d — zero consumers, see tokens.css) */
     /* R313 — Geist Mono (the reference's OFL instrument voice,
@@ -113,20 +112,20 @@
     --fw-medium: 500;
     --fw-semibold: 600;
     --fw-bold: 700;
-    --fw-black: var(--fw-bold); /* → 700: Plex has no true 800 */
+    --fw-black: 800; /* → 700: Plex has no true 800 */
 
     /* R313 — the FLUID-REM type ladder (root: html 0.5787037037vw +
        the 991/767 Webflow bands — see the html rule below). rem rungs
        scale with the viewport like the reference; Arabic reading sizes
        keep the 13px floor via max(); mono micro-sizes are Latin-only,
        no floor. */
-    --fs-display-xl: 8rem;
+    --fs-display-xl: clamp(48px,7vw,106px);
     --fs-display-lg: 7.2rem;
     --fs-display-md: 6.4rem;
 
-    --fs-h1: clamp(31.74px,4.8vw,7.4664rem);          /* 46.67px @1440 — the measured reference h1 */
-    --fs-h2: clamp(31.74px,4.8vw,5.3328rem);          /* 40px    @1440 — the reference h2 */
-    --fs-h3: clamp(23.33px,2.8vw,4.2672rem);            /* 33.33px @1440 — the reference h3 */
+    --fs-h1: clamp(34px,7vw,100px);          /* 46.67px @1440 — the measured reference h1 */
+    --fs-h2: clamp(32px,5.9vw,85px);          /* 40px    @1440 — the reference h2 */
+    --fs-h3: clamp(20px,2.4vw,32px);            /* 33.33px @1440 — the reference h3 */
 
     /* r325 Y4 — the CLAMPED display ladder (tokens.css:1337): floors are
        the reference's own phone sizes; the 4.8vw mid-term reproduces the reference's
@@ -137,11 +136,11 @@
     --fs-d3: clamp(23.33px, 2.8vw, 2.8rem);
     --fs-st: clamp(22.1px, 2.87vw, 4rem);
 
-    --fs-body-lg: clamp(16px,1.48vw,2.1336rem);
-    --fs-body:    max(13px, 1.6rem);
+    --fs-body-lg: clamp(18px,1.4vw,22px);
+    --fs-body: clamp(16px,1.15vw,18px);
     /* r140 → R313 — the chrome step joins the reference's uniform
        13.33px body run, floor-gated for Arabic. */
-    --fs-chrome:  max(13px, 1.6rem);
+    --fs-chrome: clamp(15px,1vw,17px);
     --fs-sm:      13px;
     --fs-xs:      13px;
     --fs-xxs:     13px;
@@ -164,7 +163,7 @@
     --fs-metric-md: 24px;
 
     /* line-heights — Arabic-comfortable, headline-tight */
-    --lh-tight: 1.05;
+    --lh-tight: 1.12;
     --lh-snug:  1.20;
     --lh-base:  1.65;
     --lh-loose: 1.85;
@@ -179,28 +178,28 @@
     --ls-display-tight: -0.02em;
 
     /* ─── Motion — raw ladder 80/160/240/380/520/720 ──────────────── */
-    --t-micro: 160ms;
-    --t-fast:  320ms;
-    --t-base:  640ms;
-    --t-slow:  640ms;
-    --t-slower: 640ms;
-    --t-cinema: 640ms;
+    --t-micro: 120ms;
+    --t-fast: 220ms;
+    --t-base: 380ms;
+    --t-slow: 520ms;
+    --t-slower: 700ms;
+    --t-cinema: 700ms;
     /* R313 (D10) — the loader's measured center-out two-band split. */
-    --t-sheet-exit: 320ms;
+    --t-sheet-exit: 240ms;
     --t-guest-reveal: 700ms;
 
     /* easings — ease-out settles at (0.16,1,0.3,1); the spring family
        overshoots 1.18/1.36/1.56 (soft/spring/bounce) + snappy rebound */
-    --ease:        cubic-bezier(0.23, 1, 0.32, 1);
-    --ease-out:    cubic-bezier(0.23,1,0.32,1);
-    --ease-in:     cubic-bezier(0.23,1,0.32,1);
+    --ease: cubic-bezier(0.34,1.56,0.64,1);
+    --ease-out: cubic-bezier(0.22,1,0.36,1);
+    --ease-in: cubic-bezier(0.4,0,1,1);
     --ease-linear: linear;
-    --ease-soft:   cubic-bezier(0.23,1,0.32,1);
-    --ease-spring-soft:   cubic-bezier(0.23,1,0.32,1);
-    --ease-spring:        cubic-bezier(0.23,1,0.32,1);
-    --ease-bounce:        cubic-bezier(0.23,1,0.32,1);
+    --ease-soft: cubic-bezier(0.22,1,0.36,1);
+    --ease-spring-soft: cubic-bezier(0.34,1.56,0.64,1);
+    --ease-spring: cubic-bezier(0.34,1.56,0.64,1);
+    --ease-bounce: cubic-bezier(0.34,1.56,0.64,1);
     --ease-spring-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
-    --ease-spring-snappy: cubic-bezier(0.23,1,0.32,1);
+    --ease-spring-snappy: cubic-bezier(0.34,1.56,0.64,1);
 
     /* composed transitions — --t-clean is an `all` shorthand; consumers
        that can enumerate properties (see .icon-btn) should. */
@@ -214,16 +213,16 @@
     /* (r148-d: --hover-lift-lg deleted with the canon — zero consumers) */
 
     /* ─── Motion — semantic layer ─────────────────────────────────── */
-    --motion-duration-micro:    var(--t-micro);   /*  80ms */
-    --motion-duration-short:    var(--t-fast);    /* 200ms */
-    --motion-duration-medium:   var(--t-base);    /* 400ms */
-    --motion-duration-long:     var(--t-slow);    /* 500ms */
-    --motion-duration-page:     320ms;
-    --motion-duration-reveal:   640ms;
+    --motion-duration-micro: 120ms;   /*  80ms */
+    --motion-duration-short: 220ms;    /* 200ms */
+    --motion-duration-medium: 380ms;    /* 400ms */
+    --motion-duration-long: 520ms;    /* 500ms */
+    --motion-duration-page: 220ms;
+    --motion-duration-reveal: 380ms;
     --motion-duration-stat:     700ms;
     --motion-duration-skeleton: 1200ms;
     /* R313 (D10) — canonical seat for the entrance sheet's exit. */
-    --motion-duration-sheet-exit: var(--t-sheet-exit);
+    --motion-duration-sheet-exit: 240ms;
 
     /* ambient loop ladder — perceptual rhythm, never for UI transitions */
     --motion-duration-ambient-pulse:  1.6s;
@@ -290,7 +289,7 @@
     /* ─── Type roles — role-locked semantic typography ────────────── */
     --type-display-size-md:        var(--fs-display-md);   /* 28..40px */
     --type-display-weight:         var(--fw-black);        /* → 700 */
-    --type-display-line-height:    1.28;
+    --type-display-line-height: 1.16;
     --type-display-letter-spacing: var(--ls-normal);       /* 0 */
 
     --type-headline-size-lg:        var(--fs-d1);          /* the clamped d1 rung (r325 Y4) */
@@ -397,31 +396,31 @@
        ground + band rungs are retired; #B3B3AF is the reference's
        construction hairline). */
     --neutral-0:   #FFFFFF;          /* ground — cards/inputs */
-    --neutral-50:  #f2f1ec;          /* paper — the warm vintage page ground (R313) */
-    --neutral-100: #ebebe5;          /* card hover, subtle band — warm step */
-    --neutral-150: #e7e7e1;          /* inset wells — warm step */
-    --neutral-200: #dbdbd5;          /* hairline — the reference's guide grey */
-    --neutral-300: #B3B3AF;          /* divider / rule / grid — the reference's --content--border */
+    --neutral-50: #fbf6ec;          /* paper — the warm vintage page ground (R313) */
+    --neutral-100: #f5eddf;          /* card hover, subtle band — warm step */
+    --neutral-150: #ede3d1;          /* inset wells — warm step */
+    --neutral-200: #e3d8c2;          /* hairline — the reference's guide grey */
+    --neutral-300: #c9bca3;          /* divider / rule / grid — the reference's --content--border */
     --neutral-400: #B4B4B0;   /* disable rung — the reference's technical grey */
     --neutral-500: #72726F;
     --neutral-700: #414140;          /* ink-secondary (the reference's own) */
     --neutral-800: #333330;
-    --neutral-900: #282828;          /* ink — the 2026 approved light ink, 15.84:1 on paper (AAA) */
+    --neutral-900: #1e1a3c;          /* ink — the 2026 approved light ink, 15.84:1 on paper (AAA) */
 
     /* the 9 section-color families — near-neutral grounds + their own
        inks; mint = the approved success (#17724A) and rose = the approved
        danger (#C62828) carry the feedback seats; the decorative peach/
        copper families keep the warm accent, never meaning action or danger */
-    --c-peach-bg:     #FCE5DE;   --c-peach-ink:    #F15534;   --c-peach-deep:   #9C2B0F;
+    --c-peach-bg: #fce4de;   --c-peach-ink:    #F15534;   --c-peach-deep:   #9C2B0F;
     --c-mint-bg:      #E2EFE8;   --c-mint-ink:     #17724A;   --c-mint-deep:    #0D5433;
     --c-lavender-bg:  #ECE6FA;   --c-lavender-ink: #8A6FE0;   --c-lavender-deep:#3F2D7A;
     --c-sky-bg:       #E1E9F0;   --c-sky-ink:      #4A7FA8;   --c-sky-deep:     #1F4968;
-    --c-yellow-bg:    #F5EBD6;   --c-yellow-ink:   #A8750F;   --c-yellow-deep:  #5E420C;
+    --c-yellow-bg: #fbeed4;   --c-yellow-ink:   #A8750F;   --c-yellow-deep:  #5E420C;
     --c-rose-bg:      #FBE4E4;   --c-rose-ink:     #C62828;   --c-rose-deep:    #9E1A1A;
-    --c-sand-bg:      #F1ECDF;   --c-sand-ink:     #B59868;   --c-sand-deep:    #5A4623;
+    --c-sand-bg: #e9f1d8;   --c-sand-ink:     #B59868;   --c-sand-deep:    #5A4623;
     --c-grey-bg:      #ECEDEB;   --c-grey-ink:     #626260;   --c-grey-deep:    #1A1713;
     --c-royal-bg:     #E4E9FF;   --c-royal-ink:    #2540D9;   --c-royal-deep:   #1B30B0;
-    --c-copper-bg:    #FCE5DE;   --c-copper-ink:   #F15534;   --c-copper-deep:  #9C2B0F;
+    --c-copper-bg: #fce4de;   --c-copper-ink:   #F15534;   --c-copper-deep:  #9C2B0F;
 
     /* r305 — the coral alias namespace (additive; resolves onto peach) */
     --c-coral-bg:  var(--c-peach-bg);
@@ -429,26 +428,26 @@
     --c-coral-deep: var(--c-peach-deep);
 
     /* ─── ROLE TOKENS ─────────────────────────────────────────────── */
-    --bg:               var(--neutral-50);
+    --bg: #fbf6ec;
     --surface:          var(--neutral-0);
     --surface-1:        var(--neutral-0);
     --surface-2:        var(--neutral-100);
     --surface-3:        var(--neutral-150);
     /* (r148-d: --bg-soft/--surface-elevated retired with the canon) */
 
-    --text:        var(--neutral-900);
+    --text: #1e1a3c;
     --text-secondary: var(--neutral-700);
-    --text-muted:  #666663;   /* R313: rgba(40,40,40,.72) on #F5F1E8, solid — 5.63:1 ground · 6.12:1 surface */
-    --text-faint:  #676765;   /* R341 M6: muted-ink AA audit — #70706A→#666660 (96/96 pairs ≥4.5:1 both themes; tokens regen, this export follows) */
+    --text-muted: #6a6151;   /* R313: rgba(40,40,40,.72) on #F5F1E8, solid — 5.63:1 ground · 6.12:1 surface */
+    --text-faint: #6f6656;   /* R341 M6: muted-ink AA audit — #70706A→#666660 (96/96 pairs ≥4.5:1 both themes; tokens regen, this export follows) */
     --text-on-accent: #FFFFFF;   /* 2026: white on the royal fill — 7.46:1 AAA */
     --text-on-dark:   var(--neutral-50);
 
-    --border:        var(--neutral-200);
+    --border: #e3d8c2;
     --border-strong: var(--neutral-300);
     --border-faint:  rgba(40,40,40,0.07);
-    --rule:          var(--neutral-300);
+    --rule: #e3d8c2;
     --rule-strong:   var(--border-strong);
-    --grid-line:     var(--neutral-300);
+    --grid-line: #c9bca3;
     --surface-border:  rgba(40,40,40,0.07);
     --surface-divider: rgba(40,40,40,0.05);
 
@@ -456,31 +455,31 @@
        accent; #2540D9 clears AA as text by itself — ink ≡ accent).
        White labels on the fill read 7.46:1 AAA (the AA-exception era
        is retired); hover/strong tier #1B30B0 (white 10.02:1). */
-    --accent:        #2540D9;              /* 6.62:1 paper / 7.46:1 surface — AA text + AAA fill labels */
-    --accent-hover:  #1B30B0;
-    --accent-soft:   #E4E9FF;
-    --accent-strong: #1B30B0;               /* 8.30:1 on the soft ground — deep tier */
-    --accent-fg:     #FFFFFF;               /* white labels on the royal fill — 7.46:1 AAA */
-    --accent-ink:    #2540D9;  /* the signal IS the text-safe ink now — 6.62:1 ground / 7.46:1 surface */
+    --accent: #1e1a3c;              /* 6.62:1 paper / 7.46:1 surface — AA text + AAA fill labels */
+    --accent-hover: #332c5c;
+    --accent-soft: #e6e1f2;
+    --accent-strong: #332c5c;               /* 8.30:1 on the soft ground — deep tier */
+    --accent-fg: #fbf6ec;               /* white labels on the royal fill — 7.46:1 AAA */
+    --accent-ink: #1e1a3c;  /* the signal IS the text-safe ink now — 6.62:1 ground / 7.46:1 surface */
 
     /* the focus ring clears >=3:1 on every adjacent light surface —
        #2540D9 (6.62:1 paper); dark resolves the cascade to #8AA0FF. */
-    --state-focus-ring-color: #2540D9;
+    --state-focus-ring-color: #1e1a3c;
 
-    --success:      var(--c-mint-ink);     /* #17724A — the 2026 approved success green */
+    --success: #12805c;     /* #17724A — the 2026 approved success green */
     --success-soft: var(--c-mint-bg);
-    --warning:      var(--c-yellow-ink);   /* #A8750F */
+    --warning: #a9740a;   /* #A8750F */
     --warning-soft: var(--c-yellow-bg);
-    --danger:       var(--c-rose-ink);     /* #C62828 — the 2026 approved danger red */
+    --danger: #c23227;     /* #C62828 — the 2026 approved danger red */
     --danger-soft:  var(--c-rose-bg);
-    --info:         var(--c-sky-ink);      /* #4A7FA8 */
+    --info: #2540d9;      /* #4A7FA8 */
     --info-soft:    var(--c-sky-bg);
 
     /* status INKS for text (deep shades — all >=7.2:1 on their tints) */
-    --success-ink: var(--c-mint-deep);     /* 7.99:1 on paper — the AAA text tier */
-    --warning-ink: var(--c-yellow-deep);   /* #5E420C */
-    --danger-ink:  var(--c-rose-deep);     /* 7.12:1 on paper — the AAA text tier */
-    --info-ink:    var(--c-sky-deep);      /* #1F4968 */
+    --success-ink: #0a5a40;     /* 7.99:1 on paper — the AAA text tier */
+    --warning-ink: #6b4708;   /* #5E420C */
+    --danger-ink: #8f1f16;     /* 7.12:1 on paper — the AAA text tier */
+    --info-ink: #1b30b0;      /* #1F4968 */
 
     /* label on a --danger fill (2026: the approved red #C62828 + white 5.62:1) */
     --danger-fg:   #FFFFFF;
@@ -489,18 +488,18 @@
        --brand-purple stays, the one live brand slot) */
     --brand:         var(--accent);
     --brand-purple:  var(--c-lavender-ink);
-    --gold:          #B57438;   /* r305: achievement gold — the demoted r304 copper seat, 3.57:1 large/deco tier */
-    --gold-ink:      #8F5A28;   /* r305: gold text ink — 5.39:1 ground */
-    --primary:       var(--c-royal-ink);   /* 2026: the royal slab CTA — white label 7.46:1 */
-    --primary-fg:    #FFFFFF;
+    --gold: #f29a1f;   /* r305: achievement gold — the demoted r304 copper seat, 3.57:1 large/deco tier */
+    --gold-ink: #a8620a;   /* r305: gold text ink — 5.39:1 ground */
+    --primary: #1e1a3c;   /* 2026: the royal slab CTA — white label 7.46:1 */
+    --primary-fg: #fbf6ec;
 
     /* shadows — R313: the decorative ladder is RETIRED (depth via
        hairlines only; the prefers-contrast rings below stay) */
     /* R313 override: decorative shadows removed — depth via hairlines only */
-    --shadow-card:    none;
+    --shadow-card: 0 2px 10px -2px color-mix(in srgb,#000000 7%,transparent),0 10px 28px -14px color-mix(in srgb,#000000 10%,transparent);
     --shadow-card-h:  none;
     --shadow-pop:     none;
-    --shadow-modal:   none;
+    --shadow-modal: 0 24px 64px -20px color-mix(in srgb,#000000 30%,transparent),0 2px 10px -2px color-mix(in srgb,#000000 12%,transparent);
     /* (r148-d: --shadow-mockup retired with the canon) */
     --shadow-card-premium:  none;
     --shadow-card-premium-h: none;
@@ -508,11 +507,11 @@
 
     /* elevation language — light (also the no-JS plain-:root defaults).
        R313: retired — all rungs none. */
-    --elev-1: none;
-    --elev-2: none;
-    --elev-3: none;
-    --elev-4: none;
-    --elev-5: none;
+    --elev-1: 0 1px 2px color-mix(in srgb,#000000 8%,transparent);
+    --elev-2: 0 2px 8px -1px color-mix(in srgb,#000000 12%,transparent);
+    --elev-3: 0 6px 18px -4px color-mix(in srgb,#000000 16%,transparent);
+    --elev-4: 0 12px 34px -8px color-mix(in srgb,#000000 22%,transparent);
+    --elev-5: 0 24px 64px -16px color-mix(in srgb,#000000 30%,transparent);
 
     --glass-bg:    rgba(246,246,238,0.78);   /* R313: warm paper glass */
     --glass-blur:  16px;
@@ -549,7 +548,7 @@
     --shadow-2xl: none;
     --shadow-mockup: none;
 
-    --chart-text: var(--text-muted);  /* r305: 5.74:1 on paper — AA */
+    --chart-text: #6a6151;  /* r305: 5.74:1 on paper — AA */
     --chart-grid: rgba(40,40,40,0.08);
     --chart-1: var(--accent);   /* series 1 = the orange signal */
     --chart-2: var(--c-mint-ink);
@@ -562,7 +561,17 @@
 
     /* (the --journey-glow wash retired in the 2026 paydown — zero
        consumers since r305; the seat is deleted from both sheets.) */
-  }
+    --gold-soft: #fbeed4;
+  --c-copper-ink: #e8603f;
+  --c-copper-deep: #9b2e16;
+  --c-sand-ink: #5d7c33;
+  --c-sand-deep: #36521c;
+  --c-mint-ink: #12805c;
+  --c-lavender-deep: #3d2a80;
+  --c-sky-ink: #2f7fb5;
+  --c-rose-ink: #c23227;
+  --c-grey-deep: #262233;
+}
 
   /* ══════════════════════════════════════════════════════════════════
      DARK THEME — egn night: near-black gray ground, night-teal accent (r195)
@@ -573,17 +582,17 @@
 
     /* the charcoal night ramp — r305 (the reference's own dark fills
        promoted to a full theme; the technical greys come home) */
-    --neutral-0:   #2E2E2E;          /* ground — cards/inputs */
-    --neutral-50:  #262019;          /* paper — page ground (the charcoal) */
-    --neutral-100: #353535;          /* raised step */
-    --neutral-150: #3D3D3D;          /* inset well */
-    --neutral-200: #6F6F6B;          /* hairline — R328 H7 re-key (was #4A4A48): the night hairlines/dividers rose for contrast, 2.20:1 → 2.92:1 on the #262019 ground */
-    --neutral-300: #85857F;          /* divider — R328 H7 re-key (was #5C5C5A): the grid/divider rung rides the same measured lift */
-    --neutral-400: #8A8A86;
-    --neutral-500: #B4B4B0;          /* r305 ink-muted — the redeemed disable grey, 7.09:1 */
-    --neutral-700: #C9C9C5;          /* ink-secondary */
-    --neutral-800: #E0E0DC;
-    --neutral-900: #f0f0eb;          /* ink — the paper twin. R324 override (X22, reviewers A/B): the dark ink unifies to the SAME warm paper #F5F1E8 as the light ground (the old blueprint-blue #F6F8FA ran a +12 blue channel — a second paper). Contrast rises (13.44:1 on #262019), no seat depends on the cool cast. */
+    --neutral-0: #1e1b3d;          /* ground — cards/inputs */
+    --neutral-50: #14122b;          /* paper — page ground (the charcoal) */
+    --neutral-100: #262251;          /* raised step */
+    --neutral-150: #2e2960;          /* inset well */
+    --neutral-200: #423c6e;          /* hairline — R328 H7 re-key (was #4A4A48): the night hairlines/dividers rose for contrast, 2.20:1 → 2.92:1 on the #262019 ground */
+    --neutral-300: #5f5890;          /* divider — R328 H7 re-key (was #5C5C5A): the grid/divider rung rides the same measured lift */
+    --neutral-400: #8b86ad;
+    --neutral-500: #c2bdda;          /* r305 ink-muted — the redeemed disable grey, 7.09:1 */
+    --neutral-700: #d3cee4;          /* ink-secondary */
+    --neutral-800: #e9e4f2;
+    --neutral-900: #f7f1e6;          /* ink — the paper twin. R324 override (X22, reviewers A/B): the dark ink unifies to the SAME warm paper #F5F1E8 as the light ground (the old blueprint-blue #F6F8FA ran a +12 blue channel — a second paper). Contrast rises (13.44:1 on #262019), no seat depends on the cool cast. */
 
     /* night hue families — ember-tinted deep grounds + luminous inks (r305) */
     --c-peach-bg:     #43241C;   --c-peach-ink:    #FF8E68;   --c-peach-deep:   #FFC5AE;
@@ -592,28 +601,28 @@
     --c-sky-bg:       #23313F;   --c-sky-ink:      #93C2E9;   --c-sky-deep:     #C9E2F5;
     --c-yellow-bg:    #3B331F;   --c-yellow-ink:   #EFC87B;   --c-yellow-deep:  #F8E3B4;
     --c-rose-bg:      #3A2020;   --c-rose-ink:     #FF7A70;   --c-rose-deep:    #FF7A70;
-    --c-sand-bg:      #2D2820;   --c-sand-ink:     #D9C18C;   --c-sand-deep:    #EFE2C5;
-    --c-grey-bg:      #2A2A28;   --c-grey-ink:     #B7B2A6;   --c-grey-deep:    #DDD8CB;
+    --c-sand-bg: #26301c;   --c-sand-ink:     #D9C18C;   --c-sand-deep:    #EFE2C5;
+    --c-grey-bg: #2b2750;   --c-grey-ink:     #B7B2A6;   --c-grey-deep:    #DDD8CB;
     --c-royal-bg:     #2A2F4A;   --c-royal-ink:    #8AA0FF;   --c-royal-deep:   #A9B8FF;
-    --c-copper-bg:    #43241C;   --c-copper-ink:   #FF8E68;   --c-copper-deep:  #FFC5AE;
+    --c-copper-bg: #3e2320;   --c-copper-ink:   #FF8E68;   --c-copper-deep:  #FFC5AE;
 
     /* r305 — the night coral alias namespace (additive) */
     --c-coral-bg:  var(--c-peach-bg);
     --c-coral-ink: var(--c-peach-ink);
     --c-coral-deep: var(--c-peach-deep);
 
-    --bg:               var(--neutral-50);
-    --surface:          var(--neutral-0);
+    --bg: #14122b;
+    --surface: #1e1b3d;
     --surface-1:        var(--neutral-0);
     --surface-2:        var(--neutral-100);
     --surface-3:        var(--neutral-150);
     /* (r148-d: --bg-soft/--surface-elevated retired with the canon) */
 
-    --text:        var(--neutral-900);
+    --text: #f7f1e6;
     --text-secondary: var(--neutral-700);
-    --text-muted:  var(--neutral-500);
-    --text-faint:  #A2A29D;   /* r305: AA tier, one step under muted — 5.75:1 ground */
-    --text-on-accent: #262019;   /* 2026: the dark ground ink on the luminous royal fill — 6.56:1 */
+    --text-muted: #c2bdda;
+    --text-faint: #b3adc9;   /* r305: AA tier, one step under muted — 5.75:1 ground */
+    --text-on-accent: #14122b;   /* 2026: the dark ground ink on the luminous royal fill — 6.56:1 */
     --text-on-dark:   var(--neutral-900);
 
     /* R324 X21 (reviewers A+C, round-2 follow-up): the dark hairline at
@@ -636,61 +645,61 @@
        owner-verified pair; white would fail at 2.46:1); hover #4C63F0
        takes WHITE labels (4.83:1); --accent-strong is the light text
        tier on dark */
-    --accent:        #8AA0FF;            /* fill — the luminous royal */
-    --accent-hover:  #4C63F0;
-    --accent-soft:   #2A2F4A;
-    --accent-strong: #A9B8FF;            /* 6.85:1 on the soft ground · 8.43:1 bg — text tier */
-    --accent-fg:     #262019;
-    --accent-ink:    #8AA0FF;           /* night text tier — 6.56:1 bg (the signal IS the ink now) */
+    --accent: #efe9ff;            /* fill — the luminous royal */
+    --accent-hover: #ffffff;
+    --accent-soft: #2a2552;
+    --accent-strong: #ffffff;            /* 6.85:1 on the soft ground · 8.43:1 bg — text tier */
+    --accent-fg: #14122b;
+    --accent-ink: #efe9ff;           /* night text tier — 6.56:1 bg (the signal IS the ink now) */
     /* 2026 — the night ring = the accent itself: the #4C63F0 hover tier
        reads only 2.81:1 on the raised card (under the ≥3:1 ring rule);
        #8AA0FF reads 6.56:1 bg · 5.53:1 card. */
-    --state-focus-ring-color: var(--accent);
+    --state-focus-ring-color: #efe9ff;
 
     /* the -ink family clears AA on the night ground — same values the
        base tokens already resolve to */
-    --success-ink:  var(--c-mint-deep);   /* #5FD39A — 8.65:1 night */
+    --success-ink: #5fd6ac;   /* #5FD39A — 8.65:1 night */
     --warning-ink:  var(--c-yellow-ink);
-    --danger-ink:   var(--c-rose-deep);   /* #FF7A70 — 6.35:1 night */
+    --danger-ink: #ff8a7a;   /* #FF7A70 — 6.35:1 night */
     --info-ink:     var(--c-sky-ink);
 
-    --danger-fg:    #262019;   /* 2026: the dark ground ink on the #FF7A70 fill — 6.35:1 */
+    --danger-fg: #14122b;   /* 2026: the dark ground ink on the #FF7A70 fill — 6.35:1 */
 
-    --success:      #5FD39A;             /* 8.65:1 on the ground */
+    --success: #5fd6ac;             /* 8.65:1 on the ground */
     --success-soft: var(--c-mint-bg);
-    --warning:      var(--c-yellow-ink);
+    --warning: #f0c572;
     --warning-soft: var(--c-yellow-bg);
-    --danger:       #FF7A70;             /* 6.35:1 on the ground */
+    --danger: #ff8a7a;             /* 6.35:1 on the ground */
     --danger-soft:  var(--c-rose-bg);
-    --info:         var(--c-sky-ink);
+    --info: #8aa0ff;
     --info-soft:    var(--c-sky-bg);
 
     /* (r148-d: --brand retired with the canon — zero consumers;
        --brand-purple stays, the one live brand slot) */
     --brand:         var(--accent);
     --brand-purple:  var(--c-lavender-ink);
-    --gold:          #E0A067;   /* r305: night gold achievement tone (the demoted r304 seat) */
-    --gold-ink:      #F2B782;
-    --primary:       var(--c-royal-ink);/* 2026: the night CTA — the luminous royal slab */
-    --primary-fg:    #262019;
+    --gold: #f7b34a;   /* r305: night gold achievement tone (the demoted r304 seat) */
+    --gold-ink: #f7c97e;
+    --primary: #efe9ff;/* 2026: the night CTA — the luminous royal slab */
+    --primary-fg: #14122b;
 
     /* shadows — R313: retired with the light set (depth via hairlines) */
     /* R313 override: decorative shadows removed — depth via hairlines only */
     --shadow-card:    none;
     --shadow-card-h:  none;
     --shadow-pop:     none;
-    --shadow-modal:   none;
+    --shadow-modal: 0 24px 64px -20px color-mix(in srgb,#000000 64%,transparent),0 2px 10px -2px color-mix(in srgb,#000000 38%,transparent);
     /* (r148-d: --shadow-mockup retired with the canon) */
     --shadow-card-premium:  none;
     --shadow-card-premium-h: none;
     --shadow-card-glow:     0 0 0 1px var(--accent-soft); /* ring kept — the elev tail retired */
 
     /* elevation language — dark (R313: retired — all rungs none) */
-    --elev-1: none;
+    --elev-1: 0 1px 2px color-mix(in srgb,#000000 8%,transparent);
     --elev-2: none;
     --elev-3: none;
     --elev-4: none;
-    --elev-5: none;
+    --elev-5: 0 24px 64px -16px color-mix(in srgb,#000000 30%,transparent);
 
     --glass-bg:    rgba(30,30,30,0.78);   /* r305: charcoal night glass */
     --glass-blur:  16px;
@@ -720,7 +729,7 @@
     --shadow-sm: none;
     /* (r148-d: --shadow-md/lg/xl/2xl retired with the canon) */
 
-    --chart-text: var(--neutral-500);
+    --chart-text: #c2bdda;
     --chart-grid: rgba(246,248,250,0.08);
     --chart-1: var(--accent);   /* series 1 = the night royal signal */
     --chart-2: var(--c-mint-ink);
@@ -732,7 +741,17 @@
     --chart-8: #D18AB4;   /* mauve (lifted for dark) */
 
     /* (the night --journey-glow twin retired with the light one.) */
-  }
+    --gold-soft: #3a2f1a;
+  --c-copper-ink: #ff9b7c;
+  --c-copper-deep: #ffc8b8;
+  --c-sand-ink: #b7d77e;
+  --c-sand-deep: #dceebb;
+  --c-yellow-ink: #f0c572;
+  --c-rose-ink: #ff8a7a;
+  --c-mint-ink: #5fd6ac;
+  --c-sky-deep: #c6e4f8;
+  --c-lavender-ink: #b49bf5;
+}
 
   /* ─── Reduced motion — zero ALL raw --t-* rungs (not just the
      semantic names) + the semantic + ambient families. Cross-fade

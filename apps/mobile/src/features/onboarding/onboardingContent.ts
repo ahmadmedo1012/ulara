@@ -74,7 +74,7 @@ export function onboardingScreens(role: OnboardingRole | string): OnboardingScre
       index: 4,
       kicker: "جاهز",
       title: "كل شيء بانتظارك",
-      body: "اختصارات سريعة في الأسفل، وكل ما تحتاجه على مسافة إبهام. لنبدأ.",
+      body: "الأقسام الرئيسية في الشريط السفلي.",
       art: 4,
     },
   ];

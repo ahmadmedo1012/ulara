@@ -23,6 +23,12 @@
 #     purpose is to stop ad-hoc inline SVG in pages, not to forbid the
 #     icon system itself. The landing/public chrome now consumes
 #     <Glyph name=…/> — Lucide stays for the legacy app chrome.)
+#   - frontend/src/components/gamification/        (r369 slice 03: the
+#     LevelBadge generator — the 20-level ladder's GENERATED badge
+#     geometry (rays scale 3→7 with the level, tier palette), the
+#     product twin of the landing's allowlisted components/landing/
+#     badge. Bespoke achievement symbology, the same category as the
+#     brand mark — NOT UI iconography.)
 #   - frontend/src/components/illustrations/      (r280: the mk-ill
 #     state-graphics kit — 16 two-colour SVG scenes + BrandLoader; the
 #     same category as lib/illustrations, NOT UI iconography. The
@@ -83,7 +89,7 @@ violations=0
 # ticks, mastery cells, streak ticks): the glyphs ARE the data mark, the
 # same class as Ledger's chart marks. UI icons elsewhere still go through
 # <Icon icon={...} />.
-ALLOWED='frontend/src/components/(EmojiIcon|Icon|Illustration)\.tsx|frontend/src/components/icons/|frontend/src/components/landing/|frontend/src/components/illustrations/|frontend/src/components/primitives/Ledger\.tsx|frontend/src/components/patterns/indicators\.tsx|frontend/src/lib/illustrations/|frontend/src/styles/|frontend/public/|frontend/tests/|frontend/src/brand/|frontend/src/pages/BrandPage\.tsx'
+ALLOWED='frontend/src/components/(EmojiIcon|Icon|Illustration)\.tsx|frontend/src/components/icons/|frontend/src/components/landing/|frontend/src/components/gamification/|frontend/src/components/illustrations/|frontend/src/components/primitives/Ledger\.tsx|frontend/src/components/patterns/indicators\.tsx|frontend/src/lib/illustrations/|frontend/src/styles/|frontend/public/|frontend/tests/|frontend/src/brand/|frontend/src/pages/BrandPage\.tsx'
 
 # 1. Emoji presentation in source code outside allowlist.
 #    Emoji ranges (BMP + supplementary):

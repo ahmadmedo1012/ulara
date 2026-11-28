@@ -17,7 +17,7 @@
  */
 import { useRef, useState } from 'react';
 import type { ReactNode } from 'react';
-import { Download, FileText, Loader2, Upload } from 'lucide-react';
+import { Download, FileText, Upload } from 'lucide-react';
 import { Icon } from '../Icon';
 import { toast } from '../../lib/toast';
 import { serverError } from './kit';
@@ -66,7 +66,7 @@ function DocumentDownload({ doc }: { doc: CouncilDocument }) {
       disabled={busy}
       aria-label={`تنزيل ${doc.titleAr}`}
     >
-      {busy ? <Icon icon={Loader2} size={13} className="motion-spinner" /> : <Icon icon={Download} size={13} />}
+      {busy ? <span className="spinner" aria-hidden="true" /> : <Icon icon={Download} size={13} />}
       تنزيل PDF
     </button>
   );
@@ -256,7 +256,7 @@ export function GovernanceUploadForm({
       {error && <p className="inst-form-error" role="alert">{error}</p>}
       <div className="inst-dialog-actions">
         <button type="button" className="btn primary sm" disabled={busy} onClick={() => void submit()}>
-          {busy ? <Icon icon={Loader2} size={14} className="motion-spinner" /> : <Icon icon={Upload} size={14} />}
+          {busy ? <span className="spinner" aria-hidden="true" /> : <Icon icon={Upload} size={14} />}
           رفع وإرفاق بالمجلس
         </button>
       </div>

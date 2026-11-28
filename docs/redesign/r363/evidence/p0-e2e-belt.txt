@@ -1,0 +1,19 @@
+# r363 P0 — the full hermetic e2e belt, local, after the three re-pins
+# fresh clone @ 9a235698 + the three test fixes; shards on 2 workers
+
+== shard 1:
+  63 passed (3.9m)
+
+== shard 2:
+  56 passed (3.3m)
+
+== shard 3:
+  69 passed (5.1m)
+
+== shard 7:
+  34 passed (5.6m)
+
+== shard 8:
+  26 passed (1.8m)
+
+total: 248 passed, 0 failed

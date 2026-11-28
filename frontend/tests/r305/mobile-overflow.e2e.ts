@@ -45,7 +45,7 @@ const SHELL_LANDMARKS = ['.topbar-title', 'h1.pf-page-title', '.bottom-nav'];
  * was dead, so the pin silently rotted). Re-keyed to the live class;
  * the contract itself (container inside footer, no overflow) is
  * unchanged. */
-const LANDING_LANDMARKS = ['.fo-header-inner', 'main#main', '.fo-hero-title', '.fo-in'];
+const LANDING_LANDMARKS = ['main#main', 'h1.w369-h1'];
 
 test.describe('الزائر — فيض أفقي صفري', () => {
   for (const vp of NARROW_VIEWPORTS) {
@@ -60,13 +60,13 @@ test.describe('الزائر — فيض أفقي صفري', () => {
 
       test('/404 بلا فيض', async ({ page }) => {
         await page.goto('/404');
-        await expect(page.locator('.nf-title')).toHaveText('هذه الصفحة تغيّبت عن الحضور');
-        await expectNoHorizontalOverflow(page, ['.nf-title']);
+        await expect(page.getByRole('heading', { level: 1 })).toHaveText('هذه الصفحة تغيّبت عن الحضور');
+        await expectNoHorizontalOverflow(page, ['main h1']);
       });
 
       test('/ (الرئيسية) بلا فيض — فوق وطول الصفحة', async ({ page }) => {
         await page.goto('/');
-        await expect(page.locator('.fo-hero-title')).toBeVisible();
+        await expect(page.locator('h1.w369-h1')).toBeVisible();
         await expectNoHorizontalOverflow(page, LANDING_LANDMARKS);
         // The landing is the longest public sheet — lazy sections
         // (reveal-on-scroll, footer) only lay out once scrolled past,
@@ -74,7 +74,7 @@ test.describe('الزائر — فيض أفقي صفري', () => {
         await page.evaluate(() =>
           window.scrollTo(0, document.scrollingElement?.scrollHeight ?? 0),
         );
-        await expect(page.locator('.fo-in')).toBeVisible(); // R341 re-key: .fo-footer-inner → .fo-in (f301041a)
+        await expect(page.locator('.w369-footer')).toBeVisible(); // R341 re-key: .fo-footer-inner → .fo-in (f301041a)
         await expectNoHorizontalOverflow(page, LANDING_LANDMARKS);
       });
 

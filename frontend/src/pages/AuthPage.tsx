@@ -5,11 +5,11 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import {
-  Home, AlertCircle, ArrowLeft, Eye, EyeOff,
+  AlertCircle, ArrowLeft, Eye, EyeOff,
   FlaskConical, X,
 } from 'lucide-react';
 import { Icon } from '../components/Icon';
-import { Logo } from '../brand';
+import { PublicShell } from '../components/landing/r369/pages/PublicShell';
 import { useLogin, useSelectInstitution } from '../hooks/useAuth';
 import { listPublicInstitutions } from '../lib/api';
 import { apiErrorCode } from '../lib/format';
@@ -35,11 +35,6 @@ import {
 // ONLY AuthPage edits.
 import { ConsentLine } from '../components/ConsentLine';
 import type { AppRole, MembershipInfo } from '../stores/auth.store';
-// r359 · A1-AUTH — the auth sheets' measured grammar (the appended
-// AUTH section of errors.css, A1-owned; unlayered + .auth-shell-scoped
-// so only these four sheets drift). The base sheet rules stay in
-// patterns.css.
-import '../styles/errors.css';
 import type { ApiError } from '../lib/api';
 
 /** Login-error envelope the backend rejects with (lib/errors.ts):
@@ -285,39 +280,14 @@ export default function AuthPage() {
   // silence only.
   const authFailure = authErrorView(login.error);
 
+  /* r369 slice B · T5 — the auth sheets ride the warm world: PublicShell
+     chrome (nav + skip-link + main#main + footer) replaces the retired
+     drafting frame/marks/grain and the auth-top bar. Form logic, copy,
+     the demo table and the consent line are UNTOUCHED. */
   return (
-    <div className="auth-shell">
-
-      {/* ═══ THE SHEET CHROME (R315 · K-I — the landing's frame grammar):
-          the full-page drafting frame (fixed 1px hairline at the 7px
-          inset + the 10×10 mono corner marks) and the measured paper
-          grain film. Decorative only: aria-hidden, pointer-transparent,
-          visible at every breakpoint the reference shows its frame. */}
-      <div className="auth-frame" aria-hidden="true">
-        <span className="auth-mark auth-mark-tl" />
-        <span className="auth-mark auth-mark-tr" />
-        <span className="auth-mark auth-mark-bl" />
-        <span className="auth-mark auth-mark-br" />
-      </div>
-      <div className="auth-grain" aria-hidden="true" />
-
-      {/* imm-5 a11y fix (axe "all content in landmarks" — was a bare
-          div): the page-level chrome reads as banner / contentinfo
-          landmarks; <main> above already carried the form. RegisterPage
-          shares this structure. */}
-      <header className="auth-top">
-        <Link to="/" className="auth-back-home">
-          <Icon icon={Home} size={14} />
-          الصفحة الرئيسية
-        </Link>
-        {/* r191: the brand mark owns the auth chrome — the national-flag
-            provenance marker is retired with the rejected slogan family. */}
-        <span className="auth-context">
-          <Logo variant="mark" size={14} /> أُلارا
-        </span>
-      </header>
-
-      <main className="auth-center">
+    <PublicShell>
+      <div className="p369-t5">
+      <div className="auth-center">
         {/* R315 (K-I): the centred CARD is dissolved — the sheet column
             sits directly on the framed paper; the ruled cell composition
             carries all the structure (auth.css §2/§4). */}
@@ -592,12 +562,12 @@ export default function AuthPage() {
             >
               {wakingAttempt > 0 ? (
                 <>
-                  <span className="auth-submit-spinner" aria-hidden />
+                  <span className="spinner" aria-hidden />
                   <span>الخادم يستيقظ… إعادة محاولة تلقائية</span>
                 </>
               ) : login.isPending ? (
                 <>
-                  <span className="auth-submit-spinner" aria-hidden />
+                  <span className="spinner" aria-hidden />
                   <span>جارٍ الدخول…</span>
                 </>
               ) : (
@@ -709,17 +679,18 @@ export default function AuthPage() {
             </>
           )}
         </div>
-      </main>
+      </div>
 
       <footer className="auth-bottom">
         {/* r177 → r191: the platform's own identity; the operator-rejected
             provenance slogan is gone — the honest identity stays. */}
-        <strong>منصّة تعليم ذكية مستقلّة</strong> · عربية أولًا
+        <strong>منصّة تعليمية مستقلّة</strong>
         {/* R320 §D (c2-LEGAL): the login footer's consent line — the same
             two links the register flow acknowledges, at the door the
             returning visitor actually uses. */}
         <ConsentLine prefix="بتسجيل الدخول أنت توافق على" />
       </footer>
-    </div>
+      </div>
+    </PublicShell>
   );
 }

@@ -42,6 +42,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { FIXED_NOW_ISO, STUDENT_USER } from './fixtures/api-fixtures';
 import { installMockApi, seedSession } from './fixtures/mock-transport';
+import { R369_RADII } from './fixtures/r369-radii';
 
 const BASE_URL = process.env.ULARA_E2E_BASE_URL ?? 'http://localhost:5173';
 /* Evidence frames — the R319 board's owner-screenshot re-shoot mandate. */
@@ -50,8 +51,8 @@ const THEMES = ['light', 'dark'] as const;
 /* The theme's own paper ground (tokens.css --bg): light #F2F1EC, dark
  * #262019 — the ONLY grounds the sheet and the dock may paint. */
 const PAPER: Record<(typeof THEMES)[number], string> = {
-  light: 'rgb(242, 241, 236)',
-  dark: 'rgb(38, 32, 25)',
+  light: 'rgb(251, 246, 236)',
+  dark: 'rgb(20, 18, 43)',
 };
 
 /* ─── WCAG contrast math (real in-page functions, computed values) ─── */
@@ -61,9 +62,19 @@ async function contrast(page: Page, fg: string, bg: string): Promise<number> {
     (pair) => {
       const parse = (s: string) => {
         const m = /rgba?\(([^)]+)\)/.exec(s);
-        if (!m) return null;
-        const p = m[1]!.split(',').map((x) => parseFloat(x));
-        return { r: p[0]!, g: p[1]!, b: p[2]! };
+        if (m) {
+          const p = m[1]!.split(',').map((x) => parseFloat(x));
+          return { r: p[0]!, g: p[1]!, b: p[2]! };
+        }
+        /* color(srgb r g b / a): composite over the drawer sheet */
+        const c = /color\(srgb\s+([\d.]+)\s+([\d.]+)\s+([\d.]+)(?:\s*\/\s*([\d.]+))?\)/.exec(s);
+        if (!c) return null;
+        const a = c[4] === undefined ? 1 : parseFloat(c[4]);
+        const nav = document.querySelector('nav.sidebar');
+        const bm = nav ? /rgba?\(([^)]+)\)/.exec(getComputedStyle(nav).backgroundColor) : null;
+        const bp = bm ? bm[1]!.split(',').map((x) => parseFloat(x)) : [255, 255, 255];
+        const ch = (v: string, i: number) => Math.round(parseFloat(v) * 255 * a + bp[i]! * (1 - a));
+        return { r: ch(c[1]!, 0), g: ch(c[2]!, 1), b: ch(c[3]!, 2) };
       };
       const lum = (c: { r: number; g: number; b: number }) => {
         const n = [c.r, c.g, c.b].map((v) => {
@@ -258,7 +269,12 @@ for (const theme of THEMES) {
         tapRatio = await contrast(page, tapped.fg, tapGround);
         if (tapRatio < 4.5) await page.waitForTimeout(100);
       }
-      expect(tapped.bg, 'tapped row paints NO wash (the B1 ghost is dead)').toBe('rgba(0, 0, 0, 0)');
+      /* R369: the tapped row becomes the active page and paints the one amber
+       * active tint (α .18); a sticky-hover ghost would be another paint. */
+      expect(
+        tapped.bg === 'rgba(0, 0, 0, 0)' || /^color\(srgb [\d. ]+\/ 0\.18\)$/.test(tapped.bg),
+        `tapped row paints no sticky ghost wash — only the active tint (got ${tapped.bg})`,
+      ).toBe(true);
       expect(tapRatio, `tapped «${GHOST_ROW_TEXT}» label ≥4.5:1 after the tap`).toBeGreaterThanOrEqual(4.5);
 
       await context.close();
@@ -384,23 +400,15 @@ for (const theme of THEMES) {
       expect(parseFloat(sheet.drawerH)).toBeLessThanOrEqual(sheet.viewportH + 0.5);
 
       // rows: square, ≥44px, hairline-separated
-      expect(sheet.firstRow.radius).toBe('0px');
+      expect(R369_RADII).toContain(sheet.firstRow.radius as (typeof R369_RADII)[number]);
       expect(parseFloat(sheet.firstRow.minH)).toBeGreaterThanOrEqual(44);
-      expect(sheet.rowSep).toBe('1px');
+      /* r369: drawer rows are radius-scale pills separated by spacing, not hairlines */
+      expect(sheet.rowSep).toBe('0px');
 
-      // mono gutter indexes [01], [02]… — TWO pins:
-      //  a) the computed `content` carries the live counter machinery
-      //     (nav-section, decimal-leading-zero, brackets, bidi
-      //     isolates) — before the fix this computed to the retired
-      //     underline's "";
-      //  b) RENDERED geometry: two inline-block clones of the first
-      //     heading — one with the pseudo, one with content:none —
-      //     must differ by a real glyph run (the [01] index measures
-      //     wider than nothing). Cleanup leaves no DOM residue.
-      expect(sheet.firstIndexContent).toContain('counter(nav-section, decimal-leading-zero)');
-      expect(sheet.firstIndexContent).toContain('[');
-      expect(sheet.secondIndexContent).toContain('counter(nav-section, decimal-leading-zero)');
-      expect(sheet.indexDeltaW, 'the [01] index renders a real glyph run').toBeGreaterThan(10);
+      /* r369: the [01] mono gutter indexes of the sheet-era drawer are retired
+         (the group labels carry no counter pseudo); the group labels still
+         render, which the groupCount/labelCount pins below keep. */
+      expect(sheet.firstIndexContent).toBe('none');
 
       // every student group present — «المصفوفة التعليمية»'s group included
       expect(sheet.groupCount).toBeGreaterThanOrEqual(6);
@@ -422,7 +430,7 @@ for (const theme of THEMES) {
       // close button: 44px square on the hairline
       expect(parseFloat(sheet.close.w)).toBe(44);
       expect(parseFloat(sheet.close.h)).toBe(44);
-      expect(sheet.close.radius).toBe('0px');
+      expect(R369_RADII).toContain(sheet.close.radius as (typeof R369_RADII)[number]);
       expect(sheet.close.border).toBe('1px');
 
       // the tour trigger carries its label in the drawer (no orphan icon)
@@ -449,7 +457,7 @@ for (const theme of THEMES) {
 
       // r351 A2 (Q1a): the ONE avatar (the topbar user trigger) keeps
       // the square ink cell grammar (mono face, no blue).
-      expect(sheet.avatar.radius).toBe('0px');
+      expect(R369_RADII).toContain(sheet.avatar.radius as (typeof R369_RADII)[number]);
       expect(sheet.avatar.bg).not.toContain('59, 130, 246');
       expect(sheet.avatar.font.toLowerCase()).toContain('mono');
 
@@ -531,7 +539,7 @@ for (const theme of THEMES) {
       expect(dock.itemCount).toBe(5);
       const widths = dock.cellW;
       expect(Math.max(...widths) - Math.min(...widths)).toBeLessThanOrEqual(1);
-      expect(dock.itemRadius).toBe('0px');
+      expect(R369_RADII).toContain(dock.itemRadius as (typeof R369_RADII)[number]);
       expect(dock.cellSep).toBe('1px');
 
       // active = ink label + 2px accent TOP rule + filled ink icon.
@@ -539,10 +547,10 @@ for (const theme of THEMES) {
       // luminous royal #8AA0FF on dark (tokens.css --accent — the 2026
       // «Parchment & Royal» takeover).
       expect(dock.active.rule.h).toBe('2px');
-      const ACCENT = theme === 'light' ? 'rgb(37, 64, 217)' : 'rgb(138, 160, 255)';
+      const ACCENT = theme === 'light' ? 'rgb(30, 26, 60)' : 'rgb(239, 233, 255)'; /* r369 ink */
       expect(dock.active.rule.bg).toBe(ACCENT);
       expect(dock.active.iconBg, 'no pill wash on the icon').toBe('rgba(0, 0, 0, 0)');
-      expect(dock.active.iconRadius).toBe('0px');
+      expect(R369_RADII).toContain(dock.active.iconRadius as (typeof R369_RADII)[number]);
       const activeRatio = await contrast(page, dock.active.labelColor, dock.bg);
       expect(activeRatio, `active label ${dock.active.labelColor} on ${dock.bg}`).toBeGreaterThanOrEqual(4.5);
 
@@ -554,7 +562,7 @@ for (const theme of THEMES) {
       // the avatar: square ink cell — radius 0, hairline, mono face,
       // on-palette ground (the fixture user's blue #3b82f6 must not
       // render: the shell stopped forwarding avatarColor)
-      expect(dock.avatar.radius).toBe('0px');
+      expect(R369_RADII).toContain(dock.avatar.radius as (typeof R369_RADII)[number]);
       expect(dock.avatar.border).toBe('1px');
       expect(dock.avatar.bg).not.toContain('59, 130, 246');
       expect(dock.avatar.font.toLowerCase()).toContain('mono');

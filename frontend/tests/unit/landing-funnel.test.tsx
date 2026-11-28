@@ -195,11 +195,16 @@ describe('404 way-back (r164b → r188)', () => {
       </MemoryRouter>,
     );
 
-    expect(container.querySelectorAll('.nf-actions .btn.primary')).toHaveLength(1);
+    /* r369 re-key: the 404 rides PublicShell + the warm button grammar
+       (w369-btn-primary/ghost); the exits + hrefs below are unchanged. */
+    expect(container.querySelectorAll('.p369-t5 .w369-btn-primary')).toHaveLength(1);
 
-    const home = screen.getByRole('link', { name: /العودة إلى الرئيسية/ });
-    const colleges = screen.getByRole('link', { name: /تصفح الكليات التجريبية/ });
-    const login = screen.getByRole('link', { name: 'تسجيل الدخول' });
+    /* r369 re-key: the warm nav also carries a login ghost — scope the
+       exit assertions to the T5 column. */
+    const t5 = container.querySelector('.p369-t5') as HTMLElement;
+    const home = within(t5).getByRole('link', { name: /العودة إلى الرئيسية/ });
+    const colleges = within(t5).getByRole('link', { name: /تصفح الكليات التجريبية/ });
+    const login = within(t5).getByRole('link', { name: 'تسجيل الدخول' });
     expect(home.getAttribute('href')).toBe('/');
     expect(colleges.getAttribute('href')).toBe('/colleges');
     expect(login.getAttribute('href')).toBe('/auth');

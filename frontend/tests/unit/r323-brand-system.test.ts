@@ -18,7 +18,8 @@
  *   (c) the regenerated assets are the NEW system: favicon.svg +
  *       brand/*.svg contain no <linearGradient> and no copper hexes,
  *       carry the 32-grid U-vessel geometry (ONE ink stroke, round
- *       caps/joins, M/L/Q commands only) + the one royal #2540D9
+ *       caps/joins, M/L/Q commands only) + the one cornerstone
+ *       (r369: indigo ink #1E1A3C — royal #2540D9 retired)
  *       cornerstone (the 2026 re-value; was sienna #C43E16) — and the static twins stay pinned to
  *       frontend/src/brand/mark.ts + lockups.ts (the same numbers
  *       scripts/r323/brand-assets.mjs re-states).
@@ -216,6 +217,14 @@ describe('R323 gate (b) — the StarMark/BrandMark import graph is frozen', () =
  * ════════════════════════════════════════════════════════════════════ */
 /* The vessel's cornerstone rect exactly as the static twins serialize
  * it (brand-assets.mjs markGroup). */
+/* r369 slice 06 RE-KEY: the cornerstone is the indigo ink #1E1A3C now —
+ * royal #2540D9 is the retired identity (slice 04 re-keyed the shared
+ * mark + mobile assets; this sweep brought the web's ulara-mark.svg +
+ * favicon.svg to the same seat). The Logo tone='royal' literal slot,
+ * the print royal seat, the --c-royal palette family and chartTheme
+ * keep their royal literals deliberately — see the r369 LEDGER's
+ * royal-remnants audit line. */
+const CORNERSTONE_369 = '#1E1A3C';
 const cornerRect = (fill: string) =>
   `<rect x="${MARK_CORNERSTONE.x}" y="${MARK_CORNERSTONE.y}" width="${MARK_CORNERSTONE.size}" height="${MARK_CORNERSTONE.size}" fill="${fill}"/>`;
 
@@ -239,7 +248,7 @@ describe('R323 gate (c) — favicon + brand twins are the ULARA system', () => {
     expect(favicon).toContain('stroke-linecap="round"');
     expect(favicon).toContain('stroke-linejoin="round"');
     expect(favicon).toContain('stroke-width="2.25"');
-    expect(favicon).toContain(cornerRect('#2540D9'));
+    expect(favicon).toContain(cornerRect(CORNERSTONE_369));
     /* the vessel is ONE continuous stroke — never mitered */
     expect(favicon).not.toMatch(/stroke-linejoin="miter"/);
   });
@@ -250,7 +259,7 @@ describe('R323 gate (c) — favicon + brand twins are the ULARA system', () => {
     expect(ularaMark).toContain('stroke-linecap="round"');
     expect(ularaMark).toContain('stroke-linejoin="round"');
     expect(ularaMark).toContain('stroke-width="1.5"');
-    expect(ularaMark).toContain(cornerRect('#2540D9'));
+    expect(ularaMark).toContain(cornerRect(CORNERSTONE_369));
     expect(ularaMark).toContain('<title>أُلارا</title>');
     /* geometry parity with the SHARED canonical mark (the compact RN/
      * kit form scripts/brand/build-app-icons.mjs writes — same numbers,
@@ -258,7 +267,7 @@ describe('R323 gate (c) — favicon + brand twins are the ULARA system', () => {
      * identically stated). */
     const shared = repoRead('shared/brand/mark.svg');
     expect(shared).toContain(MARK_VESSEL_PATH);
-    expect(shared).toContain(cornerRect('#2540D9'));
+    expect(shared).toContain(cornerRect(CORNERSTONE_369));
   });
 
   it('every public/brand/*.svg is gradient-free and copper-free', () => {

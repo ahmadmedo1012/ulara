@@ -3,7 +3,7 @@ import type { FormEvent } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import {
   Microscope, FileText, CheckCircle2, X, Sparkles, MessageSquare,
-  StickyNote, RefreshCw, ClipboardCheck, ArrowLeft,
+  StickyNote, ClipboardCheck, ArrowLeft,
 } from 'lucide-react';
 import { Button, UserAvatar, Tabs, FormField } from '../../components/primitives';
 import { Skeleton, EmptyState, ErrorState } from '../../components/primitives/States';
@@ -871,12 +871,14 @@ function ReviewNotes({ paperId }: { paperId: string }) {
         </div>
       )}
       {annotations.isError && (
-        <div className="inline-retry" role="alert">
-          <span className="text-xs text-muted">تعذَّر تحميل الملاحظات على البحث.</span>
-          <button type="button" className="btn ghost sm" onClick={() => annotations.refetch()}>
-            <Icon icon={RefreshCw} size={12} /> إعادة المحاولة
-          </button>
-        </div>
+        /* The shared state kit replaces the hand-rolled .inline-retry row
+           (the TeacherIntelligencePage convention — the workspace's notes
+           thread is no exception to the state-kit law). */
+        <ErrorState
+          message="تعذَّر تحميل الملاحظات على البحث"
+          error={annotations.error}
+          onRetry={() => annotations.refetch()}
+        />
       )}
       {/* r305-a7 a11y: the notes thread is a real list (role=list +
           listitem) — the rows branch is its only content. */}

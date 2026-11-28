@@ -1,151 +1,100 @@
 import { Link } from 'react-router-dom';
-import { ArrowRight, Check, FlaskConical } from 'lucide-react';
-import { Icon } from '../../components/Icon';
-import { Logo } from '../../brand';
-import { useThemeSync } from '../../components/layout/ThemeToggle';
 import { LIVE_CAPABILITIES, LIVE_COUNT, VISION_STATUS } from '../../data/landing-ledger';
-import { RevealCssClass } from '../../hooks/useReveal';
-/* c3-W6 (K-I extension): the guest sheet chrome — same grammar as
- * /auth + /campus (fixed frame + corner marks + grain film). */
-import { GuestSheetChrome } from '../../components/layout/GuestSheetChrome';
-// patterns.css §10 (r341/D9) — the guest sub-page sheet (ex
-// campus.css, deleted): the honest capability matrix (ما يعمل اليوم) +
-// the status pairs (إلى أين) moved here VERBATIM from the landing when
-// D7 recomposed the sheet to the reference's 9 sections; the colleges registry
-// links to /colleges (the real registry page).
+import { Glyph } from '../../components/icons';
+import { PublicShell } from '../../components/landing/r369/pages/PublicShell';
+import { Em, PageHead, ArticleSection } from '../../components/landing/r369/pages/sections';
 
-/** /capabilities — «السجلّ» (R313 · WP-A1).
+/** /capabilities — «السجلّ» (R313 · WP-A1 · r369 slice B).
  *
- * The landing's two honest-table sections live here as one ledger page:
+ * The honest ledger page, unchanged in substance:
  *   · ما يعمل اليوم — the capability matrix: every row is a real
  *     product truth (system feature state), numbered, checked, with the
- *     bracketed count in the footer line — no slab, no inversion;
+ *     bracketed count in the footer line;
  *   · إلى أين — the honest status pairs: live / simulated /
- *     in-development, mono-tagged, exactly as the system is today;
+ *     in-development, exactly as the system is today;
  *   · مساحة العمل التجريبية — the demo-workspace summary: the honest
  *     three-faculty set + the demo-data disclosure, linking to
- *     /colleges for the multi-tenancy pitch (Phase Ω: the platform has
- *     no university registry — institutions build their own).
+ *     /colleges (Phase Ω: the platform has no university registry —
+ *     institutions build their own).
+ * r369: the sheet rides PublicShell + the kit; the drafting chrome,
+ * mono-bracket indices and hairline grammar are retired. Every word
+ * stays as the system states it.
  */
 export function CapabilitiesPage() {
-  useThemeSync();
-
   return (
-    <div className="cu">
-      <a href="#main" className="skip-link">تخطَّ إلى المحتوى</a>
-      <GuestSheetChrome />
+    <PublicShell>
+      <div className="lg p369-t1">
+        <PageHead
+          n="05"
+          icon="check"
+          kicker="ما يعمل اليوم"
+          title={<>قدرات <Em>موثَّقة</Em>، لا ادّعاءات</>}
+          lead="كل رقم يُحسب من حالة الميزات في النظام — يتغيّر مع التحديثات، لا مع الحملات."
+          actions={(
+            <>
+              <Link to="/campus" className="w369-btn w369-btn-primary" aria-label="بيئة العمل الرقمية — لقطات من المنصّة">بيئة العمل الرقمية</Link>
+              <Link to="/colleges" className="w369-btn w369-btn-ghost">كيف تُبنى الكليات</Link>
+            </>
+          )}
+        />
 
-      <header className="cu-header">
-        <div className="cu-header-inner">
-          <Link to="/" className="btn ghost sm">
-            <Icon icon={ArrowRight} size={14} />
-            العودة إلى الصفحة الرئيسية
-          </Link>
-          <Link to="/" className="cu-header-brand" aria-label="أُلارا — الصفحة الرئيسية">
-            <Logo variant="mark" size={22} />
-            أُلارا
-          </Link>
-        </div>
-      </header>
-
-      <main id="main" tabIndex={-1} className="cu-main pf-page">
-        {/* ── ما يعمل اليوم — the capability matrix ── */}
-        <section aria-labelledby="cap-live-title">
-          <div className="cu-head pf-page-header-text">
-            <span className="fo-eyebrow"><span className="fo-mono" dir="ltr">[01]</span> ما يعمل اليوم</span>
-            <RevealCssClass as="h1" className="cu-title" delay={1} id="cap-live-title">
-              قدرات موثَّقة، لا ادّعاءات
-            </RevealCssClass>
-            <RevealCssClass as="p" className="cu-lede" delay={2}>
-              كل رقم يُحسب من حالة الميزات في النظام — يتغيّر مع التحديثات، لا مع الحملات.
-            </RevealCssClass>
-            {/* D9: the honest CTA pair at the page head (the D7c measured
-                seat) — the sister sub-page + the real registry page; the
-                registry section below keeps the data + the disclosure. */}
-            <RevealCssClass as="div" className="pf-page-actions" delay={3}>
-              <Link to="/campus" className="btn accent" aria-label="بيئة العمل الرقمية — لقطات من المنصّة">بيئة العمل الرقمية</Link>
-              <Link to="/colleges" className="btn ghost">كيف تُبنى الكليات</Link>
-            </RevealCssClass>
-          </div>
-
-          <RevealCssClass as="ol" className="lv-list" delay={2}>
+        <ArticleSection n="01" title="ما يعمل اليوم">
+          <ol className="p369-cap-list">
             {LIVE_CAPABILITIES.map((cap, i) => (
-              <li key={cap} className="lv-row">
-                <span className="lv-num fo-mono" dir="ltr" aria-hidden>{String(i + 1).padStart(2, '0')}</span>
-                <span className="lv-text">{cap}</span>
-                <span className="lv-check" aria-hidden><Icon icon={Check} size={14} /></span>
+              <li key={cap} className="p369-cap-row">
+                <span className="p369-article-num" dir="ltr" aria-hidden>{String(i + 1).padStart(2, '0')}</span>
+                <span className="p369-cap-text">{cap}</span>
+                <span className="p369-cap-check" aria-hidden><Glyph name="check" size={14} /></span>
               </li>
             ))}
-          </RevealCssClass>
-          <p className="lv-foot fo-mono" dir="ltr">[{String(LIVE_COUNT).padStart(2, '0')}] live capabilities · source: system feature state</p>
-        </section>
+          </ol>
+          <p className="p369-cap-foot lg-mono" dir="ltr">[{String(LIVE_COUNT).padStart(2, '0')}] live capabilities · source: system feature state</p>
+        </ArticleSection>
 
-        {/* ── إلى أين — the honest status pairs ── */}
-        <section aria-labelledby="cap-vision-title">
-          <div className="cu-head pf-page-header-text">
-            <span className="fo-eyebrow"><span className="fo-mono" dir="ltr">[02]</span> إلى أين</span>
-            <RevealCssClass as="h2" className="cu-title" delay={1} id="cap-vision-title">
-              نحو تعليمٍ يعرف كلَّ طالب
-            </RevealCssClass>
-            <RevealCssClass as="p" className="cu-lede" delay={2}>
-              منظومة تتذكّر ما شاهده وما أخطأ فيه —
-              ثم تقترح الخطوة التالية. كل حالة أدناه كما هي في النظام اليوم.
-            </RevealCssClass>
-          </div>
-
-          <RevealCssClass as="ul" className="vs-status" delay={3}>
+        <ArticleSection n="02" title="إلى أين — نحو تعليمٍ يعرف كلَّ طالب">
+          <p>
+            منظومة تتذكّر ما شاهده وما أخطأ فيه —
+            ثم تقترح الخطوة التالية. كل حالة أدناه كما هي في النظام اليوم.
+          </p>
+          <ul className="p369-status">
             {VISION_STATUS.map((s) => (
-              <li key={s.k} className={s.live ? 'is-live' : undefined}>
-                <span className="vs-status-k"><Icon icon={s.live ? Check : FlaskConical} size={13} /> {s.k}</span>
-                <span className="vs-status-v">{s.v}</span>
-                <span className={`vs-status-tag${s.live ? ' is-live' : ''}`}>
+              <li key={s.k} className="p369-status-row" data-live={s.live || undefined}>
+                <span className="p369-status-k">
+                  <Glyph name={s.live ? 'check' : 'clock'} size={14} /> {s.k}
+                </span>
+                <span className="p369-status-v">{s.v}</span>
+                <span className="p369-status-tag" data-live={s.live || undefined}>
                   {s.live ? 'يعمل الآن' : 'محاكاة/قيد التطوير'}
                 </span>
               </li>
             ))}
-          </RevealCssClass>
-        </section>
+          </ul>
+        </ArticleSection>
 
-        {/* ── مساحة العمل التجريبية — the demo-workspace summary ── */}
-        <section aria-labelledby="cap-colleges-title">
-          <div className="cu-head pf-page-header-text">
-            <span className="fo-eyebrow"><span className="fo-mono" dir="ltr">[03]</span> مساحة العمل التجريبية</span>
-            <RevealCssClass as="h2" className="cu-title" delay={1} id="cap-colleges-title">
-              ثلاث كليات للعرض — <em>وكلياتك تُبنى بعد انضمامك</em>
-            </RevealCssClass>
-            <RevealCssClass as="p" className="cu-lede" delay={2}>
-              موسومة بوضوح، لا تشبه جامعة — والبنية الكاملة تُبنى من بيانات مؤسستك.
-            </RevealCssClass>
-          </div>
-
-          <RevealCssClass as="div" className="cu-registry" delay={2}>
-            <dl className="cu-meta" aria-label="بيانات السجلّ">
-              <div className="fo-meta-row">
-                <dt className="fo-meta-k">السجلّ</dt>
-                <dd className="fo-meta-v">مساحة عمل أُلارا التجريبية</dd>
-              </div>
-              <div className="fo-meta-row">
-                <dt className="fo-meta-k">الكليات</dt>
-                <dd className="fo-meta-v">
-                  <span className="fo-mono" dir="ltr">3</span> للعرض — علوم الحاسوب، الهندسة، إدارة الأعمال
-                </dd>
-              </div>
-              <div className="fo-meta-row">
-                <dt className="fo-meta-k">الحالة</dt>
-                <dd className="fo-meta-v">بيانات موسومة بوضوح لأغراض العرض</dd>
-              </div>
-            </dl>
-            {/* D9: the registry actions moved UP to the page head (the
-                pf-page-actions pair above) — this block keeps the data
-                registry + the demo-data disclosure. */}
-          </RevealCssClass>
-
-          <p className="cu-foot">
+        <ArticleSection n="03" title={<>مساحة العمل التجريبية — <Em>وكلياتك تُبنى بعد انضمامك</Em></>}>
+          <p>موسومة بوضوح، لا تشبه جامعة — والبنية الكاملة تُبنى من بيانات مؤسستك.</p>
+          <dl className="p369-rail" aria-label="بيانات السجلّ">
+            <div className="p369-rail-row">
+              <dt className="p369-rail-label">السجلّ</dt>
+              <dd className="p369-rail-value">مساحة عمل أُلارا التجريبية</dd>
+            </div>
+            <div className="p369-rail-row">
+              <dt className="p369-rail-label">الكليات</dt>
+              <dd className="p369-rail-value">
+                <span className="lg-mono" dir="ltr">3</span> للعرض — علوم الحاسوب، الهندسة، إدارة الأعمال
+              </dd>
+            </div>
+            <div className="p369-rail-row">
+              <dt className="p369-rail-label">الحالة</dt>
+              <dd className="p369-rail-value">بيانات موسومة بوضوح لأغراض العرض</dd>
+            </div>
+          </dl>
+          <p className="p369-captures-foot">
             بيانات العرض تخصّ «مساحة عمل أُلارا التجريبية» — مساحةً موسومة لأغراض العرض، لا جامعة ولا انتماء،
             وأُلارا منصّة مستقلّة متعددة المستأجرين لا تنتمي إلى أيّ مؤسّسة تعليمية ولا تمثّلها.
           </p>
-        </section>
-      </main>
-    </div>
+        </ArticleSection>
+      </div>
+    </PublicShell>
   );
 }

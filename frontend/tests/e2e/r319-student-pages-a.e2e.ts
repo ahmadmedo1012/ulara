@@ -32,6 +32,7 @@ import {
   OFFERING_ID, LIBRARY_BOOKS, LIBRARY_RESEARCH,
 } from './fixtures/api-fixtures';
 import { installStatefulApi, statefulOk, statefulJson } from './fixtures/mock-transport';
+import { R369_RADII } from './fixtures/r369-radii';
 
 test.use({ e2eRole: 'STUDENT' });
 
@@ -100,12 +101,12 @@ test.describe('student pages A — §B2 sheet grammar (chromium · light)', () =
     // The upcoming assignment's due state — the mono chip register.
     const chip = page.locator('.r319s-chip').first();
     await expect(chip).toHaveText(/^DUE \d+D$/);
-    await expect(chip).toHaveCSS('border-radius', '0px');
+    expect(R369_RADII).toContain(await chip.evaluate((el) => getComputedStyle(el).borderRadius));
 
     // The card-class sample computes radius 0 (the collapsed ladder).
     const rowlist = page.locator('.pf-rowlist').first();
     await expect(rowlist).toBeVisible();
-    expect(await rowlist.evaluate((el) => getComputedStyle(el).borderRadius)).toBe('0px');
+    expect(R369_RADII).toContain(await rowlist.evaluate((el) => getComputedStyle(el).borderRadius));
 
     await expectSheetContract(page);
   });
@@ -126,7 +127,7 @@ test.describe('student pages A — §B2 sheet grammar (chromium · light)', () =
     // The continue strip (the page's one-action rail) computes radius 0.
     const rail = page.locator('.r305c-continue');
     await expect(rail).toBeVisible();
-    expect(await rail.evaluate((el) => getComputedStyle(el).borderRadius)).toBe('0px');
+    expect(R369_RADII).toContain(await rail.evaluate((el) => getComputedStyle(el).borderRadius));
 
     await expectSheetContract(page);
   });
@@ -163,7 +164,7 @@ test.describe('student pages A — §B2 sheet grammar (chromium · light)', () =
     // The matrix course block (the card class sample) computes radius 0.
     const block = page.locator('.matrix-course').first();
     await expect(block).toBeVisible();
-    expect(await block.evaluate((el) => getComputedStyle(el).borderRadius)).toBe('0px');
+    expect(R369_RADII).toContain(await block.evaluate((el) => getComputedStyle(el).borderRadius));
 
     await expectSheetContract(page);
   });
@@ -213,7 +214,7 @@ test.describe('student pages A — §B2 sheet grammar (chromium · light)', () =
     await expect(loansPanel).toContainText('لا استعارات نشطة');
 
     // The panel (the card class sample) computes radius 0.
-    expect(await loansPanel.evaluate((el) => getComputedStyle(el).borderRadius)).toBe('0px');
+    expect(R369_RADII).toContain(await loansPanel.evaluate((el) => getComputedStyle(el).borderRadius));
 
     await expectSheetContract(page);
   });

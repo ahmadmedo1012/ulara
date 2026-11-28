@@ -35,7 +35,8 @@ test.describe('لوحة الدخول — لوحة المفاتيح', () => {
       text: (document.activeElement?.textContent ?? '').trim(),
     }));
     expect(active.tag, 'the first Tab stop must be an interactive element').toBe('A');
-    expect(active.text).toContain('الصفحة الرئيسية');
+    /* r369: PublicShell opens with the skip link, the first Tab stop */
+    expect(active.text).toContain('تخطَّ إلى المحتوى');
   });
 
   test('النموذج قابل للتشغيل بالكامل بلوحة المفاتيح (تعبئة + Enter يرسل)', async ({ page }) => {
@@ -65,7 +66,7 @@ test.describe('لوحة الدخول — لوحة المفاتيح', () => {
     // before the prompt paragraph in most boots; we simply walk until
     // the submit button owns focus, deterministically capped).
     const submit = page.getByRole('button', { name: 'تسجيل الدخول' });
-    for (let i = 0; i < 12; i++) {
+    for (let i = 0; i < 40; i++) {
       const isSubmit = await page.evaluate(
         () => document.activeElement?.classList.contains('auth-submit') ?? false,
       );

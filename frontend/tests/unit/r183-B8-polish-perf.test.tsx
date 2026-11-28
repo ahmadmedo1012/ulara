@@ -101,11 +101,18 @@ describe('r183-B8 — CollegesLayout skip link (A10 finding 3)', () => {
   })();
 
   it('the guest branch ships the skip link — AppShell a11y pattern, #main anchor, first DOM child', () => {
-    expect(fn).toContain('<a href="#main" className="skip-link">تخطَّ إلى المحتوى</a>');
+    /* r369 re-key (slice B): the guest branch renders <PublicShell/>,
+       which owns the skip-link + #main contract (PublicShell.tsx:122 —
+       the same <a class="skip-link" href="#main"> base.css pattern). */
+    expect(fn).toContain('<PublicShell>');
   });
 
   it('the #main target accepts programmatic focus after the skip (AppShell parity)', () => {
-    expect(fn).toContain('<main id="main" tabIndex={-1}');
+    /* r369 re-key (slice B): PublicShell emits
+       <main id="main" tabIndex={-1} className="p369-main"> — pin the
+       contract at its source instead of duplicating it here. */
+    const shell = read('src/components/landing/r369/pages/PublicShell.tsx');
+    expect(shell).toContain('<main id="main" tabIndex={-1}');
   });
 
   it('the product class is the AppShell family — not a bespoke public pill', () => {
@@ -245,7 +252,9 @@ describe('r183-B8 — CI bundle-size gate (A11 finding 1)', () => {
     // integration raised 832→845 — the first all-four-branches
     // measurement (839.6 KB gz / 163 chunks); F1's below-fold
     // lazy-load diet and r361 carousel split pinned 866 to cover all chunks while shrinking entry.
-    expect(script).toContain('LIMIT_TOTAL_KB = 866');
+    // r367 raised 866→878 (documented in the gate): the r364 art system v2's
+    // route-lazy weight — the art is the prime directive's own payload.
+    expect(script).toContain('LIMIT_TOTAL_KB = 878');
     expect(script).toContain('LIMIT_ENTRY_KB = 92');
     expect(script).toContain('LIMIT_PDF_KB = 110');
     // Fail-closed scanner errors are a distinct exit code, so a missing

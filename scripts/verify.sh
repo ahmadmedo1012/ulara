@@ -118,7 +118,7 @@ if [[ -n "$SPECS" ]]; then
   E2E_ARGS=()
   for s in ${SPECS//,/ }; do E2E_ARGS+=("tests/e2e/${s}.e2e.ts"); done
 else
-  E2E_ARGS=("tests/e2e/r309-recovery.e2e.ts" "tests/e2e/r308-landing-instruments.e2e.ts")
+  E2E_ARGS=("tests/e2e/r309-recovery.e2e.ts")
 fi
 if (cd frontend && npx playwright test "${E2E_ARGS[@]}" --project=e2e > /tmp/verify-e2e.log 2>&1); then
   ok "e2e"

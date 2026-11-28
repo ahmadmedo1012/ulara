@@ -370,17 +370,18 @@ describe('r325 Y4 — the type census gate (every heading level × every seat ×
       });
     }
 
-    it('the d1 clamp floors at 38px @390 and caps at 118px (the r369 ladder contract)', () => {
+    it('the d1 clamp floors at 34px @390 and caps at 100px (the r369 maturity-pass ruling)', () => {
       const m = tokenSrc.match(/--fs-d1:\s*clamp\(([^)]+)\)/);
       expect(m).toBeTruthy();
-      /* r369 — the friendly display ladder: the phone floor rises to 38px
-       * (the brief's huge-display intent) and the desktop ceiling to
-       * 118px. The 3-line rule this gate protects is kept by the r369
-       * sheet's own measure (the copy column, not the type size) — see
-       * tests/e2e/r369-landing. The old 31.74/62.22 pins encoded the
-       * retired reference ladder. */
-      expect(m![1]).toContain('38px');
-      expect(m![1]).toContain('118px');
+      /* r369 maturity pass (4382dd8, LEDGER §99) — the h1 deliberately
+       * takes 100px, not the measured 124: Arabic carries the same
+       * headline in two lines there, and four broken lines is a
+       * translation failure, not a match. This pin supersedes the older
+       * 38px/118px ladder (PLAN.md line 48 predates the ruling). The
+       * 3-line rule this gate protects is kept by the sheet's measure —
+       * see tests/e2e/r369-landing. */
+      expect(m![1]).toContain('34px');
+      expect(m![1]).toContain('100px');
     });
   });
 

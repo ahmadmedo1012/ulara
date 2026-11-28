@@ -74,7 +74,7 @@ describe('r177 — public metadata is platform-neutral (index.html)', () => {
     expect(html).toContain('<title>أُلارا · نظام تشغيل الجامعة</title>');
     // ULARA takeover: the meta description is the platform's own
     // one-line identity — the full Arabic-first descriptor.
-    expect(html).toContain('منظومة متكاملة، عربية أولًا');
+    expect(html).toContain('منظومة لإدارة المؤسّسة');
     expect(html).not.toContain('منصّة تعليم ذكية مستقلّة'); // the r191 slogan seat is retired
   });
 
@@ -117,7 +117,6 @@ describe('r177 — landing/auth copy is affiliation-free', () => {
     const landing = [
       'src/pages/LandingPage.tsx',
       'src/components/landing/r369/index.tsx',
-      'src/components/landing/r369/Mascot.tsx',
       'src/pages/LandingPage.tsx',
     ].map(read).join('\n');
     for (const claim of OFFICIAL_CLAIMS) {
@@ -155,7 +154,7 @@ describe('r177 — landing/auth copy is affiliation-free', () => {
         expect(src, `${f} still carries: ${claim}`).not.toContain(claim);
       }
       // r191: the auth identity strip (rejected slogan removed).
-      expect(src).toContain('منصّة تعليم ذكية مستقلّة');
+      expect(src).toContain('منصّة تعليمية مستقلّة');
     }
   });
 
@@ -306,7 +305,8 @@ describe('r183 — brand-identity closure (the surfaces r177 missed)', () => {
     // #2540D9 royal — was #262019 · #C43E16); copper/gold hexes stay
     // BANNED from the favicon (r323-brand-system gate (c) pins this too).
     expect(favicon).toContain('#1A1713');
-    expect(favicon).toContain('#2540D9');
+    // r369 round 2: the cornerstone is the indigo ink #1E1A3C (royal #2540D9 retired from the mark in 3b98f3b; this pin lagged)
+    expect(favicon).toContain('#1E1A3C');
     expect(favicon).not.toContain('#B57438');
     expect(favicon).not.toContain('#E9B44C');
     expect(favicon).not.toContain('#0E3F6C');

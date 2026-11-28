@@ -10,6 +10,7 @@ import {
  * §B2 SectionBar + hand-rolled .jobs-table (the roster exemplar's
  * recomposition). */
 import { SheetSection, KpiBand, DataSheet, SheetEmpty, type DataSheetColumn } from '../../components/patterns';
+import podiumScene from '../../assets/art-v2/podium-scene.webp';
 /* R319 (c3-S2) — the §B2 mono status chip (the APPLIED register). */
 import { StatusChip } from '../../components/student';
 import { ErrorState } from '../../components/primitives/States';
@@ -303,6 +304,7 @@ export default function JobsPage() {
                 code="NO-MATCH"
                 title="لا توجد فرص ضمن هذا النوع"
                 desc="اختر نوعاً آخر من الأزرار أعلاه — كل الفرص المفتوحة تظهر تحت «الكل»."
+                art={podiumScene}
               />
             ) : (
               <DataSheet

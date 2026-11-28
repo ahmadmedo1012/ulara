@@ -155,8 +155,22 @@ for (const viewport of [
         await page.goto('/');
         await page.waitForLoadState('load');
 
+        /* r363 — the gate seats INSIDE the footer's final row (the
+         * owner's ruling), and the footer is the lazy chunk behind
+         * MountOnVisible (.lz-mount[data-lz="footer"]): the band mounts
+         * when the colophon nears, not at page load. Scroll the
+         * placeholder in first, wait for the footer, then measure. */
+        /* the footer is a lazy seat: walk to the bottom until it mounts */
+        await expect.poll(async () => {
+          await page.evaluate(() => window.scrollTo(0, document.documentElement.scrollHeight));
+          return page.locator('.w369-footer').count();
+        }, { timeout: 15_000 }).toBeGreaterThan(0);
+        await page.waitForTimeout(900); /* the lazy chunk + the cb-rise clip */
+
         const banner = page.locator('.cb-banner');
-        const bannerBox = await banner.boundingBox().catch(() => null);
+        const bannerBox = (await banner.count()) > 0
+          ? await banner.boundingBox({ timeout: 5_000 }).catch(() => null)
+          : null; /* absent banner: no 30s auto-wait */
         if (!bannerBox) {
           // unanswered consent is the ONLY state that shows the banner; a
           // fresh guest context must show it — but never fail the world

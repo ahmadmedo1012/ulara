@@ -50,36 +50,20 @@
 }
 .sg-section + .sg-section { margin-block-start: var(--sp-6); }
 
-/* registration crosses — 10×10 plus-marks, ink, outside the corners */
-.sg-reg {
-  position: absolute;
-  inline-size: var(--sg-reg-size, 11px);
-  block-size: var(--sg-reg-size, 11px);
-  pointer-events: none;
-}
-.sg-reg::before,
-.sg-reg::after {
-  content: '';
-  position: absolute;
-  background: var(--text);
-  opacity: 0.72;
-}
-.sg-reg::before {
-  inset-block-start: calc(50% - 0.5px);
-  inset-inline-start: 0;
-  inline-size: 100%;
-  block-size: 1px;
-}
-.sg-reg::after {
-  inset-block-start: 0;
-  inset-inline-start: calc(50% - 0.5px);
-  inline-size: 1px;
-  block-size: 100%;
-}
-.sg-reg--tl { inset-block-start: calc(-1 * var(--sg-reg-size, 11px) - 3px); inset-inline-start: calc(-1 * var(--sg-reg-size, 11px) - 3px); }
-.sg-reg--tr { inset-block-start: calc(-1 * var(--sg-reg-size, 11px) - 3px); inset-inline-end: calc(-1 * var(--sg-reg-size, 11px) - 3px); }
-.sg-reg--bl { inset-block-end: calc(-1 * var(--sg-reg-size, 11px) - 3px); inset-inline-start: calc(-1 * var(--sg-reg-size, 11px) - 3px); }
-.sg-reg--br { inset-block-end: calc(-1 * var(--sg-reg-size, 11px) - 3px); inset-inline-end: calc(-1 * var(--sg-reg-size, 11px) - 3px); }
+/* registration crosses — P3/r363 (B1): the DRAWING is the one
+   .reg-cross primitive (styles/patterns.css + RegCross.tsx — 13px
+   hollow-center crosshair, 1px strokes, hairline ink). The old
+   11px CSS-bar voice (--text @ .72 — the B3 off-hairline ink) is
+   retired; the canonical ink reads at one darkness with the frame
+   rule the crosses ride. Sheet.tsx renders the marks with these
+   .sg-reg classes kept — the classes are now SEATS ONLY: the whole
+   box sits OUTSIDE the frame corner with the same 3px gap (the
+   offset rides the primitive's own size var, so it follows the
+   drawing at every register). */
+.sg-reg--tl { inset-block-start: calc(-1 * var(--reg-cross-size, 13px) - 3px); inset-inline-start: calc(-1 * var(--reg-cross-size, 13px) - 3px); }
+.sg-reg--tr { inset-block-start: calc(-1 * var(--reg-cross-size, 13px) - 3px); inset-inline-end: calc(-1 * var(--reg-cross-size, 13px) - 3px); }
+.sg-reg--bl { inset-block-end: calc(-1 * var(--reg-cross-size, 13px) - 3px); inset-inline-start: calc(-1 * var(--reg-cross-size, 13px) - 3px); }
+.sg-reg--br { inset-block-end: calc(-1 * var(--reg-cross-size, 13px) - 3px); inset-inline-end: calc(-1 * var(--reg-cross-size, 13px) - 3px); }
 
 /* the draw rule rides the frame's top edge — armed ONLY on sections
    the sanctioned belt owns ([data-reveal]); plain sections render the
@@ -230,6 +214,35 @@
 .sg-kpi-delta[data-tone='positive'] { color: var(--success-ink); }
 .sg-kpi-delta[data-tone='warning'] { color: var(--warning-ink); }
 .sg-kpi-delta[data-tone='danger'] { color: var(--danger-ink); }
+/* r365 — the flat signal FLAG: one solid triangle before the delta
+   caption (the reference's delta-flag register in the KPI band). A
+   border-triangle, 6px, tone ink, inline-start placement — RTL flips
+   with the direction naturally since the glyph is symmetric. */
+.sg-kpi-delta[data-dir] {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.sg-kpi-delta[data-dir]::before {
+  content: '';
+  inline-size: 0;
+  block-size: 0;
+  border-inline-start: 4px solid transparent;
+  border-inline-end: 4px solid transparent;
+  border-block-start: none;
+  flex: none;
+  transform-origin: center;
+}
+.sg-kpi-delta[data-dir='up']::before {
+  border-block-end: 6px solid currentColor;
+}
+.sg-kpi-delta[data-dir='down']::before {
+  border-block-start: 6px solid currentColor;
+}
+.sg-kpi-delta[data-dir='flat']::before {
+  border-block-end: 3px solid currentColor;
+  transform: translateY(1px);
+}
 .sg-kpi[data-empty='true'] .sg-kpi-value {
   font-family: var(--font-sans);
   font-size: var(--fs-body-lg);
@@ -685,6 +698,16 @@ a.pf-stat:hover { background: var(--surface-2); }
   gap: var(--sp-3);
   padding: var(--sp-9) var(--sp-4);
   text-align: center;
+}
+/* r367 — the optional art-v2 seat: the empty sheet may carry ONE
+   duotone strip scene above the frame register (the r365 NEXT item).
+   The scene keeps the sheet's quiet measure: capped width, the
+   multiply-style grayscale treatment rides the duo-scene's own CSS. */
+.sg-empty-art {
+  inline-size: min(280px, 100%);
+}
+.sg-empty-art .duo-img {
+  block-size: auto;
 }
 .sg-empty-frame {
   position: relative;

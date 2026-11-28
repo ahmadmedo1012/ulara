@@ -23,6 +23,7 @@ import { usePalette } from "@/design/theme";
 import { sp } from "@/design/tokens";
 import { T } from "@/components/ui/text";
 import { haptics } from "@/haptics";
+import { pressFeedback } from "@/motion";
 
 const LOCK_FLAG = "ula-biometric-lock";
 
@@ -155,14 +156,14 @@ export function BiometricGate({ children }: { children: ReactNode }) {
                   if (ok) setLocked(false);
                 });
               }}
-              style={{
+              style={({ pressed }) => [{
                 flexDirection: "row",
                 alignItems: "center",
                 gap: sp[8],
                 minHeight: 48,
                 paddingHorizontal: sp[20],
                 backgroundColor: p.primary,
-              }}
+              }, pressed && { opacity: pressFeedback.linkOpacity }]}
             >
               <Lock size={16} color={p.primaryFg} />
               <T variant="body" weight="bold" style={{ color: p.primaryFg }}>

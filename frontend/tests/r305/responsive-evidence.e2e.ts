@@ -51,7 +51,7 @@ test.describe('أدلة الاستجابة — أسطح الزائر', () => {
 
       test(`/404 — ${vp.name}`, async ({ page }) => {
         await page.goto('/404');
-        await expect(page.locator('.nf-title')).toHaveText('هذه الصفحة تغيّبت عن الحضور');
+        await expect(page.getByRole('heading', { level: 1 })).toHaveText('هذه الصفحة تغيّبت عن الحضور');
         await page.screenshot({
           ...(CAPTURE ? { path: `tests/r305/__evidence__/404-${vp.name}.png` } : {}),
           ...SHOT_OPTIONS,

@@ -495,6 +495,8 @@ model User {
   eventRsvps          EventRSVP[]
   // R320 §D (P0-3/P0-4) — the forgot-password flow's single-use tokens.
   passwordResetTokens PasswordResetToken[]
+  // P6 — per-device refresh sessions (listing + per-session revocation).
+  authSessions     UserSession[]
 
   @@index([role])
   @@index([email])
@@ -2116,6 +2118,65 @@ model PasswordResetToken {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
+}
+
+// ────────────────────────────────────────────────────────────────
+//  P6 — user sessions: listing + per-session revocation + refresh-
+//  token reuse detection (the documented auth.service.ts deferral).
+// ────────────────────────────────────────────────────────────────
+// ONE row per device session LINEAGE: created at login/register
+// (and adopted for pre-table cookies on their first refresh), then
+// ROLLED IN PLACE on every refresh — the row's refreshTokenHash
+// moves to the newly minted token and lastUsedAt/ip/userAgent are
+// stamped. The refresh token itself is NEVER stored — only its
+// sha-256 hex digest (a FAST hash on purpose, same rationale as
+// PasswordResetToken.tokenHash: the JWT is high-entropy + TTL-bound,
+// so pre-image cost is irrelevant while lookup must stay cheap).
+//
+// D3 coexistence (rotation.ts is the BINDING policy):
+//  · a NORMAL refresh never bumps User.tokenVersion — it only rolls
+//    this row (sliding session, multi-device survival intact);
+//  · tokenVersionSnapshot pins the user's tokenVersion AT MINT TIME.
+//    It never changes on the row. D3 revocation events (logout,
+//    password change/reset, role change, deactivation) bump the
+//    USER-level counter once and atomically; every row whose snapshot
+//    no longer equals it is dead, and the sessions list hides it —
+//    without those call sites needing to touch this table;
+//  · PER-SESSION revocation (DELETE /auth/sessions/:id) sets
+//    revokedAt ONLY — no version bump, the other devices keep
+//    sliding. A revoked credential presented again at /auth/refresh
+//    is treated as token theft: reusedAt is stamped on the offending
+//    row, ALL of the user's rows are revoked and tokenVersion is
+//    bumped atomically (the documented reuse-detection response).
+//
+// No institution scope, by design: a refresh session spans the user's
+// institutional memberships exactly like User.tokenVersion (r178 —
+// the context is re-resolved at every mint; LoginEvent/PushDevice
+// set the precedent for user-level auth telemetry).
+model UserSession {
+  id       String   @id @default(cuid())
+  userId   String
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  // sha-256 hex of the refresh token — NEVER the token itself.
+  refreshTokenHash     String   @unique
+  // The user's tokenVersion when this lineage was minted (D3 global-kill
+  // comparison — see the model comment).
+  tokenVersionSnapshot Int
+  // Short request fingerprints, stamped at mint/roll time (best-effort
+  // telemetry, same nullable-String convention as LoginEvent).
+  userAgent String?
+  ip        String?
+  createdAt  DateTime @default(now())
+  lastUsedAt DateTime @default(now())
+  // null = live. Set by: DELETE /auth/sessions/:id (per-session),
+  // logout (with the D3 global bump), or the reuse family-kill.
+  revokedAt DateTime?
+  // Set by the reuse detector: this (already revoked) credential was
+  // presented again — the theft marker.
+  reusedAt  DateTime?
+
+  @@index([userId, revokedAt])
+  @@index([userId, lastUsedAt])
 }
 
 // ────────────────────────────────────────────────────────────────

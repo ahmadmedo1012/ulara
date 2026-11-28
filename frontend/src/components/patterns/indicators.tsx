@@ -455,50 +455,6 @@ export function ScheduleStrip({
   );
 }
 
-const ATT_MARK_LABEL: Record<AttendanceMark, string> = {
-  present: 'حاضر',
-  late: 'متأخر',
-  absent: 'غائب',
-};
-
-/**
- * AttendanceTicks — a roll-call row:
- *
- *   ✓ ✓ ✓ ◨ ✗      present=✓ ink · absent=✗ on hatch · late=✓ signal
- *
- * Marks render oldest→newest in the order handed over; every tick
- * carries its Arabic state as title + sr-only. With NO marks the row
- * renders its honest empty register (the hatch field + note) — callers
- * never fabricate a presence history.
- */
-export function AttendanceTicks({
-  marks,
-  emptyNote,
-  ariaLabel = 'سجل الحضور',
-}: {
-  marks: readonly AttendanceMark[];
-  /** The honest line when there is nothing to tick yet. */
-  emptyNote?: string;
-  ariaLabel?: string;
-}) {
-  if (marks.length === 0) {
-    return (
-      <span className="ind-att ind-att--empty" role="img" aria-label={ariaLabel}>
-        {emptyNote ? <span className="ind-streak-note">{emptyNote}</span> : null}
-      </span>
-    );
-  }
-  return (
-    <span className="ind-att" role="img" aria-label={ariaLabel}>
-      {marks.map((m, i) => (
-        <span key={i} className={`ind-att-tick ind-att-tick--${m}`} title={ATT_MARK_LABEL[m]}>
-          <span aria-hidden="true">{m === 'absent' ? '✗' : '✓'}</span>
-          <span className="sr-only">{ATT_MARK_LABEL[m]}</span>
-        </span>
-      ))}
-    </span>
-  );
-}
 
 /**
  * GradeBars — a score distribution over the six equal bands, on a

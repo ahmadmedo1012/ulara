@@ -308,10 +308,16 @@ function buildTs() {
   T.push(`export const dsEase = [${e1}, ${e2}, ${e3}, ${e4}] as const;`);
   T.push('');
 
-  T.push('// radius discipline: 0 everywhere; circles only for round elements.');
+  // r369 slice 04: the full soft ladder ships to mobile (chips/inputs
+  // 10–14 · cards 22 · panels 28 · hero 36 · pills 9999). The r313 zero
+  // ladder is retired. `none` stays as the back-compat alias the three
+  // Assistant.tsx call sites consume (= xs 8, their existing value).
+  T.push('// radius: the r369 soft ladder (shared JSON is the source of truth).');
   T.push('export const radius = {');
-  T.push(`  none: ${data.radius.xs},`);
-  T.push(`  full: ${data.radius.full},`);
+  for (const [k, v] of Object.entries(data.radius)) {
+    T.push(`  ${JSON.stringify(k)}: ${v},`);
+  }
+  T.push(`  none: ${data.radius.xs}, // back-compat alias (= xs) for the pre-r369 call sites`);
   T.push('} as const;');
   T.push('');
 

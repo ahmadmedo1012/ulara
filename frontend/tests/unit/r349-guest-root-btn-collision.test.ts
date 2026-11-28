@@ -71,14 +71,18 @@ describe('R349 · guest-sheet roots can never match buttons (the .lg collision)'
     expect(clean).not.toMatch(/(^|\n)\s*\.lg\s*\{/);
   });
 
-  it('the four guest sheet TSX roots are <div>s (the tag qualification stays sound)', () => {
+  it('the guest sheet TSX roots are <div>s (the tag qualification stays sound)', () => {
+    /* r369 slice B re-key: /about + /help joined the lg document-sheet
+     * family on PublicShell (the ab/hp roots are retired); the sheets'
+     * content root is now <div className="lg p369-t1"> — still a <div>,
+     * and the retired div.lg paint is neutralised in r369-pages.css. */
     const legalSheet = readFileSync(path.join(root, 'src/pages/legal/LegalSheet.tsx'), 'utf8');
     const publicPages = readFileSync(path.join(root, 'src/pages/PublicPages.tsx'), 'utf8');
     const appDownload = readFileSync(path.join(root, 'src/pages/AppDownloadPage.tsx'), 'utf8');
-    expect(legalSheet).toMatch(/<div className="lg">/);
-    expect(publicPages).toMatch(/<div className="ab">/);
-    expect(publicPages).toMatch(/<div className="hp">/);
-    expect(appDownload).toMatch(/<div className="ap">/);
+    expect(legalSheet).toMatch(/<div className="lg p369-t1">/);
+    expect(publicPages.match(/<div className="lg p369-t1">/g)!.length).toBe(2);
+    /* r369 slice B re-key: /app joined the lg document family too. */
+    expect(appDownload).toMatch(/<div className="lg p369-t1">/);
     // If any of these roots ever becomes a non-div element, the tag
     // qualification in patterns.css must be revisited — fail loudly.
     expect(legalSheet).not.toMatch(/<(section|main|article)[^>]*className="lg"/);

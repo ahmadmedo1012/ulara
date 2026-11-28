@@ -49,6 +49,14 @@ vi.mock('../../src/db.js', () => ({
     // r352 — the scoped-role-grant model the permission merge reads.
     unitCapabilityGrant: { findMany: vi.fn(async () => []) },
     loginEvent: { create: vi.fn(async () => ({})) },
+    // P6 — the mint paths open/roll session rows (best-effort writes).
+    userSession: {
+      findUnique: vi.fn(),
+      create: vi.fn(async () => ({})),
+      update: vi.fn(),
+      updateMany: vi.fn(async () => ({ count: 1 })),
+      deleteMany: vi.fn(async () => ({ count: 0 })),
+    },
     // Interactive-transaction caller: hand the mock prisma itself as tx
     // so tx.institution.findUnique etc. hit the same spied delegates.
     $transaction: vi.fn(async (fn: (tx: unknown) => Promise<unknown>) => fn(prisma)),

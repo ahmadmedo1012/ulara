@@ -10,6 +10,9 @@
 | الملف | المحتوى |
 |---|---|
 | [architecture.md](architecture.md) | القرارات المعمارية والخدمات والوحدات الست وعقد الـAPI |
+| [architecture/](architecture/) | مخططات C4 (سياق/حاويات/تدفق بيانات) — صورة لحظية تزامن مع `architecture.md` |
+| [adr/](adr/) | سجل قرارات المعمارية — توثيق قرارات قائمة (سياق/قرار/بدائل/عواقب) |
+| [cleanup/](cleanup/) | تقرير فحص المستودع الشامل + البنية المستهدفة المقترحة (جولة التنظيم) |
 | [deployment.md](deployment.md) | النشر (Vercel + Neon)، المتغيرات، cron، التشغيل اليومي والعرض |
 | [mobile.md](mobile.md) | تطبيق الجوال: الهوية، البنية، الاختبار، البناء، القنوات، الأسرار |
 | [testing.md](testing.md) | استراتيجية الاختبار: الوحدة/التكامل/e2e/البوابات/الإثباتات/الحمل |
@@ -18,8 +21,11 @@
 | [roadmap.md](roadmap.md) | ما تبقّى (بنود قليلة مرتّبة) |
 | [api/openapi.json](api/openapi.json) | عقد الـAPI المولّد من الشيفرة (`npm run api:openapi`) — مولَّد، لا يُحرَّر يدويًا |
 | [ops/LEDGER.md](ops/LEDGER.md) | سجل التقدّم الوحيد للمالك — إضافة فقط، لا يُلمس |
-| [redesign/r352/](redesign/r352/) | البرنامج الحالي: المؤسسة (خلفية + واجهة) — `HANDOFF.md` في كل مسار |
-| [redesign/r354/REPORT.md](redesign/r354/REPORT.md) | الموجة البصرية الأخيرة + [INTEGRATION-LOG.md](redesign/r354/INTEGRATION-LOG.md) (دمج الـPRs الثلاثة) |
+| [redesign/r367/](redesign/r367/) | آخر جولة مسجّلة — «المُنهي»: دمج r365/r366، إقفال أحمر CI، الأداء والوصولية، أوراق الهاتف والإقلاع، التقرير العربي للمالك ([REPORT.ar.md](redesign/r367/REPORT.ar.md))؛ سجل الملكية الدائم: [redesign/r342/OWNERSHIP.md](redesign/r342/OWNERSHIP.md) |
+| [redesign/r363–r366/](redesign/) | جولات القيادة السابقة (الصلابة · الموقع العام · المنتج بعد الدخول · الموبايل) — محتواها على `main` وسجلاتها هنا |
+| [redesign/p4/](redesign/p4/) | أدلة المسح الشامل للمنتج (r363): كتالوجات عيوب كل مسار `defects-<lane>.json` + `defects-summary.md` — تُكتب آليًا من `product-sweep.yml` وتُرفع artifacts |
+| [redesign/r352/](redesign/r352/) | برنامج المؤسسة (خلفية + واجهة) — `HANDOFF.md` في كل مسار |
+| [redesign/p4/](redesign/p4/) | أدلة المسح الشامل للمنتج (r363): كتالوجات عيوب كل مسار `defects-<lane>.json` + `defects-summary.md` — تُكتب آليًا من `product-sweep.yml` وتُرفع artifacts |
 
 ## مسارات قراءة مقترحة
 

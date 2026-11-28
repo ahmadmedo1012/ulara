@@ -4,6 +4,8 @@ import { ArrowLeft } from 'lucide-react';
 import { Reveal } from '../motion/Reveal';
 import { CountIn } from '../motion/CountIn';
 import { formatInt } from '../../utils/numbers';
+import { RegCross } from './RegCross';
+import { DuotoneScene } from '../landing/plates/DuotoneScene';
 
 /* ═══════════════════════════════════════════════════════════════════
    R359 (A3) — THE SHEET GRAMMAR patterns.
@@ -77,10 +79,14 @@ export function SheetSection({
     .join(' ');
   const inner = (
     <>
-      <i className="sg-reg sg-reg--tl" aria-hidden="true" />
-      <i className="sg-reg sg-reg--tr" aria-hidden="true" />
-      <i className="sg-reg sg-reg--bl" aria-hidden="true" />
-      <i className="sg-reg sg-reg--br" aria-hidden="true" />
+      {/* P3/r363 (B1): the corner crosses draw from the ONE RegCross
+          primitive (13px hollow-center crosshair, hairline ink); the
+          .sg-reg classes stay for the r359 seats (the whole box
+          OUTSIDE the corner, 3px gap). */}
+      <RegCross className="sg-reg sg-reg--tl" />
+      <RegCross className="sg-reg sg-reg--tr" />
+      <RegCross className="sg-reg sg-reg--bl" />
+      <RegCross className="sg-reg sg-reg--br" />
       {(title !== undefined || caption !== undefined || aside !== undefined || desc !== undefined) && (
         <header className="sg-head">
           <div className="sg-head-main">
@@ -124,13 +130,19 @@ export interface KpiItem {
   caption?: string;
   /** The Arabic label under the numeral. */
   label: string;
-  /** A number counts in formatted; a string renders verbatim. */
-  value: number | string;
+  /** A number counts in formatted; a string or node renders verbatim
+   *  (r365: ReactNode joins so pages can ride CountIn inside the cell). */
+  value: number | string | ReactNode;
   /** Optional unit appended to the numeral (٪ / مقرر). */
   unit?: string;
   /** The delta line (mono, tone-colored). */
   delta?: string;
   deltaTone?: KpiTone;
+  /* r365 — the flat delta FLAG: a small solid triangle rendered before
+   * the delta caption, playing the reference's signal-flag role in the
+   * KPI band (direction, not decoration: up/down/flat). Additive —
+   * every existing page keeps rendering unchanged when absent. */
+  deltaDir?: 'up' | 'down' | 'flat';
   tone?: KpiTone;
   /** Marks a not-yet datum — the honest-empty register. */
   empty?: boolean;
@@ -173,7 +185,11 @@ function KpiCell({ item }: { item: KpiItem }) {
       <span className="sg-kpi-value">{item.empty ? '—' : valueNode}</span>
       <span className="sg-kpi-label">{item.label}</span>
       {item.delta !== undefined && (
-        <span className="sg-kpi-delta" data-tone={DELTA_TONE[item.deltaTone ?? 'neutral']}>
+        <span
+          className="sg-kpi-delta"
+          data-tone={DELTA_TONE[item.deltaTone ?? 'neutral']}
+          data-dir={item.deltaDir}
+        >
           {item.delta}
         </span>
       )}
@@ -434,20 +450,35 @@ export function SheetEmpty({
   desc,
   action,
   code,
+  art,
+  artAlt,
 }: {
   title: string;
   desc?: string;
   action?: ReactNode;
   /** Optional mono sheet-code (NO-DATA / ERROR / …). */
   code?: string;
+  /* r367 (the r365 NEXT item): the optional art-v2 scene seat — the
+   * empty sheet may carry ONE duotone scene (the strip variant) above
+   * the frame register; omitted keeps the pre-r367 framed register
+   * verbatim. The scene is atmosphere: alt stays empty (the copy
+   * names the state), the flat-shape kit rides the scene's own
+   * grammar. */
+  art?: string;
+  artAlt?: string;
 }) {
   return (
     <div className="sg-empty">
+      {art !== undefined && (
+        <div className="sg-empty-art" aria-hidden="true">
+          <DuotoneScene src={art} alt={artAlt ?? ''} variant="strip" />
+        </div>
+      )}
       <div className="sg-empty-frame">
-        <i className="sg-reg sg-reg--tl" aria-hidden="true" />
-        <i className="sg-reg sg-reg--tr" aria-hidden="true" />
-        <i className="sg-reg sg-reg--bl" aria-hidden="true" />
-        <i className="sg-reg sg-reg--br" aria-hidden="true" />
+        <RegCross className="sg-reg sg-reg--tl" />
+        <RegCross className="sg-reg sg-reg--tr" />
+        <RegCross className="sg-reg sg-reg--bl" />
+        <RegCross className="sg-reg sg-reg--br" />
         {code !== undefined && <span className="sg-label">{code}</span>}
       </div>
       <p className="sg-empty-title">{title}</p>

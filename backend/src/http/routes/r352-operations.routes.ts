@@ -440,11 +440,12 @@ router.delete('/equipment/:id/programs/:programId', requireCapability('FACILITIE
 // ── work orders ────────────────────────────────────────────────────
 router.get('/work-orders', validate(workOrderListSchema, 'query'), async (req, res, next) => {
   try {
-    const { page, limit, status, equipmentId } = req.query as unknown as z.infer<typeof workOrderListSchema>;
+    const { page, limit, status, equipmentId, facilityId } = req.query as unknown as z.infer<typeof workOrderListSchema>;
     const where: Prisma.MaintenanceWorkOrderWhereInput = {
       institutionId: req.institution!.id,
       ...(status ? { status } : {}),
       ...(equipmentId ? { equipmentId } : {}),
+      ...(facilityId ? { facilityId } : {}),
     };
     const [total, data] = await Promise.all([
       prisma.maintenanceWorkOrder.count({ where }),
@@ -698,10 +699,11 @@ router.patch(
 // ── safety incidents ───────────────────────────────────────────────
 router.get('/safety-incidents', validate(safetyIncidentListSchema, 'query'), async (req, res, next) => {
   try {
-    const { page, limit, status } = req.query as unknown as z.infer<typeof safetyIncidentListSchema>;
+    const { page, limit, status, facilityId } = req.query as unknown as z.infer<typeof safetyIncidentListSchema>;
     const where: Prisma.SafetyIncidentWhereInput = {
       institutionId: req.institution!.id,
       ...(status ? { status } : {}),
+      ...(facilityId ? { facilityId } : {}),
     };
     const [total, data] = await Promise.all([
       prisma.safetyIncident.count({ where }),

@@ -19,7 +19,7 @@ import { formatPct1 } from '../../utils/numbers';
      form). The rest of the app still hand-writes className="btn …" /
      className="input" — the primitives remain the canonical consumers
      of those token systems, with the loading contracts pinned by
-     motion.css companions (.btn[data-loading] + .motion-spinner,
+     motion.css companions (.btn[data-loading] + .spinner,
      .input-affix).
    - Pill's non-interactive branch: when `onClick` is omitted the pill
      renders a <span> so the primitive can never emit a fake control;

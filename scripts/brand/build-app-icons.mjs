@@ -64,7 +64,7 @@ const STROKE_FAVICON = 2.25;  // mark.ts: the sanctioned small-seat ratio
  * ink/royal — colours; canvas — output px; box — fraction of the canvas
  * the full 32-grid box occupies; bg — background fill or null.
  */
-function markSvg({ stroke, ink = "#1A1713", orange = "#2540D9", canvas = 1024, box = 1, bg = null }) {
+function markSvg({ stroke, ink = "#1A1713", orange = "#1E1A3C", canvas = 1024, box = 1, bg = null }) {
   // Build in the mark's own 32-unit space; the viewBox carries the box
   // fraction (the mark occupies `box` of the canvas, centred) so the path
   // commands stay literal — never re-scale path numbers by hand.
@@ -76,7 +76,9 @@ function markSvg({ stroke, ink = "#1A1713", orange = "#2540D9", canvas = 1024, b
 
 /* ── 3. the asset table (every number derived from the one source) ──── */
 
-const PAPER = "#F5F1E8";
+/* r369: the paper ground is the cream --bg; the cornerstone is the
+   collapsed light --accent (tokens.generated.css: var(--neutral-900)). */
+const PAPER = "#FBF6EC";
 const ASSETS = {
   // App icon — punchy favicon-ratio strokes on paper.
   "icon.png": { svg: () => markSvg({ stroke: STROKE_FAVICON, bg: PAPER, box: 0.74 }) },
@@ -130,7 +132,7 @@ const report = (name, ok, note) => {
 console.log(`build-app-icons (${MODE}) — source: apps/mobile/src/brand/mark.ts`);
 
 // The ONE SVG — canonical, committed, byte-checked (viewBox = mark's own).
-const oneSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="${VIEWBOX}"><g fill="none" stroke="#1A1713" stroke-width="${STROKE_COMPONENT}" stroke-linecap="round" stroke-linejoin="round"><path d="${VESSEL}"/></g><rect x="${KEY[0]}" y="${KEY[1]}" width="${KEY[2]}" height="${KEY[2]}" fill="#2540D9"/></svg>`;
+const oneSvg = `<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="${VIEWBOX}"><g fill="none" stroke="#1A1713" stroke-width="${STROKE_COMPONENT}" stroke-linecap="round" stroke-linejoin="round"><path d="${VESSEL}"/></g><rect x="${KEY[0]}" y="${KEY[1]}" width="${KEY[2]}" height="${KEY[2]}" fill="#1E1A3C"/></svg>`;
 
 if (MODE === "png") {
   writeFileSync(join(SHARED_BRAND, "mark.svg"), oneSvg + "\n");

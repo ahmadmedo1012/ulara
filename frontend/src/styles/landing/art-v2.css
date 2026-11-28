@@ -1,0 +1,291 @@
+/* ═══════════════════════════════════════════════════════════════════
+   art-v2.css — r364 P1/P2 · the art system v2's public seats.
+
+   The flat-shape kit (the reference's measured construction —
+   docs/redesign/r350/reference REFERENCE.md §8 + shots shot-why /
+   shot-footer: big FLAT signal shapes against monochrome architectural
+   art) + the duotone scene plates that carry them. Every paint flows
+   the grammar seats: ink/paper/hairline tokens + var(--accent) — the
+   owner's royal blue plays the reference's orange role exactly.
+
+   Shapes are absolutely-seated inside .duo-scene (the figure) — the
+   variants' grids give them their stage; nothing here touches layout
+   outside the figure.
+   ═══════════════════════════════════════════════════════════════════ */
+
+.duo-scene {
+  --duo-ink: var(--paper-ink);
+  --duo-paper: var(--paper);
+  --duo-signal: var(--accent);
+  --duo-pale: color-mix(in srgb, var(--paper-ink) 7%, transparent);
+  position: relative;
+  overflow: hidden;
+  margin: 0;
+  background: var(--duo-paper);
+}
+
+/* ── the kit pieces ─────────────────────────────────────────────── */
+
+/* the large solid ROYAL circle — cropped by the frame (the reference's
+ * footer collage top-left: a full circle bleeding off the edge) */
+.fs-circle-royal {
+  position: absolute;
+  z-index: 3;
+  block-size: 13rem;
+  inline-size: 13rem;
+  border-radius: 50%;
+  background: var(--duo-signal);
+  inset-block-start: -4.5rem;
+  inset-inline-start: 6%;
+  pointer-events: none;
+}
+
+/* the tall solid ROYAL slab — the second flat shape (shot-footer's
+ * vertical bar against the scene's far edge) */
+.fs-slab {
+  position: absolute;
+  z-index: 3;
+  block-size: 58%;
+  inline-size: 8.5rem;
+  background: var(--duo-signal);
+  inset-block-start: 18%;
+  inset-inline-end: 14%;
+  pointer-events: none;
+}
+
+/* the PALE circle — a big quiet disc behind the scene (shot-footer's
+ * paper-tint circle at mid-left) */
+.fs-circle-pale {
+  position: absolute;
+  z-index: 1;
+  block-size: 24rem;
+  inline-size: 24rem;
+  border-radius: 50%;
+  background: var(--duo-pale);
+  inset-block-end: -18%;
+  inset-inline-start: 24%;
+  pointer-events: none;
+}
+
+/* the thin ROYAL construction lines — two hairlines crossing the
+ * band (the surveying grammar; never over the figure's face) */
+.fs-line {
+  position: absolute;
+  z-index: 2;
+  background: var(--duo-signal);
+  opacity: 0.5;
+  pointer-events: none;
+}
+.fs-line-a {
+  inline-size: 100%;
+  block-size: 1px;
+  inset-block-start: 22%;
+  inset-inline-start: 0;
+}
+.fs-line-b {
+  block-size: 100%;
+  inline-size: 1px;
+  inset-inline-start: 62%;
+  inset-block-start: 0;
+}
+
+/* ── the scene image — the duotone treatment ────────────────────── */
+.duo-img {
+  position: relative;
+  z-index: 2;
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: cover;
+  filter: grayscale(1) contrast(1.12) brightness(1.04);
+  mix-blend-mode: multiply;
+}
+
+/* ── the caption row ────────────────────────────────────────────── */
+.duo-cap {
+  position: absolute;
+  z-index: 4;
+  inset-block-end: 0.75rem;
+  inset-inline-start: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--duo-ink);
+  font-size: 0.72rem;
+}
+.duo-cap-note {
+  font-size: 0.85rem;
+  color: color-mix(in srgb, var(--duo-ink) 72%, transparent);
+}
+
+/* ── variant: stage (the why band's hero imagery) ───────────────── */
+.duo-stage {
+  inline-size: 100%;
+  aspect-ratio: 1344 / 620;
+  max-block-size: 560px;
+  border: 1px solid var(--hairline);
+}
+
+/* ── variant: strip (the footer's ink band) ─────────────────────── */
+.duo-strip {
+  inline-size: 100%;
+  aspect-ratio: 1440 / 384;
+  min-block-size: 220px;
+}
+
+/* the strip's shapes re-seat for the low band */
+.duo-strip .fs-circle-royal { block-size: 10rem; inline-size: 10rem; inset-block-start: -3rem; }
+.duo-strip .fs-slab { block-size: 70%; inline-size: 6.5rem; inset-block-start: 10%; }
+.duo-strip .fs-circle-pale { block-size: 18rem; inline-size: 18rem; inset-block-end: -30%; }
+
+/* ── dark theme — the same seats invert with the paper ──────────── */
+[data-theme="dark"] .duo-scene {
+  --duo-pale: color-mix(in srgb, var(--paper-ink) 10%, transparent);
+}
+[data-theme="dark"] .duo-img {
+  filter: grayscale(1) contrast(1.05) brightness(0.82);
+  mix-blend-mode: screen;
+  opacity: 0.9;
+}
+
+/* ── reduced motion / JS-off: nothing animates here — the figure is
+   static by construction. ────────────────────────────────────────── */
+
+/* ── the phone re-stage (mission P5: composed, not scaled) ──────── */
+@media (max-width: 767px) {
+  .duo-stage { aspect-ratio: 692 / 620; max-block-size: 460px; }
+  .fs-circle-royal { block-size: 9rem; inline-size: 9rem; inset-block-start: -2.5rem; inset-inline-start: 2%; }
+  .fs-slab { inline-size: 5.5rem; inset-inline-end: 6%; }
+  .fs-circle-pale { block-size: 16rem; inline-size: 16rem; }
+  .fs-line-b { inset-inline-start: 76%; }
+  .duo-strip .fs-circle-royal { block-size: 7rem; inline-size: 7rem; inset-block-start: -2rem; }
+  .duo-strip .fs-slab { inline-size: 4.5rem; }
+  .duo-strip .fs-circle-pale { block-size: 13rem; inline-size: 13rem; }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   the plan plates + dark cards (the use-case grammar — shot-usecase)
+   ═══════════════════════════════════════════════════════════════════ */
+
+.plan-plate {
+  position: relative;
+  margin: 0;
+  border: 1px solid var(--hairline);
+  background: var(--paper);
+  display: flex;
+  flex-direction: column;
+}
+.plan-plate-art {
+  display: block;
+  inline-size: 100%;
+  block-size: auto;
+  /* the plan's own paper tone blends into the sheet (same multiply
+     law as the hero ink) */
+  mix-blend-mode: multiply;
+}
+.plan-titlebar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  border-block-start: 1px solid var(--hairline);
+  padding: 0.55rem 0.9rem;
+}
+.plan-title {
+  font-weight: 700;
+  font-size: 1.05rem;
+  letter-spacing: 0.01em;
+  color: var(--paper-ink);
+}
+.plan-spec {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  font-size: 0.62rem;
+  color: var(--paper-ink-2);
+  text-transform: uppercase;
+}
+.plan-spec-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  padding-inline: 0.6rem;
+  border-inline-start: 1px solid var(--hairline);
+}
+.plan-spec-cell b {
+  font-weight: 500;
+  font-size: 0.55rem;
+  /* r367 a11y pass — 55% rode 3.85:1 (axe serious, the gate's floor
+     breach at phone/light); 72% measures 5.71:1 light / 7.97:1 dark —
+     the AA floor holds on both arms without losing the ghosted-spec
+     voice. */
+  color: color-mix(in srgb, var(--paper-ink) 72%, transparent);
+}
+.plan-stamp {
+  display: grid;
+  place-items: center;
+  inline-size: 1.6rem;
+  block-size: 1.6rem;
+  border: 1px solid var(--hairline);
+  color: var(--accent);
+  margin-inline-start: 0.5rem;
+}
+.plan-stamp svg { inline-size: 0.9rem; block-size: 0.9rem; }
+
+/* the dark info card — the ink slab (CHECKING… / LEARNED PATTERN) */
+.dark-card {
+  position: absolute;
+  z-index: 3;
+  inset-inline-start: 0;
+  inset-block-end: 0;
+  inline-size: min(19rem, 92%);
+  background: var(--paper-ink);
+  color: var(--paper);
+  border: 1px solid var(--paper-ink);
+  box-shadow: 4px 4px 0 0 color-mix(in srgb, var(--paper-ink) 28%, transparent);
+  padding: 0.55rem 0.75rem 0.6rem;
+}
+.dark-card-head {
+  display: block;
+  font-size: 0.66rem;
+  letter-spacing: 0.08em;
+  margin-block-end: 0.4rem;
+  color: color-mix(in srgb, var(--paper) 88%, transparent);
+}
+.dark-card-rows {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.28rem;
+}
+.dark-card-row {
+  font-size: 0.6rem;
+  letter-spacing: 0.04em;
+  color: color-mix(in srgb, var(--paper) 72%, transparent);
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+.dark-card-row::before {
+  content: "";
+  inline-size: 0.4rem;
+  block-size: 0.4rem;
+  background: var(--accent);
+  flex: none;
+}
+
+/* the roles band's plan row — the use-case reveal strip */
+.plan-strip {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.25rem;
+  margin-block-start: 2.5rem;
+}
+.plan-strip .plan-plate { min-inline-size: 0; }
+.plan-strip .plan-plate-checked { position: relative; min-inline-size: 0; }
+@media (max-width: 991px) {
+  .plan-strip { grid-template-columns: 1fr; gap: 1.5rem; }
+  .dark-card { position: static; inline-size: 100%; margin-block-start: 0.6rem; }
+}

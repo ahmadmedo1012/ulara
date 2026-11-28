@@ -5,8 +5,6 @@
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { api, unwrap } from '../../lib/api';
-import { useInstitutionScope } from '../../stores/auth.store';
-import { withInstitutionScope } from '../../lib/queryClient';
 
 /* r179 (phase-5) scope classification (mirrors
  * backend/src/http/routes/training.routes.ts): the training CATALOG
@@ -49,14 +47,6 @@ export interface LeaderEntry {
   avatarColor?: string | null;
   totalXp: number;
   level: number;
-}
-export function useLeaderboard() {
-  const inst = useInstitutionScope();
-  return useQuery({
-    /* r180: GET /leaderboard is institution-scoped server-side — scoped key. */
-    queryKey: withInstitutionScope(['leaderboard'], inst),
-    queryFn: () => unwrap<LeaderEntry[]>(api.get('/leaderboard')),
-  });
 }
 
 // ── Training (Self-Development) ───────────────────────────────

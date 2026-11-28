@@ -18,7 +18,7 @@ import { toast } from '../../lib/toast';
 import { formatDate } from '../../utils/numbers';
 import {
   serverError, DetailList, EnumChip, InstConfirm, InstFilters, InstFormDialog, InstPagedTable,
-  InstSection, InstSelect, InstStates, InstTable, type InstColumn, type InstField, type InstFormValues,
+  InstSection, InstSelect, InstStates, InstTable, StatusFlag, type InstColumn, type InstField, type InstFormValues,
 } from '../../components/institutional/kit';
 import { Icon } from '../../components/Icon';
 import {
@@ -267,8 +267,8 @@ export function InstitutionOrganizationPage() {
   const listColumns: Array<InstColumn<OrgUnit>> = [
     { head: 'الوحدة', cell: (u) => <span className="inst-tree-name">{u.nameAr}</span> },
     { head: 'النوع', cell: (u) => <span className="inst-tree-kind">{ORG_UNIT_TYPE_LABELS[u.type]}</span> },
-    { head: 'الرمز', cell: (u) => <span className="font-mono">{u.code ?? '—'}</span> },
-    { head: 'الحالة', cell: (u) => <EnumChip value={u.status} labels={ORG_UNIT_STATUS_LABELS} /> },
+    { head: 'الرمز', mono: true, cell: (u) => (u.code ?? '—') },
+    { head: 'الحالة', cell: (u) => <StatusFlag value={u.status} labels={ORG_UNIT_STATUS_LABELS} /> },
     {
       head: 'إجراءات', mobileHidden: true,
       cell: (u) => canManage ? (
@@ -492,7 +492,7 @@ export function InstitutionOrganizationPage() {
                 columns={[
                   { head: 'الاسم', cell: (p) => p.fullNameAr },
                   { head: 'الفئة', cell: (p) => STAFF_CATEGORY_LABELS[p.category] ?? p.category },
-                  { head: 'الحالة', cell: (p) => <EnumChip value={p.staffStatus} labels={STAFF_STATUS_LABELS} /> },
+                  { head: 'الحالة', cell: (p) => <StatusFlag value={p.staffStatus} labels={STAFF_STATUS_LABELS} /> },
                 ]}
               />
             </InstStates>
@@ -510,8 +510,8 @@ export function InstitutionOrganizationPage() {
                 dense
                 columns={[
                   { head: 'منذ', cell: (a) => formatDate(a.startDate) },
-                  { head: 'الحالة', cell: (a) => <EnumChip value={a.status} labels={APPOINTMENT_STATUS_LABELS} /> },
-                  { head: 'بقرار', cell: (a) => a.decisionNumber ?? '—' },
+                  { head: 'الحالة', cell: (a) => <StatusFlag value={a.status} labels={APPOINTMENT_STATUS_LABELS} /> },
+                  { head: 'بقرار', mono: true, cell: (a) => (a.decisionNumber ?? '—') },
                 ]}
               />
             </InstStates>
@@ -529,8 +529,8 @@ export function InstitutionOrganizationPage() {
                 dense
                 columns={[
                   { head: 'البرنامج', cell: (p) => p.nameAr },
-                  { head: 'الرمز', cell: (p) => <span className="font-mono">{p.code}</span>, mono: true },
-                  { head: 'الحالة', cell: (p) => <EnumChip value={p.status} labels={PROGRAM_STATUS_LABELS} /> },
+                  { head: 'الرمز', cell: (p) => (p.code ?? '—'), mono: true },
+                  { head: 'الحالة', cell: (p) => <StatusFlag value={p.status} labels={PROGRAM_STATUS_LABELS} /> },
                 ]}
               />
             </InstStates>

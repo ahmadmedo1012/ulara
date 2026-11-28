@@ -8,7 +8,8 @@ import { catalogApi } from "@/api/catalog";
 import { trainingApi } from "@/api/training";
 import { useInstitutionScope } from "@/hooks/useInstitutionScope";
 import { usePalette } from "@/design/theme";
-import { ds, sp, tierColors } from "@/design/tokens";
+import { ds, radius, sp, tierColors } from "@/design/tokens";
+import { LevelBadge, LEVEL_NAMES } from "@/components/gamification/LevelBadge";
 import { T } from "@/components/ui/text";
 import { Badge, Card, Hairline } from "@/components/ui/surfaces";
 import { Avatar, LedgerRow, RowList } from "@/components/ui/data";
@@ -27,30 +28,15 @@ import {
 import { PushFrame } from "@/features/student/components";
 
 /**
- * /student/gamification — نقاطي وأوسمتي (web GamificationPage parity):
- * XP + level with the tier orb (the documented gamification brand
- * constants), the institutional leaderboard (top 10) and my training
- * badges grid keyed by rarity tones.
+ * /student/gamification — نقاطي وأوسمتي (web GamificationPage parity).
+ * r369 slice 04: the metallic tier orb retires (the web retired it in
+ * R359) — the level statement rides the r369 generated badge, and the
+ * 20-rung ladder joins below it, both driven ONLY by the real
+ * profile.student.{level,totalXp}. The mobile payload carries no
+ * pctIntoLevel/toNext and no streak field exists anywhere (the web's
+ * slice-02/03 finding) — so no progress bar and no streak row render;
+ * both gaps ride the LEDGER, never a fabricated rung.
  */
-/**
- * Orb numeral ink — decided by the tier ground's OWN luminance (WCAG
- * relative luminance of tierColors[tier]): the bright metallics (GOLD
- * #D4A537 ≈ 0.42, SILVER ≈ 0.36) seat the ink rung; the darker tiers
- * seat paper. Fixes paper-on-GOLD at 2.27:1 / paper-on-SILVER at 2.48:1
- * (light mode's old p.surface read). Both inks come from the ds token
- * data — no literals here.
- */
-function tierOrbInk(tier: string, fallback: string): string {
-  const hex = tierColors[tier];
-  const m = /^#([0-9a-fA-F]{2})([0-9a-fA-F]{2})([0-9a-fA-F]{2})$/.exec(hex ?? "");
-  if (!m) return fallback;
-  const lin = (v: string) => {
-    const c = parseInt(v, 16) / 255;
-    return c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4;
-  };
-  const L = 0.2126 * lin(m[1]) + 0.7152 * lin(m[2]) + 0.0722 * lin(m[3]);
-  return L > 0.3 ? ds.light.text : ds.dark.text;
-}
 
 export default function GamificationScreen() {
   const p = usePalette();
@@ -87,25 +73,11 @@ export default function GamificationScreen() {
       ) : (
         <Card style={{ gap: sp[10] }}>
           <View style={{ flexDirection: "row", alignItems: "center", gap: sp[12] }}>
-            <View
-              accessibilityLabel={`المستوى ${num(level ?? null)} — تصنيف ${TIER_LABEL[tier]}`}
-              style={{
-                width: 72,
-                height: 72,
-                borderRadius: 36,
-                backgroundColor: tierColors[tier],
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              {/* The orb's numeral ink follows the TIER's luminance, not the
-                  theme surface: paper-on-GOLD was 2.27:1 and paper-on-SILVER
-                  2.48:1 in light mode (sub-AA even for large numerals).
-                  Darker tiers keep the paper read; the bright metallics seat
-                  ink. */}
-              <T variant="h2" weight="bold" style={{ color: tierOrbInk(tier, p.surface) }}>
-                {num(level ?? null)}
-              </T>
+            {/* r369: the generated badge replaces the metallic orb — the
+                level's own rung geometry (rays 3→7, tier marks), never a
+                tinted circle. */}
+            <View accessibilityLabel={`المستوى ${num(level ?? null)} — تصنيف ${TIER_LABEL[tier]}`}>
+              <LevelBadge level={Math.min(Math.max(level ?? 1, 1), 20) - 1} size={72} locked={level == null} />
             </View>
             <View style={{ flex: 1, gap: sp[4] }}>
               <T variant="sm" color="muted">
@@ -124,6 +96,47 @@ export default function GamificationScreen() {
             التصنيف مشتق من مستواك: برونزي حتى المستوى 2، فضي حتى 4، ذهبي حتى 6، بلاتيني من المستوى 7.
           </T>
         </Card>
+      )}
+
+      {/* r369 slice 04 — the 20-rung ladder: earned rungs light their tier
+          ink, the current rung rings in goldInk, locked rungs mute. Data:
+          profile.student.level only — never a fabricated rung. */}
+      {!profile.isLoading && !profile.isError && (
+        <View style={{ gap: sp[6] }}>
+          <T variant="h4" weight="bold">
+            سلّم المستويات
+          </T>
+          <View style={{ flexDirection: "row", flexWrap: "wrap", gap: sp[8] }}>
+            {LEVEL_NAMES.map((n, i) => {
+              const rung = i + 1;
+              const current = Math.min(Math.max(level ?? 0, 0), 20);
+              const earned = rung <= current;
+              const isCurrent = rung === current;
+              return (
+                <View
+                  key={n}
+                  accessibilityLabel={`المستوى ${latn(rung)} — ${n}${isCurrent ? " — مستواك الحالي" : earned ? " — مفتوح" : " — مغلق"}`}
+                  style={{
+                    width: "18%",
+                    alignItems: "center",
+                    gap: sp[4],
+                    paddingVertical: sp[6],
+                    borderRadius: radius.md,
+                    backgroundColor: isCurrent ? p.surfaceHover : "transparent",
+                  }}
+                >
+                  <LevelBadge level={i} size={34} locked={!earned} />
+                  <T variant="xs" color={isCurrent ? "accentInk" : earned ? "secondary" : "faint"} weight={isCurrent ? "bold" : "regular"}>
+                    {n}
+                  </T>
+                </View>
+              );
+            })}
+          </View>
+          <T variant="xs" color="faint">
+            عشرون مستوى من «بذرة» إلى «المعلّم» — تُفتح بنقاط التطوير الذاتي.
+          </T>
+        </View>
       )}
 
       <View style={{ gap: sp[6] }}>

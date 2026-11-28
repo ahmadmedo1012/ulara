@@ -417,8 +417,8 @@ async function request(config: ApiRequestConfig): Promise<ApiResponse<unknown>> 
     wakeRequestSettle(wakeId);
     return res;
   } catch (error) {
-    wakeRequestSettle(wakeId);
     const err = error instanceof ApiError ? error : new ApiError('Network Error', cfg);
+    wakeRequestSettle(wakeId, err.response !== undefined);
     const status = err.response?.status;
 
     /* r152a (A4 P3-suspected): recovery used to fire ONLY on TOKEN_EXPIRED.

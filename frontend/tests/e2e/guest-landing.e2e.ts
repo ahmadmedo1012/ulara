@@ -14,27 +14,27 @@ test.describe('الصفحة العامة للزوار', () => {
     // العرض ذا السطرين «رحلة تعلم واحدة / من المحاضرة إلى الإتقان»
     // (بلا تشكيل على سلّم --fs-h1)؛ التثبيت القديم «كلُّ معرفةٍ…» كان
     // لعنوان جُهّز قبل r306. وهوية «أُلارا» نفسها في خلية العلامة بالترويسة.
-    await expect(page.locator('.fo-hero-title')).toContainText('رحلة تعلم واحدة');
-    await expect(page.locator('.fo-hero-title')).toContainText('من المحاضرة إلى الإتقان');
-    await expect(page.getByRole('banner').locator('.fo-brand-name')).toContainText('أُلارا');
+    await expect(page.locator('h1.w369-h1')).toContainText('في نظام واحد');
+    await expect(page.locator('h1.w369-h1')).toContainText('جامعةٌ تعمل');
+    await expect(page.getByRole('banner').locator('.w369-brand-word')).toContainText('أُلارا');
     // هوية المنصّة في الترويسة (r188: لا جامعة حقيقية — الاستقلالية؛ r191: العبارة المحذوفة صُنعت في ليبيا لم تعد اسم المنتج)
-    await expect(page.locator('.fo-header-actions')).toBeVisible();
-    await page.locator('[data-lz="footer"]').scrollIntoViewIfNeeded();
-    await expect(page.getByText('نظام تشغيل الجامعة').first()).toBeVisible();
+    await expect(page.locator('.w369-nav-actions')).toBeVisible();
+    await page.locator('.w369-footer').scrollIntoViewIfNeeded();
+    await expect(page.locator('.w369-footer').getByText('منصّة تعليمية تقنية مستقلّة').first()).toBeVisible();
     // بيان الاستقلالية يسمّي المؤسّسة التجريبية الاصطناعية بالاسم
     await expect(page.getByText('مساحة عمل أُلارا التجريبية').first()).toBeVisible();
-    // دفتر الصدق بعد r191: القسم يسمّي مصدر أرقامه (ما يعمل اليوم بدل ما يُشحن اليوم)
-    await expect(page.getByText('ما يعمل اليوم').first()).toBeVisible();
+    // دفتر الصدق: التذييل يربط بسجلّ القدرات (ما يعمل اليوم فعلًا)
+    await expect(page.locator('.w369-footer').getByRole('link', { name: 'القدرات' })).toBeVisible();
     // RTL بالهيكل — التطبيق عربي بالكامل (قفل index.html)
     await expect(page.locator('html')).toHaveAttribute('dir', 'rtl');
   });
 
-  test('الدعوة الأساسية: «ابدأ الآن» تقود مباشرةً إلى إنشاء الحساب (r164-b)', async ({ page }) => {
+  test('الدعوة الأساسية: «أنشئ حسابك» تقود مباشرةً إلى إنشاء الحساب (r164-b)', async ({ page }) => {
     await page.goto('/');
 
     // r164-b: كل أزرار البدء الرئيسيّة تقود الزائر الجديد مباشرةً إلى
     // نموذج إنشاء الحساب — لا إلى بوابة الدخول (كان الوصل مكسورًا).
-    await page.getByRole('link', { name: 'ابدأ الآن' }).first().click();
+    await page.getByRole('link', { name: 'أنشئ حسابك' }).first().click();
     await expect(page).toHaveURL(/\/auth\/register$/);
     // الخطوة الأولى في صفحة التسجيل: اختيار الدور «من أنت؟»
     await expect(page.getByRole('heading', { name: 'من أنت؟' })).toBeVisible();

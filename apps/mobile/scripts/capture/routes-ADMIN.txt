@@ -1,0 +1,13 @@
+# r366 capture rig — ADMIN routes (registrar@test.ly)
+# format: NAME|route-path
+dashboard|admin/dashboard
+faculties|admin/faculties
+students|admin/students
+teachers|admin/teachers
+reports|admin/reports
+courses|admin/courses
+invites|admin/invites
+bulk-import|admin/bulk-import
+digital|admin/digital
+alerts|admin/alerts
+feedback|admin/feedback

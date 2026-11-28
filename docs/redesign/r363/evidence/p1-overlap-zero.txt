@@ -1,0 +1,8 @@
+r363 P1 — overlap sweep after the landing fixes (dev server, hermetic mock transport)
+Command: ULARA_E2E_BASE_URL=http://localhost:5173 npx tsx scripts/audit/r362-overlap.ts --only /
+Output:  overlap sweep: 14 cells × 1 routes @ http://localhost:5173
+         findings: 0 {}
+(7 widths × 2 themes on / — collisions, clipped text, page overflow: zero)
+Console (light, load + scroll to 4100): NONE (the fetchPriority dev warning is retired
+with the attribute — the hint was redundant: the hero art is preloaded, the footer
+strip is lazy).

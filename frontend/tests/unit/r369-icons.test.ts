@@ -41,7 +41,7 @@ describe('r369 §S1 — the icon set', () => {
      * edge (the classic “the star is cut” bug). */
     for (const name of GLYPH_NAMES) {
       const g = GLYPHS[name]!;
-      for (const d of [g.accent ?? '', ...g.stroke].filter(Boolean)) {
+      for (const d of [(g as { accent?: string }).accent ?? '', ...g.stroke].filter(Boolean)) {
         const anchor = d.match(/^M\s*(-?[\d.]+)[\s,]+(-?[\d.]+)/);
         expect(anchor, `${name}: path must open with M x y`).toBeTruthy();
         const [, x, y] = anchor!;

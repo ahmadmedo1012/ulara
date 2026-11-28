@@ -1,0 +1,221 @@
+# ═════════════════════════════════════════════════════════════════════
+# product-sweep.yml — the P4 PRODUCT SWEEP lane (work order P4, items
+# #1+#2: scripts/audit/p4/sweep.ts + this job).
+#
+# PURPOSE: run the P4 sweep detectors as a CI gate, riding the SAME
+# hermetic serving pattern as the surface-drift job in ci.yml —
+# `vite preview` over the PRODUCTION build on :4173, every /api/ call
+# fulfilled by the e2e fixture transport
+# (tests/e2e/fixtures/mock-transport.ts via AUDIT_API_MOCK=1 +
+# ULARA_E2E_BASE_URL) — no backend, no DB, no network. The sweep
+# ATTACHES to the running preview (it never boots its own server).
+#
+# CADENCE (CI budget):
+#   · PRs            → sweep-slice: landing + one page per role
+#                      (+ /institution) × 390/1440 × light/dark = 28
+#                      cells, plus the r362 overlap cross-check and the
+#                      r360 landing-height read on the same preview.
+#   · push to main   → sweep-full: the FULL r358-derived matrix in 6
+#                      role lanes running in parallel (≤ 60 timeout).
+#                      The lanes carry the overlap detector INSIDE the
+#                      sweep (every cell runs the r362 COLLECT source),
+#                      so no separate r362 step is needed here.
+#   · weekly schedule→ sweep-full (below) + sweep-ux (drafted at the
+#                      bottom — its probe scripts land with P4 items
+#                      #3-#6; the job is commented until then).
+#   · workflow_dispatch with a `mode` input so an operator can force
+#                     slice / full / ux.
+#
+# GATE SEMANTICS: scripts/audit/p4/sweep.ts exits 0 clean, 1 on any
+# P0/P1 finding (the catalog still records P2 inventory), 2 on infra —
+# so a non-zero step status fails the job. Lane catalogs land in
+# docs/redesign/p4/evidence/ as defects-<lane>.json (+ summary) and are
+# uploaded as artifacts.
+# ═════════════════════════════════════════════════════════════════════
+
+name: Product sweep
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  schedule:
+    # Weekly, Monday 03:07 UTC (off the :00 minute — the GH cron crunch).
+    - cron: '7 3 * * 1'
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'slice (PR-sized) | full (matrix) | ux (full + UX probes)'
+        required: false
+        default: 'full'
+        type: choice
+        options: [slice, full, ux]
+
+# Least privilege — nothing here writes to the repo.
+permissions:
+  contents: read
+
+concurrency:
+  group: product-sweep-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_VERSION: '22'
+  # The hermetic transport knobs (surface-drift job convention, ci.yml):
+  # the sweep attaches to the preview at ULARA_E2E_BASE_URL and every
+  # /api/ call is fulfilled by the e2e fixture transport (AUDIT_API_MOCK=1).
+  ULARA_E2E_BASE_URL: http://localhost:4173
+  AUDIT_API_MOCK: '1'
+
+jobs:
+  # ── 1. the PR slice: 7 routes × 390/1440 × light/dark = 28 cells ──────
+  sweep-slice:
+    if: >
+      github.event_name == 'pull_request' ||
+      (github.event_name == 'workflow_dispatch' && inputs.mode == 'slice')
+    name: Product sweep (slice)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+      - run: npm ci
+      - run: npm --prefix frontend run build
+      - name: Install chromium (audit sweep browser)
+        working-directory: frontend
+        run: npx playwright install chromium
+      - name: Serve the production build (hermetic)
+        working-directory: frontend
+        run: |
+          npx vite preview --port 4173 --strictPort &
+          echo "PREVIEW_PID=$!" >> "$GITHUB_ENV"
+          sleep 5
+      - name: P4 sweep — slice (28 cells, gate)
+        run: npx tsx scripts/audit/p4/sweep.ts --mode slice
+      # Cross-checks with the proven standalone instruments on the same
+      # preview (the sweep already embeds the r362 detectors — these two
+      # keep the historical gates visible on PRs):
+      - name: Overlap detector — slice routes
+        run: |
+          npx tsx scripts/audit/r362-overlap.ts --only / --json /tmp/overlap-slice.json
+          npx tsx scripts/audit/r362-overlap.ts --role STUDENT --json /tmp/overlap-slice-student.json
+      - name: Landing height law (≤ 5,000px @390, deep-walked)
+        run: node scripts/audit/r360-landing-height.mjs http://localhost:4173/
+      - name: Stop the preview server
+        if: always()
+        run: kill "$PREVIEW_PID" || true
+      - name: Upload sweep evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: p4-sweep-slice
+          path: |
+            /tmp/overlap-slice*.json
+            docs/redesign/p4/evidence/
+          retention-days: 14
+
+  # ── 2. the full matrix: every derived route × 7 widths × 2 themes, ────
+  #    chunked per role (the r360-F3 lesson: runners reap detached
+  #    processes, so the matrix runs as role CHUNKS — one lane each,
+  #    each writing its own defects-<lane>.json catalog). The
+  #    /institution surfaces ride the ADMIN lane (selectedInstitution,
+  #    the r358 roleFor mapping). The overlap/r362 detectors run INSIDE
+  #    the sweep on every cell — no separate r362 step per lane.
+  sweep-full:
+    if: >
+      github.event_name == 'push' ||
+      github.event_name == 'schedule' ||
+      (github.event_name == 'workflow_dispatch' && inputs.mode != 'slice')
+    name: Product sweep (full — ${{ matrix.lane }})
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        lane: [PUBLIC, STUDENT, TEACHER, ADMIN, QUALITY, OWNER]
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+      - run: npm ci
+      - run: npm --prefix frontend run build
+      - name: Install chromium (audit sweep browser)
+        working-directory: frontend
+        run: npx playwright install chromium
+      - name: Serve the production build (hermetic)
+        working-directory: frontend
+        run: |
+          npx vite preview --port 4173 --strictPort &
+          echo "PREVIEW_PID=$!" >> "$GITHUB_ENV"
+          sleep 5
+      - name: P4 sweep — lane ${{ matrix.lane }} (7 widths × 2 themes, gate)
+        run: npx tsx scripts/audit/p4/sweep.ts --mode full --lane ${{ matrix.lane }}
+      - name: Stop the preview server
+        if: always()
+        run: kill "$PREVIEW_PID" || true
+      - name: Upload lane catalog
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: p4-sweep-full-${{ matrix.lane }}
+          path: docs/redesign/p4/evidence/
+          retention-days: 14
+
+  # ── 3. the UX probes — DRAFT (P4 items #3-#6, not built yet) ─────────
+  #    Weekly + dispatch 'ux' only. These are the NEW P4 detectors:
+  #    keyboard-only journeys, 200% text zoom, reduced motion, slow-3G +
+  #    CPU 4×. Heavier interaction, higher flake risk — gated on the
+  #    schedule, reported as artifacts + gate on P0s only. The job is
+  #    installed as a draft comment UNTIL the probe scripts land;
+  #    uncomment as each script/audit/p4/*.ts ships.
+  #
+  sweep-ux:
+    # r363: the four probes shipped (probe-keyboard · probe-zoom ·
+    # probe-reduced-motion · probe-throttle); the responsive-semantics
+    # probe is the remaining P4 item and stays unwired.
+    if: >
+      github.event_name == 'schedule' ||
+      (github.event_name == 'workflow_dispatch' && inputs.mode == 'ux')
+    name: Product sweep (ux probes)
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+      - run: npm ci
+      - run: npm --prefix frontend run build
+      - name: Install chromium (audit sweep browser)
+        working-directory: frontend
+        run: npx playwright install chromium
+      - name: Serve the production build (hermetic)
+        working-directory: frontend
+        run: |
+          AUDIT_API_MOCK=1 npx vite preview --port 4173 --strictPort &
+          echo "PREVIEW_PID=$!" >> "$GITHUB_ENV"
+          sleep 5
+      - name: Keyboard-only — the five main journeys
+        run: ULARA_E2E_BASE_URL=http://localhost:4173 npx tsx scripts/audit/p4/probe-keyboard.ts --report docs/redesign/p4/evidence
+      - name: 200% text zoom — the reflow gate at half-viewport + rem×2
+        run: ULARA_E2E_BASE_URL=http://localhost:4173 npx tsx scripts/audit/p4/probe-zoom.ts --report docs/redesign/p4/evidence
+      - name: prefers-reduced-motion — ambient animations settle, reveals complete
+        run: ULARA_E2E_BASE_URL=http://localhost:4173 npx tsx scripts/audit/p4/probe-reduced-motion.ts --report docs/redesign/p4/evidence
+      - name: Slow-3G + CPU 4× — landing + /auth + one role page
+        run: ULARA_E2E_BASE_URL=http://localhost:4173 npx tsx scripts/audit/p4/probe-throttle.ts --report docs/redesign/p4/evidence
+      - name: Stop the preview server
+        if: always()
+        run: kill "$PREVIEW_PID" || true
+      - name: Upload UX evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: p4-sweep-ux
+          path: docs/redesign/p4/evidence/
+          retention-days: 14

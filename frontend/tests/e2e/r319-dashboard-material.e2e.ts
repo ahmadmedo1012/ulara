@@ -29,6 +29,7 @@
  *     bare «لا شيء بعد» prose.
  */
 import { test, expect } from './fixtures/e2e';
+import { R369_RADII } from './fixtures/r369-radii';
 
 const THEMES = ['light', 'dark'] as const;
 
@@ -117,7 +118,7 @@ for (const theme of THEMES) {
         mono: getComputedStyle(el).fontFamily,
         dir: el.getAttribute('dir'),
       }));
-      expect(style.radius).toBe('0px');
+      expect(R369_RADII).toContain(style.radius as (typeof R369_RADII)[number]);
       expect(style.mono).toContain('Geist Mono');
       expect(style.dir).toBe('ltr');
     });

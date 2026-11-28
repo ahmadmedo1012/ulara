@@ -116,44 +116,49 @@ describe('R320 §D — the 9-page grammar (the reference public sheet)', () => {
     expect(skip).toBeTruthy();
     expect(skip?.getAttribute('href')).toBe('#main');
     expect(container.querySelector('main#main')).toBeTruthy();
-    /* R341 D2 re-key: /about left the lg-* family and rides the pattern
-     * library now (about.css ab-* header, queen-arbitrated OWNERSHIP D2
-     * split); the other eight sheets keep the lg sheet header.
-     * R341 D3 re-key: /help likewise (help.css hp-* header). */
-    expect(container.querySelector('header.lg-header, header.ab-header, header.hp-header')).toBeTruthy();
+    /* r369 slice B re-key: every public sheet rides PublicShell now —
+     * the warm world's route-aware nav (w369-nav) replaces the three
+     * retired drafting headers (lg/ab/hp). */
+    expect(container.querySelector('header.w369-nav')).toBeTruthy();
     // the honest colophon cluster + the آخر تحديث stamp
-    expect(screen.getByText('منصّة مستقلّة · عربية أولًا · بيانات العرض اصطناعية بالكامل')).toBeTruthy();
+    expect(screen.getByText('منصّة مستقلّة · بيانات العرض اصطناعية بالكامل')).toBeTruthy();
     expect(screen.getAllByText(/آخر تحديث/).length).toBeGreaterThanOrEqual(1);
     expect(screen.getAllByText(LEGAL_UPDATED).length).toBeGreaterThanOrEqual(1);
   });
 
-  it.each(PAGES)('$path mounts the GuestSheetChrome frame (4 marks) + grain film', ({ Component }) => {
+  it.each(PAGES)('$path rides PublicShell — the warm nav + footer, NO retired frame or grain', ({ Component }) => {
     const { container } = renderPage(Component);
-    const frame = container.querySelector('.auth-frame');
-    expect(frame).toBeTruthy();
-    expect(frame?.querySelectorAll('.auth-mark')).toHaveLength(4);
-    expect(container.querySelector('.auth-grain')).toBeTruthy();
+    // r369 slice B re-key: GuestSheetChrome (auth-frame × 4 marks +
+    // grain film) is retired grammar; the shell is the landing's world.
+    expect(container.querySelector('.w369.p369')).toBeTruthy();
+    expect(container.querySelector('header.w369-nav .w369-brand')).toBeTruthy();
+    expect(container.querySelector('footer')).toBeTruthy();
+    expect(container.querySelector('.auth-frame')).toBeNull();
+    expect(container.querySelector('.auth-grain')).toBeNull();
   });
 
-  it('the sticky guest header carries the back-to-home link + the brand mark', () => {
+  it('the warm nav carries the brand mark home + the entry actions', () => {
     renderPage(PrivacyPage);
-    const back = screen.getByRole('link', { name: /العودة إلى الصفحة الرئيسية/ });
-    expect(back.getAttribute('href')).toBe('/');
-    const brand = screen.getByRole('link', { name: 'أُلارا — الصفحة الرئيسية' });
+    const nav = document.querySelector('header.w369-nav')!;
+    const brand = within(nav as HTMLElement).getByRole('link', { name: 'أُلارا — الصفحة الرئيسية' });
     expect(brand.getAttribute('href')).toBe('/');
+    const login = within(nav as HTMLElement).getByRole('link', { name: 'تسجيل الدخول' });
+    expect(login.getAttribute('href')).toBe('/auth');
+    const register = within(nav as HTMLElement).getByRole('link', { name: /أنشئ حسابك/ });
+    expect(register.getAttribute('href')).toBe('/auth/register');
   });
 
-  it('the section bars are [nn]-indexed h2s — mono LTR runs, aria-hidden, sequential', () => {
+  it('the section bars are circled-number h2s — LTR runs, aria-hidden, sequential (r369 re-key)', () => {
     renderPage(PrivacyPage);
     const bars = screen.getAllByRole('heading', { level: 2 });
     expect(bars.length).toBe(9);
     bars.forEach((bar, i) => {
-      const index = within(bar).getByText(`[${String(i + 1).padStart(2, '0')}]`);
+      const index = within(bar).getByText(String(i + 1).padStart(2, '0'));
       expect(index).toHaveAttribute('dir', 'ltr');
       expect(index).toHaveAttribute('aria-hidden', 'true');
     });
     // the required privacy headings, in the PAGES-GAP §6 order
-    const titles = bars.map((b) => b.textContent?.replace(/\[\d+\]/g, '').trim());
+    const titles = bars.map((b) => b.textContent?.replace(/^\d{2}/, '').trim());
     expect(titles).toEqual([
       'ما الذي نجمعه', 'لماذا نجمعه', 'أين يُخزَّن', 'مدة الاحتفاظ', 'حقوقك',
       'الأطراف الثالثة', 'ملفات تعريف الارتباط والتخزين المحلي', 'التواصل', 'آخر تحديث',
@@ -383,12 +388,16 @@ describe('R320 §D — the real facts (every sentence from real code)', () => {
      * footer band — sections/Footer.tsx. */
     const landing = read('src/components/landing/r369/index.tsx');
     // extract the honest identity paragraph from the landing source
-    const m = landing.match(/منصّة تعليمية تقنية مستقلّة، عربية أولًا\.[^<]+/);
+    const m = landing.match(/منصّة تعليمية تقنية مستقلّة\.[^<]+/);
     expect(m).toBeTruthy();
     const paragraph = m![0].trim();
     expect(paragraph).toContain('اصطناعية بالكامل لأغراض العرض');
     renderPage(AboutPage);
-    expect(screen.getByText(paragraph)).toBeTruthy();
+    /* r369: the shell footer (w369-footer-note) carries the same identity
+     * paragraph, so pin the about statement cell specifically. */
+    const statement = document.querySelector('.lg-p-statement');
+    expect(statement).toBeTruthy();
+    expect(statement!.textContent).toBe(paragraph);
   });
 
   it('help: nine FAQs, each citing a real surface (@test.ly/12345678 · 5 roles · the storage ledger · the print sheet)', () => {
@@ -721,19 +730,24 @@ describe('R320 §D — the legal.css contracts', () => {
     const print = cssLive.match(/@media print\s*\{[\s\S]*\}\s*\}\s*$/);
     expect(print).toBeTruthy();
     const block = print![0];
-    expect(block).toMatch(/\.lg-header[^{]*\{[^}]*display:\s*none/);
-    expect(block).toMatch(/\.auth-frame[^{]*\{[^}]*display:\s*none/);
-    expect(block).toMatch(/\.auth-grain[^{]*\{[^}]*display:\s*none/);
+    // r369 re-key: the retired lg-header/auth-frame/auth-grain seats are
+    // gone; the warm chrome (nav, footer, mobile menu) hides instead.
+    expect(block).toMatch(/\.p369-nav[^{]*\{[^}]*display:\s*none/);
+    expect(block).toMatch(/\.w369-footer[^{]*\{[^}]*display:\s*none/);
+    expect(block).toMatch(/\.w369-mobile-menu[^{]*\{[^}]*display:\s*none/);
     // the colophon (the stamp's home) is NEVER hidden
     expect(block).not.toMatch(/\.lg-colophon[^{]*\{[^}]*display:\s*none/);
-    // the document measure collapses to one full column
-    expect(block).toMatch(/\.lg-main\s*\{[^}]*max-inline-size:\s*none/);
+    // the document measure collapses to one full column (r369: the t1 wrapper)
+    expect(block).toMatch(/\.p369-t1\s*\{[^}]*max-inline-size:\s*none/);
   });
 
-  it('radius 0 everywhere (the r313 ladder) — no raw border-radius literals', () => {
+  it('radius from tokens only (the r313 ladder + the r369 card rung) — no raw literals', () => {
+    /* r369 re-key: the document sheet's 22px world cards ride the kit
+     * (r369-pages.css, --r-2xl); legal.css itself keeps the r313 ladder
+     * and any radius here must still be a token, never a literal. */
     const radii = cssLive.match(/border-[a-z-]*radius\s*:\s*[^;]+;/g) ?? [];
     for (const r of radii) {
-      expect(r).toMatch(/var\(--r-sm\)/);
+      expect(r).toMatch(/var\(--r-(sm|2xl)\)/);
     }
   });
 
@@ -749,12 +763,14 @@ describe('R320 §D — the legal.css contracts', () => {
 /* ═══ I · the FAQ + storage table grammar extras ════════════════════ */
 
 describe('R320 §D — the FAQ + ledger table grammar', () => {
-  it('the help page numbers its questions [01]..[09] (mono LTR, aria-hidden)', () => {
+  it('the help page numbers its questions 01..09 (circled LTR runs, aria-hidden — r369 re-key)', () => {
     renderPage(HelpPage);
+    const faq = document.querySelector('.p369-faq')!;
     for (let i = 1; i <= 9; i++) {
-      const idx = screen.getAllByText(`[${String(i).padStart(2, '0')}]`);
-      expect(idx.length).toBeGreaterThanOrEqual(1);
+      const idx = within(faq as HTMLElement).getAllByText(String(i).padStart(2, '0'));
+      expect(idx.length).toBe(1);
       expect(idx[0]).toHaveAttribute('dir', 'ltr');
+      expect(idx[0]).toHaveAttribute('aria-hidden', 'true');
     }
   });
 

@@ -5,6 +5,7 @@ import Flag from "lucide-react-native/icons/flag";
 import Hash from "lucide-react-native/icons/hash";
 import Moon from "lucide-react-native/icons/moon";
 import Vibrate from "lucide-react-native/icons/vibrate";
+import Volume2 from "lucide-react-native/icons/volume-2";
 import { router } from "expo-router";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { apiWithCookieCapture, ApiError, get, put } from "@/api/client";
@@ -13,6 +14,7 @@ import { setThemePreference, usePalette, useThemePreference, type ThemePreferenc
 import { unregisterPushDevices } from "@/lib/push";
 import { NUMERALS_OPTIONS, useNumerals } from "@/lib/format";
 import { haptics } from "@/haptics";
+import { sound } from "@/sound";
 import { sp, touchFloor } from "@/design/tokens";
 import { Screen, PageHeader } from "@/components/ui/screen";
 import { T, MonoLabel } from "@/components/ui/text";
@@ -27,6 +29,7 @@ import { authenticate, biometricAvailable, getBiometricLockEnabled, setBiometric
 import { humanizeError } from "@/lib/errors";
 import type { SessionResponse } from "@/api/types";
 import Constants from "expo-constants";
+import { pressFeedback } from "@/motion";
 
 /** /settings — the SHARED settings surface (every role). R341 M3: the
  *  30-row wall of boxed one-per-setting cards is dead — rows are grouped
@@ -85,6 +88,19 @@ export default function Settings() {
     haptics.setEnabled(next);
     setHapticsOn(next);
     if (next) haptics.impact("light"); // a felt sample of what was enabled
+  };
+
+  /* «أصوات الواجهة» — the persisted kill-switch, the haptics row's own
+     seat. The set is quiet by construction and the OS silent switch
+     mutes it on iOS regardless — this toggle is for people who want
+     silence everywhere. Re-enabling plays the success blip as the
+     audible sample of what was enabled (the same grammar as the
+     haptics row's felt sample). */
+  const [soundsOn, setSoundsOn] = useState(() => sound.isEnabled());
+  const toggleSounds = (next: boolean) => {
+    sound.setEnabled(next);
+    setSoundsOn(next);
+    if (next) sound.notify("success"); // an audible sample of what was enabled
   };
 
   const [currentPassword, setCurrentPassword] = useState("");
@@ -261,7 +277,7 @@ export default function Settings() {
                 طريقة عرض الأرقام في لوحتك ونتائجك — {`١٢٣`} بالخط العربي أو {`123`} باللاتيني.
               </T>
             </LedgerRow>
-            <LedgerRow last>
+            <LedgerRow>
               <View style={{ flexDirection: "row", alignItems: "center", gap: sp[10] }}>
                 <Vibrate size={20} color={p.textMuted} />
                 <View style={{ flex: 1 }}>
@@ -275,6 +291,23 @@ export default function Settings() {
                   kind={hapticsOn ? "ghost" : "primary"}
                   small
                   onPress={() => toggleHaptics(!hapticsOn)}
+                />
+              </View>
+            </LedgerRow>
+            <LedgerRow last>
+              <View style={{ flexDirection: "row", alignItems: "center", gap: sp[10] }}>
+                <Volume2 size={20} color={p.textMuted} />
+                <View style={{ flex: 1 }}>
+                  <T variant="body" weight="medium">أصوات الواجهة</T>
+                  <T variant="xs" color="muted">
+                    نغمات قصيرة هادئة عند نجاح العمليات أو فشلها — تحترم مفتاح الصمت.
+                  </T>
+                </View>
+                <Button
+                  label={soundsOn ? "إلغاء" : "تفعيل"}
+                  kind={soundsOn ? "ghost" : "primary"}
+                  small
+                  onPress={() => toggleSounds(!soundsOn)}
                 />
               </View>
             </LedgerRow>
@@ -549,7 +582,7 @@ function PrefRow({
           accessibilityState={{ checked: value }}
           testID={testID}
           onPress={() => onToggle(!value)}
-          style={{ minHeight: touchFloor, minWidth: touchFloor, alignItems: "center", justifyContent: "center" }}
+          style={({ pressed }) => [{ minHeight: touchFloor, minWidth: touchFloor, alignItems: "center", justifyContent: "center" }, pressed && { opacity: pressFeedback.linkOpacity }]}
         >
           <Switch
             pointerEvents="none"

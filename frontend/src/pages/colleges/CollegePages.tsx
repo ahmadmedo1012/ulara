@@ -31,7 +31,9 @@ import { useAuthStore, type AcademicPosition } from '../../stores/auth.store';
  * corner marks + grain film) and the mono sheet-label — the /auth pages'
  * grammar carried to the chrome-less guest colleges surfaces, mounted
  * ONLY in the guest branch (authed visitors get the AppShell). */
-import { GuestSheetChrome } from '../../components/layout/GuestSheetChrome';
+/* r369 slice B — the guest chrome moved UP to CollegesLayout
+   (App.tsx), which now wraps the Outlet in PublicShell; these pages
+   render the same content for guest and authed visitors. */
 // D14 CSS split (13-17): this sheet also styles the .comp-* competitions
 // grid rendered by the page below and is shared with two other lazy
 // consumers (CompetitionsPages + CommunityPages — rg-verified, r157;
@@ -43,6 +45,9 @@ import '../../styles/colleges.css';
 // bridge's unlayered rules land last in the chunk-shared CSS).
 import '../../styles/landing/inner.css';
 import { formatDate } from '../../utils/numbers';
+/* r364 art v2 — the page's architectural hero band + the kit */
+import { ArtPageHeroPlan } from '../../components/patterns/ArtPageHero';
+import '../../styles/landing/art-v2.css';
 
 interface CollegeListItem {
   id: string;
@@ -270,12 +275,7 @@ export function CollegesIndexPage() {
 
   return (
     <PageFrame>
-      {/* c3-W6 (K-I): the guest branch joins the sheet grammar — the
-          frame + marks + film ride a body PORTAL here (the funnel's
-          transition stack traps fixed descendants — GuestSheetChrome
-          header note) + the registry's mono identity line over the
-          header. Authed visitors keep the shell untouched. */}
-      {isGuest && <GuestSheetChrome portal />}
+
       {/* r264: ترويسة patterns هادئة. Phase Ω: /colleges هو صفحة عرض
           تعدّد المستأجرين — لا كتالوج جامعات. */}
       {/* R332 W10b — .inx-head: the page-opening hairline + d2 display
@@ -288,6 +288,16 @@ export function CollegesIndexPage() {
            * carries the how. */
           description="ما تراه هنا هيكل مساحة العرض الموسومة — لا كتالوج جامعات."
           actions={isGuest ? <GuestJoinRow /> : undefined}
+        />
+
+        {/* r364 art v2 — the registry sheet's hero: the campus site's
+            thick-wall plan (the buildings the faculties live in) under
+            its title bar, with the honest dark card. */}
+        <ArtPageHeroPlan
+          plan="plan-campus"
+          title="الحرم الجامعي — المخطط العام"
+          scale="1:500"
+          dark={{ header: 'بيانات العرض', rows: ['هيكل مساحة العرض الموسومة', 'لا كتالوج جامعات', 'بيئة كل مؤسسة من بياناتها'] }}
         />
       </div>
 
@@ -485,14 +495,13 @@ export function CollegeDetailPage() {
   useDocTitle(q.data?.name ?? null);
 
   if (q.isLoading) {
-    return <div className="page">{isGuest && <GuestSheetChrome portal />}<DetailSkeleton /></div>;
+    return <div className="page"><DetailSkeleton /></div>;
   }
   if (q.isError || !q.data) {
-    /* the guest fail-grace branch keeps the sheet grammar too — the frame
-     * is part of the page, not of the data (c3-W6). */
+    /* the guest fail-grace branch keeps the warm shell too — the chrome
+     * is part of the page, not of the data. */
     return (
       <div className="page">
-        {isGuest && <GuestSheetChrome portal />}
         <ErrorState error={q.error} onRetry={() => q.refetch()} />
       </div>
     );
@@ -544,7 +553,6 @@ export function CollegeDetailPage() {
 
   return (
     <div className="page college-detail">
-      {isGuest && <GuestSheetChrome portal />}
       {/* Back to the gallery (A14 P2-3): the one detail page in the app
           without a back affordance — copies the CourseDetail idiom
           (ghost button, ChevronRight = the RTL back direction). */}
@@ -932,7 +940,6 @@ export function CollegesLeaderboardPage() {
 
   return (
     <div className="page colleges-leaderboard">
-      {isGuest && <GuestSheetChrome portal />}
       {/* Gallery back-link (A12 P1-2): leaderboard ↔ gallery used to be
           one-way — the gallery CTA brought you here and the ONLY link
           out was the landing. Same ghost idiom as the detail page. */}

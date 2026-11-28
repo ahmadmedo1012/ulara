@@ -131,7 +131,53 @@ labelled a demonstration, and no product statistic is invented.
 `think`, `rest`, `wave`, `sleep`), token colours only, decorative by
 default.
 
-## 6. What this section retires (do not resurrect)
+## 6. The authenticated world
+
+The shell and role pages ride the same tokens through `world.css` (§4):
+22px cards on the soft shadow, pill actions, calm app type ladder. The
+gamification seats speak the reward grammar in exactly one unit —
+**نقطة إتقان** (mastery point): stars and the jar are the LANDING's
+story device; inside the product the unit is the point. `LevelBadge`
+carries the 20-level ladder's tier mark (1-4 leaf, 5-9 sky, 10-14
+violet, 15-19 amber, 20 gold) with rays 3→7, a halo from tier 2 and a
+tick at tier 3; the level names and derivation are always disclosed
+(«التصنيف مشتق من مستواك»), never implied as server truth. Empty
+states stay honest — zero is rendered as zero.
+
+## 7. The mascot's one in-product seat
+
+نجّوم lives on the public story by default. Its ONE product seat is
+**empty states** (gamification «لا إنجازات بعد» think, notifications
+rest) — a friendly presence where there is nothing to grade. It never
+appears in grading, recording or assessment flows. Idle motion is a
+3.6s bob plus a blink inside a 6s ambient loop, both dead under
+reduced motion.
+
+## 8. Effects and sound
+
+ONE shared celebration primitive: `<Celebrate/>` — a +N rise over a
+halo-pulsing gold dot, ~0.64s inside the 1.2s ceiling, one polite live
+announcement, focus never stolen, reduced-motion = the static fact
+line. It fires only on a REAL level-up reported by the training
+payload against the remembered level; a first visit records silently.
+Press feedback rides the `--press-scale` spring register (an :active
+twin guards it from hover rules on fine pointers). UI sounds are three
+tiny synthesized mp3s (tap, confirm, milestone) served from `public/`,
+**default OFF**, one Settings toggle, remembered, never autoplay,
+fully muted under reduced motion or data-saver; an Audio object exists
+only after an opted-in play.
+
+## 9. Mobile parity
+
+The app consumes the same `shared/design-tokens.json` through
+`tokens.generated.ts` — same cream/indigo/amber canon, Baloo display
+heads, 22px tiles, pill buttons, the duotone glyph set byte-identical
+to the web's `glyphs.ts`, `LevelBadge` geometry byte-identical with
+tier-inked paints, and the press spring on Button. Brand assets (app
+icon, adaptive set, splash, favicon, the mark) carry the indigo
+cornerstone `#1E1A3C` on cream `#FBF6EC` in every target.
+
+## 10. What this section retires (do not resurrect)
 
 Radius 0 · shadow-less depth · the hairline/registration frame · the
 mono-bracket index voice · the drafting/isometric/blueprint art systems

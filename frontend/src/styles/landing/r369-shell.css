@@ -1,0 +1,207 @@
+/* ═════════════════════════════════════════════════════════════════════
+   r369 · slice 02 — the product shell speaks the warm world.
+   ─────────────────────────────────────────────────────────────────────
+   Scope: the authenticated chrome (rail, top bar, mobile bar). The
+   panels (palette / notifications / More sheet) follow in this slice's
+   later batches. DOM and logic are untouched: every rule here is a
+   visual re-skin scoped under .has-shell, unlayered so it takes the
+   last word (house precedent: shell.css's own cascade contract).
+   What each rule retires is named in place. Tokens only — the amber
+   (--gold/--gold-ink) is the world's ONE signal, used exactly as the
+   spec orders: wayfinding state on the rail rows. */
+
+/* ── 1 · the rail: pill rows, the active row in the stage-pill amber ──
+   Retires: the charcoal ink wipe (.nav-fill scaleX, chrome.css §2), the
+   2px accent tick (.nav-item.on::before, polish.css), the surface-step
+   active and the charcoal hover wash (layout.css R319 pair). */
+.has-shell .nav-item { border-radius: var(--r-full); }
+
+/* The --_bg/--_fg pair alone is NOT enough here: world.css's r368
+   sweep twin (.nav-item.on { background: var(--accent-soft) }, the
+   lavender pill in the batch-1 capture) sets background DIRECTLY and
+   ships unlayered, so this rule sets the painted properties directly
+   too — the pair stays set for the layout.css consumers that read it. */
+.has-shell .nav-item.on,
+.has-shell .nav-item[aria-current='page'] {
+  --_bg: color-mix(in srgb, var(--gold) 18%, transparent);
+  --_fg: var(--text);
+  --_icon-fg: var(--gold-ink);
+  background: color-mix(in srgb, var(--gold) 18%, transparent);
+  color: var(--text);
+  font-weight: var(--fw-bold);
+}
+.has-shell .nav-item.on::before,
+.has-shell .nav-item[aria-current='page']::before { content: none; }
+.has-shell .nav-item.on .nav-fill { transform: scaleX(0); }
+.has-shell .nav-item.on::after { content: none; }
+.has-shell .nav-item.on .nav-icon,
+.has-shell .nav-item[aria-current='page'] .nav-icon { color: var(--gold-ink); }
+
+@media (hover: hover) and (pointer: fine) {
+  .has-shell .nav-item:hover {
+    --_bg: color-mix(in srgb, var(--gold) 8%, transparent);
+    --_fg: var(--text);
+    --_icon-fg: var(--gold-ink);
+    background: color-mix(in srgb, var(--gold) 8%, transparent);
+    color: var(--text);
+  }
+  .has-shell .nav-item.on:hover,
+  .has-shell .nav-item[aria-current='page']:hover {
+    --_bg: color-mix(in srgb, var(--gold) 22%, transparent);
+    --_fg: var(--text);
+    background: color-mix(in srgb, var(--gold) 22%, transparent);
+    color: var(--text);
+  }
+}
+
+/* the touch press twin — same acknowledgment, instant */
+.has-shell .nav-item:active {
+  --_bg: color-mix(in srgb, var(--gold) 12%, transparent);
+  --_fg: var(--text);
+  --_icon-fg: var(--gold-ink);
+  background: color-mix(in srgb, var(--gold) 12%, transparent);
+  color: var(--text);
+}
+
+/* section labels: the quiet warm rung (the mono instrument voice
+   belongs to the retired drafting grammar) */
+.has-shell .nav-section-label {
+  color: var(--text-secondary);
+  font-weight: var(--fw-semibold);
+}
+
+/* ── 2 · the top bar ─────────────────────────────────────────────── */
+
+/* the honest collector chip: the student's real نقاط إتقان total from
+   useStudentDashboard (the same query the dashboard + gamification
+   pages read — no new endpoint). Streak has NO data source anywhere in
+   the app, so it is absent, never faked (slice-02 honesty gate).
+   Student-only: the XP economy is the student's. Hidden below 921px —
+   the mobile top bar's budget is search · bell · user. */
+.has-shell .topbar-xp {
+  display: inline-flex; align-items: center; gap: var(--sp-1-5, 6px);
+  min-block-size: 36px;
+  padding-inline: var(--sp-3);
+  border-radius: var(--r-full);
+  border: 1px solid color-mix(in srgb, var(--gold) 35%, transparent);
+  background: color-mix(in srgb, var(--gold) 12%, transparent);
+  /* 85% gold-ink toward the page ink: 5.29:1 on the chip's wash (plain
+     --gold-ink read 4.32:1, the sweep's axe finding on every student page) */
+  color: color-mix(in srgb, var(--gold-ink) 85%, var(--text));
+  font-size: var(--fs-sm);
+  font-weight: var(--fw-semibold);
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background var(--t-fast) var(--ease);
+}
+.has-shell .topbar-xp:hover {
+  background: color-mix(in srgb, var(--gold) 18%, transparent);
+}
+.has-shell .topbar-xp svg { color: inherit; flex: none; }
+.has-shell .topbar-xp-loading {
+  color: var(--text-secondary);
+  border-color: var(--border);
+  background: transparent;
+}
+@media (max-width: 920px) {
+  .has-shell .topbar-xp { display: none; }
+}
+
+/* ── 3 · the mobile bar: the active destination reads amber ─────────
+   Retires: the 2px accent top rule (.bottom-nav-item.active::before,
+   notifications.css R319) — the rail's amber pill grammar, compressed
+   to the dock's register (icon + label in gold-ink, bolder label). */
+.has-shell .bottom-nav-item { border-radius: var(--r-md); }
+.has-shell .bottom-nav-item[aria-current="page"],
+.has-shell .bottom-nav-item.active {
+  --_fg: var(--gold-ink);
+  --_bg: transparent;
+  font-weight: var(--fw-bold);
+}
+.has-shell .bottom-nav-item[aria-current="page"]::before,
+.has-shell .bottom-nav-item.active::before { content: none; }
+.has-shell .bottom-nav-item[aria-current="page"] .bottom-nav-icon,
+.has-shell .bottom-nav-item.active .bottom-nav-icon { color: var(--gold-ink); }
+
+/* ── 4 · the command palette (GlobalSearch dropdown) ────────────────
+   22px panel, pill rows, amber selected row. Retires: the r-xs panel
+   corner, the r-sm row corner, the R313 2px accent rule ::before and
+   the surface-2 selected step. Hover stays the quiet surface step —
+   the r305 conservation holds (the signal belongs to the committed
+   cursor row, not to a passing pointer). */
+.has-shell .search-dropdown { border-radius: var(--r-xl); }
+.has-shell .search-row { border-radius: var(--r-full); }
+.has-shell .search-row::before { content: none; }
+.has-shell .search-row.active,
+.has-shell .search-row[aria-selected="true"] {
+  --_bg: color-mix(in srgb, var(--gold) 18%, transparent);
+  --_fg: var(--text);
+  background: color-mix(in srgb, var(--gold) 18%, transparent);
+  color: var(--text);
+}
+.has-shell .search-row.active .search-row-icon,
+.has-shell .search-row[aria-selected="true"] .search-row-icon {
+  color: var(--gold-ink);
+}
+
+/* ── 5 · the notifications panel ────────────────────────────────────
+   22px panel corner (the panel mounts on document.body via the
+   anchored primitive — outside .has-shell — so its corner rule is
+   deliberately unscoped; the class exists only in the shell).
+   Unread honesty: BOTH swept owners of .notif-item-dot died as dead
+   twins (polish.css + notifications.css comments admit it), so today
+   unread renders as nothing but a hover tint — the dot is RESTORED
+   here in the one amber, paired with a bold ink title: a text state
+   plus the dot, never colour alone (spec). The accent hover tint on
+   unread rows re-keys to gold so the panel spends one signal. */
+/* NOTE: the whole panel tree (rows included) is PORTALED to
+   document.body by the anchored primitive, so every rule in this
+   section scopes to .notification-panel, never .has-shell — the
+   batch-2 capture proved the .has-shell variants match nothing. */
+.notification-panel { border-radius: var(--r-xl); }
+.notification-panel .notif-item.unread .notif-item-title {
+  font-weight: var(--fw-bold);
+  color: var(--text);
+}
+.notification-panel .notif-item-dot {
+  inline-size: 8px;
+  block-size: 8px;
+  border-radius: 50%;
+  background: var(--gold);
+  flex: none;
+  margin-block-start: var(--sp-1-5, 6px);
+}
+@media (hover: hover) and (pointer: fine) {
+  .notification-panel .notif-item.unread:hover {
+    background: color-mix(in srgb, var(--gold) 14%, transparent);
+  }
+}
+
+/* ── 6 · the More sheet (mobile sidebar drawer) ─────────────────────
+   Kept a side sheet: the drawer already owns the landing's close
+   grammar (× + Esc via the overlay stack + focus management), and the
+   slice's measured facts forbid reflowing the shell layout. What it
+   earns here is the world's sheet corner on its free edge (inline-end
+   = the edge the sheet does NOT anchor to, RTL-safe). */
+@media (max-width: 920px) {
+  .has-shell .sidebar {
+    border-start-end-radius: var(--r-xl);
+    border-end-end-radius: var(--r-xl);
+  }
+  /* grouped pill rows: the R319 hairline-separated square cells and
+     the mono [NN] gutter counter (layout.css, the drafting grammar's
+     instrument voice) both retire — the world's sheet groups its
+     pills under plain warm labels. */
+  .has-shell .nav-group .nav-item + .nav-item { border-block-start: 0; }
+  .has-shell .nav-section-label::before { content: none; }
+}
+
+/* ── 7 · the theme toggle's hit floor ───────────────────────────────
+   The sidebar's segmented theme control shipped 30×28 options — under
+   the 44px hit floor the slice's measured facts demand (the authed
+   overlap audit caught it at 1024/1440/1920, both themes). min-* so
+   the collapsed-rail twin keeps its own geometry contract. */
+.has-shell .theme-toggle-option {
+  min-inline-size: 44px;
+  min-block-size: 44px;
+}

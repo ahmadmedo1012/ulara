@@ -215,10 +215,11 @@ role-name inference.*
   detail surfaces (`limit` 20–50) with the server's count honestly
   labeled when more rows exist; the main registers all paginate
   fully.
-- Work orders and safety incidents cannot be filtered by facility
-  server-side (the contract's filters are status/equipmentId only —
-  web parity): the facility page filters the loaded page client-side
-  and says so.
+- Work orders and safety incidents ARE filterable by facility
+  server-side now (r363 P6: `?facilityId=` on both list endpoints —
+  the contract's filters are status/equipmentId/facilityId); the
+  facility page's client-side filter note remains honest until the
+  app passes the parameter (a UI follow-up, never a dead button).
 - Device verification (real Android/iOS scroll physics, FlashList
   recycling, keyboard behavior) is **pending** — no emulator/device
   in this sandbox; jest + the render net cover rendering and the

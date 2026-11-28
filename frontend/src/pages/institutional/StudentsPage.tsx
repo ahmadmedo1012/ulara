@@ -14,11 +14,13 @@
 import {
   useState, Plus, PageFrame, PageHeader,
   toast, formatDate, Icon, serverError,
-  DetailList, EnumChip, InstFilters, InstFormDialog,
+  DetailList, InstFilters, InstFormDialog,
   InstPagedTable, InstSection, InstStates, InstSelect,
   type InstColumn, type InstField, type InstFormValues,
 } from './scaffold';
+import { StatusFlag } from '../../components/institutional/kit';
 import { KpiBand } from '../../components/patterns';
+import { useInstitutionScope } from '../../stores/auth.store';
 import {
   useCredentialTypes, useCredentials, useEnrollments, useLearners, useMyCapabilities,
   useOrgUnitTree, usePrograms, useInstActions } from '../../hooks/institutional/queries';
@@ -53,13 +55,18 @@ export function InstitutionStudentsPage() {
   const canManageCredentials = caps.data?.has('CREDENTIALS_MANAGE') ?? false;
   // Learner-register writes (intake) are PEOPLE_MANAGE per contract §7.
   const canManagePeople = caps.data?.has('PEOPLE_MANAGE') ?? false;
+  const scope = useInstitutionScope();
 
   const [tab, setTab] = useState<'register' | 'enrollments' | 'credentials'>('enrollments');
   const [status, setStatus] = useState('');
   const [page, setPage] = useState(1);
+  /* The register/credentials tabs own their page state — the footers
+   * must actually page (the old no-op onPage rendered a dead footer). */
+  const [registerPage, setRegisterPage] = useState(1);
+  const [credPage, setCredPage] = useState(1);
 
   const enrollmentsQuery = useEnrollments({ status: tab === 'enrollments' ? status || undefined : undefined, page, limit: 20 });
-  const credentialsQuery = useCredentials({ page: 1, limit: 20 });
+  const credentialsQuery = useCredentials({ page: credPage, limit: 20 });
   const programsQuery = usePrograms({ limit: 100 });
   const credentialTypesQuery = useCredentialTypes();
 
@@ -74,7 +81,7 @@ export function InstitutionStudentsPage() {
   });
 
   // The generalized learner register (the pickers' source of truth).
-  const learnersQuery = useLearners({ page: 1, limit: 100, status: 'ACTIVE' });
+  const learnersQuery = useLearners({ page: registerPage, limit: 100, status: 'ACTIVE' });
   const learnerOptions = (learnersQuery.data?.data ?? []).map((l) => ({
     value: l.id,
     label: `${l.fullNameAr} — ${LEARNER_CATEGORY_LABELS[l.category]} (${l.learnerNumber})`,
@@ -235,21 +242,21 @@ export function InstitutionStudentsPage() {
 
   const learnerColumns: Array<InstColumn<LearnerProfileRow>> = [
     { head: 'الاسم', cell: (l) => <span className="inst-tree-name">{l.fullNameAr}</span> },
-    { head: 'الصنف', cell: (l) => <EnumChip value={l.category} labels={LEARNER_CATEGORY_LABELS} /> },
-    { head: 'الرقم', cell: (l) => <span className="font-mono">{l.learnerNumber}</span> },
+    { head: 'الصنف', cell: (l) => <StatusFlag value={l.category} labels={LEARNER_CATEGORY_LABELS} /> },
+    { head: 'الرقم', mono: true, cell: (l) => <bdi>{l.learnerNumber}</bdi> },
     { head: 'الوحدة', mobileHidden: true, cell: (l) => l.orgUnit?.nameAr ?? '—' },
-    { head: 'الحساب', mobileHidden: true, cell: (l) => (l.user ? l.user.email : <EnumChip value="NO_ACCOUNT" labels={{ NO_ACCOUNT: 'بلا حساب' }} />) },
-    { head: 'الحالة', cell: (l) => <EnumChip value={l.status} labels={LEARNER_STATUS_LABELS} /> },
+    { head: 'الحساب', mobileHidden: true, cell: (l) => (l.user ? l.user.email : <StatusFlag value="NO_ACCOUNT" labels={{ NO_ACCOUNT: 'بلا حساب' }} />) },
+    { head: 'الحالة', cell: (l) => <StatusFlag value={l.status} labels={LEARNER_STATUS_LABELS} /> },
   ];
 
   const enrollmentColumns: Array<InstColumn<ProgramEnrollment>> = [
     {
       head: 'الطالب/المتدرب',
-      cell: (e) => e.student ? `${e.student.firstName} ${e.student.lastName}` : e.studentProfileId,
+      cell: (e) => (e.student ? <bdi>{`${e.student.firstName} ${e.student.lastName}`}</bdi> : e.studentProfileId),
     },
     { head: 'البرنامج', cell: (e) => e.program?.nameAr ?? e.programId },
     { head: 'منذ', cell: (e) => formatDate(e.entryDate) },
-    { head: 'الحالة', cell: (e) => <EnumChip value={e.status} labels={ENROLLMENT_STATUS_LABELS} /> },
+    { head: 'الحالة', cell: (e) => <StatusFlag value={e.status} labels={ENROLLMENT_STATUS_LABELS} /> },
     {
       head: 'إجراءات', mobileHidden: true,
       cell: (e) => canManagePrograms ? (
@@ -267,12 +274,12 @@ export function InstitutionStudentsPage() {
   const credentialColumns: Array<InstColumn<AwardedCredential>> = [
     {
       head: 'الطالب/المتدرب',
-      cell: (c) => c.student ? `${c.student.firstName} ${c.student.lastName}` : c.studentProfileId,
+      cell: (c) => (c.student ? <bdi>{`${c.student.firstName} ${c.student.lastName}`}</bdi> : c.studentProfileId),
     },
     { head: 'الشهادة', cell: (c) => c.credentialType?.nameAr ?? c.credentialTypeId },
-    { head: 'الرقم التسلسلي', cell: (c) => <span className="font-mono">{c.serialNumber ?? '—'}</span> },
+    { head: 'الرقم التسلسلي', mono: true, cell: (c) => (c.serialNumber ? <bdi>{c.serialNumber}</bdi> : '—') },
     { head: 'تاريخ المنح', cell: (c) => (c.conferredAt ? formatDate(c.conferredAt) : '—') },
-    { head: 'الحالة', cell: (c) => <EnumChip value={c.status} labels={CREDENTIAL_STATUS_LABELS} /> },
+    { head: 'الحالة', cell: (c) => <StatusFlag value={c.status} labels={CREDENTIAL_STATUS_LABELS} /> },
     {
       head: 'إجراءات', mobileHidden: true,
       cell: (c) => canManageCredentials && c.status === 'AWARDED' ? (
@@ -308,7 +315,9 @@ export function InstitutionStudentsPage() {
         ) : null}
       />
 
-      {/* R359 final · W3 — the learner facts ride the KPI band. */}
+      {/* R359 final · W3 — the learner facts ride the KPI band (gated
+          on the institution context like the family's other registers). */}
+      {scope !== null && (
       <KpiBand
         items={[
           {
@@ -333,7 +342,8 @@ export function InstitutionStudentsPage() {
             empty: credentialsQuery.data == null,
           },
         ]}
-      />
+        />
+      )}
 
       <div className="inst-tabs" role="tablist" aria-label="أقسام الطلاب والمتعلمين">
         <button type="button" role="tab" aria-selected={tab === 'register'} className="inst-tab" onClick={() => setTab('register')}>
@@ -355,7 +365,7 @@ export function InstitutionStudentsPage() {
           rowKey={(l) => l.id}
           ariaLabel="سجل المتعلمين العام"
           unit={LEARNER_UNIT}
-          onPage={() => undefined}
+          onPage={setRegisterPage}
           empty={null}
         />
         </InstSection>
@@ -402,8 +412,8 @@ export function InstitutionStudentsPage() {
                     <span className="inst-actions">
                       <span className="inst-tree-kind">مستوى {c.level}</span>
                       {c.grantsProgression
-                        ? <EnumChip value="ACTIVE" labels={{ ACTIVE: 'تؤهل لمواصلة الدراسة' }} />
-                        : <EnumChip value="CLOSED" labels={{ CLOSED: 'لا تسمح بمواصلة الدراسة' }} />}
+                        ? <StatusFlag value="ACTIVE" labels={{ ACTIVE: 'تؤهل لمواصلة الدراسة' }} />
+                        : <StatusFlag value="CLOSED" labels={{ CLOSED: 'لا تسمح بمواصلة الدراسة' }} />}
                       {c.legalBasis && <span className="inst-tree-kind">{c.legalBasis}</span>}
                     </span>
                   ),
@@ -418,7 +428,7 @@ export function InstitutionStudentsPage() {
             rowKey={(c) => c.id}
             ariaLabel="الشهادات الممنوحة"
             unit={CRED_UNIT}
-            onPage={() => undefined}
+            onPage={setCredPage}
           />
           </InstSection>
         </>

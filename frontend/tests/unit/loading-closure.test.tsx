@@ -109,22 +109,24 @@ describe('r172b §1 — student dashboard pending mirror', () => {
 
     /* r220 re-pin — the pattern anatomy (Superlist): the PageFrame
        masthead (h1 + pending description) → the TodayList slot → the
-       momentum StatLine slot → the week-list slot. Every slot renders
+       momentum KPI-band slot → the week-list slot. Every slot renders
        the resolved section's class, so the pending → resolved handoff
-       moves nothing (the r172b mirror contract, re-mirrored for the
-       PageFrame/StatLine anatomy). */
+       moves nothing (the r172b mirror contract). r365 re-pin — the
+       momentum slot rides the KPI-BAND register now (the huge-numeral
+       band, the reference's KPI grammar), so the mirror holds the same
+       .sg-kpis grid the resolved band renders: five cells, each with
+       the label + numeral + delta bars. */
     const header = container.querySelector('header.pf-page-header');
     expect(header).not.toBeNull();
     expect(header?.getAttribute('aria-busy')).toBe('true');
     expect(screen.getByRole('heading', { level: 1, name: 'لوحة التحكم' })).toBeTruthy();
     expect(screen.getByText(/جارٍ تحضير لوحتك/)).toBeTruthy();
 
-    // The momentum StatLine — 4 skeleton cells at line scale.
-    const statline = container.querySelector('.pf-statline');
-    expect(statline).not.toBeNull();
-    expect(statline?.getAttribute('aria-busy')).toBe('true');
-    expect(container.querySelectorAll('.pf-statline .pf-stat')).toHaveLength(4);
-    expect(statline?.querySelector('.skeleton')).not.toBeNull();
+    // The momentum KPI band — 5 skeleton cells on the resolved grid.
+    const kpis = container.querySelector('.dash-momentum .sg-kpis');
+    expect(kpis).not.toBeNull();
+    expect(container.querySelectorAll('.dash-momentum .sg-kpi')).toHaveLength(5);
+    expect(kpis?.querySelector('.skeleton')).not.toBeNull();
 
     // The list slots — the TodayList + week-list placeholders.
     const listSlots = container.querySelectorAll('.flex-col .flex.items-center');

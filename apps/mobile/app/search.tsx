@@ -16,6 +16,7 @@ import { Card, Badge } from "@/components/ui/surfaces";
 import { EmptyState, ErrorState, SkeletonList } from "@/components/ui/states";
 import { humanizeError } from "@/lib/errors";
 import type { SearchResults } from "@/api/types";
+import { pressFeedback } from "@/motion";
 
 /** /search — global search across courses, lectures, papers, training tracks. */
 export default function Search() {
@@ -85,7 +86,7 @@ export default function Search() {
           accessibilityLabel="تنفيذ البحث"
           onPress={() => setSubmitted(q.trim())}
           hitSlop={12}
-          style={{ alignSelf: "flex-start", paddingVertical: sp[8] }}
+          style={({ pressed }) => [{ alignSelf: "flex-start", paddingVertical: sp[8] }, pressed && { opacity: pressFeedback.linkOpacity }]}
         >
           <T variant="sm" weight="bold" color="accentInk">
             تنفيذ البحث عن «{q.trim()}»

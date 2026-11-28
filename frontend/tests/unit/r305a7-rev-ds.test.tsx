@@ -314,7 +314,7 @@ describe('R305-A7 — in-flight requests (D6)', () => {
     const submit = screen.getByRole('button', { name: 'تأكيد التقييم' });
     expect(submit).toBeDisabled();
     expect(submit).toHaveAttribute('aria-busy', 'true');
-    expect(submit.querySelector('.motion-spinner')).not.toBeNull();
+    expect(submit.querySelector('.spinner')).not.toBeNull();
     // The sibling inputs freeze too (the draft cannot drift mid-save).
     expect(screen.getByLabelText('الدرجة (من 20)')).toBeDisabled();
     expect(screen.getByLabelText('ملاحظات للطالب')).toBeDisabled();
@@ -329,7 +329,7 @@ describe('R305-A7 — in-flight requests (D6)', () => {
     const publish = screen.getByRole('button', { name: 'نشر في المكتبة' });
     expect(publish).toBeDisabled();
     expect(publish).toHaveAttribute('aria-busy', 'true');
-    expect(publish.querySelector('.motion-spinner')).not.toBeNull();
+    expect(publish.querySelector('.spinner')).not.toBeNull();
   });
 });
 
