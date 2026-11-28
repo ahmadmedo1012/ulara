@@ -94,8 +94,14 @@ test.describe('تغذية راجعة للروابط', () => {
       }));
 
     await row.hover();
-    const states = await readHoverBg();
-    expect(states.cursor, 'row links must present the pointer cursor').toBe('pointer');
+    // the row may still be settling under a reveal when the pointer lands,
+    // so the cursor is polled rather than read once
+    await expect
+      .poll(async () => (await readHoverBg()).cursor, {
+        timeout: 5_000,
+        message: 'row links must present the pointer cursor',
+      })
+      .toBe('pointer');
 
     // a.pf-row-link:hover { background: var(--surface-2) } — the hover
     // background must differ from the resting surface. expect.poll
