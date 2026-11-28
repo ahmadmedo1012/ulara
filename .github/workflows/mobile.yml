@@ -328,9 +328,15 @@ jobs:
             ~/.gradle/caches
             ~/.gradle/wrapper
             /usr/local/lib/android/sdk/ndk
-          key: android-devclient-${{ hashFiles('apps/mobile/package-lock.json', 'apps/mobile/app.config.ts') }}
+          # r370: the key family and the restore prefix must MATCH — the
+          # restore key was `android-smoke-` (the retired workflow's family),
+          # so no cache this step wrote could ever be restored by it; every
+          # native-build run paid a cold Gradle. package.json joins the hash:
+          # a dependency ADD/REMOVE that leaves the lock untouched (a
+          # workspace edit) changes what Gradle resolves.
+          key: android-devclient-${{ hashFiles('apps/mobile/package.json', 'apps/mobile/package-lock.json', 'apps/mobile/app.config.ts') }}
           restore-keys: |
-            android-smoke-
+            android-devclient-
             android-apk-
 
       - name: Mobile dependencies
