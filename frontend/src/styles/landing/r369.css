@@ -3440,6 +3440,33 @@ html:not([data-theme='dark']) .w369-footer {
 }
 
 
+/* ── the hand-off split: the headline stays seated while the subject flows ──
+ * 07 holds a steps list and two phones, too tall to pin. So the headline
+ * stage is the pinned half and the subject column simply scrolls past it:
+ * the reference's heading-left, object-right frame, with nothing trapped. */
+@media (min-width: 1200px) and (min-height: 720px) and (prefers-reduced-motion: no-preference) {
+  .w369-handoff {
+    display: grid;
+    grid-template-columns: minmax(0, 0.72fr) minmax(0, 1.28fr);
+    column-gap: clamp(var(--sp-7), 3vw, var(--sp-10));
+    align-items: start;
+  }
+  .w369-handoff > .w369-band-head {
+    grid-column: 1;
+    grid-row: 1 / span 2;
+    align-self: stretch;
+    min-block-size: 0;
+  }
+  .w369-handoff .w369-band-stage {
+    max-inline-size: 30rem;
+    margin-inline: 0;
+    justify-items: start;
+    text-align: start;
+  }
+  .w369-handoff > .w369-steps { grid-column: 2; grid-row: 1; margin-block-start: var(--sp-11); grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .w369-handoff > .w369-two { grid-column: 2; grid-row: 2; margin-block: var(--sp-10) var(--sp-11); }
+}
+
 /* ── stage rail: the pinned headline scene shows the scroll's progress ── */
 .w369-srail { display: none; }
 @media (prefers-reduced-motion: no-preference) {
