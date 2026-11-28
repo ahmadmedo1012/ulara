@@ -3173,3 +3173,167 @@ html:not([data-theme='dark']) .w369-footer {
   .w369-source:active { transform: none; }
   :where(.w369-nav-link, .w369-footer-link, .w369-link, .w369-mobile-link, .w369-faq-q, .w369-tour-btn) { transition: none; }
 }
+
+/* ── r369 reference-match: per-section palette + bigger headline scene ──
+ * The reference moves through distinct grounds (peach, sky, pastel, then
+ * night); ours was one faint bloom per band. Each daylight band now
+ * paints a vertical two-scene ground: the headline scene at the full
+ * tint token, easing into a lighter pastel for the subject scene, then
+ * to the page ground. Token colours only (color-mix), so dark resolves.
+ * The pinned #stars scene and the night band keep their own grounds. */
+.w369-band:not([data-scene='night']):not(#stars)::before {
+  mask-image: linear-gradient(to bottom, transparent, CanvasText 8%, CanvasText 90%, transparent);
+  background:
+    radial-gradient(70% 45% at 50% 14%, color-mix(in srgb, var(--w369-tint-deep, var(--gold)) 16%, transparent), transparent 72%),
+    linear-gradient(to bottom,
+      var(--w369-tint-bg, var(--bg)) 0%,
+      var(--w369-tint-bg, var(--bg)) 34%,
+      color-mix(in srgb, var(--w369-tint-bg, var(--bg)) 45%, var(--bg)) 62%,
+      var(--bg) 100%);
+}
+[data-theme='dark'] .w369-band:not([data-scene='night']):not(#stars)::before {
+  background:
+    radial-gradient(70% 45% at 50% 14%, color-mix(in srgb, var(--w369-tint-deep, var(--gold)) 30%, transparent), transparent 72%),
+    linear-gradient(to bottom,
+      color-mix(in srgb, var(--w369-tint-deep, var(--bg)) 22%, var(--bg)) 0%,
+      color-mix(in srgb, var(--w369-tint-deep, var(--bg)) 12%, var(--bg)) 40%,
+      var(--bg) 100%);
+}
+@media (min-width: 1024px) {
+  .w369-band-head .w369-h2 { font-size: clamp(3.2rem, 6.6vw, 6rem); line-height: 1.12; }
+  .w369-band-head { max-inline-size: 48ch; }
+}
+@media (max-width: 1023px) {
+  .w369-band-head .w369-h2 { font-size: clamp(2.3rem, 10vw, 3.2rem); line-height: 1.16; }
+}
+
+/* ── r369 reference-match: two scenes per daylight band ──────────────
+ * The headline is its own scene (full-bleed tint ground of its own) and
+ * the subject is the second (the pastel ground below). One section, one
+ * anchor, no copy moved: only the paint is split, so the nav ids, the
+ * stage navigator and the reveal observers are untouched. Phones keep
+ * the single natural-height column (the head ground is just shorter). */
+.w369-band:not([data-scene='night']):not(#stars) .w369-band-head { position: relative; }
+.w369-band:not([data-scene='night']):not(#stars) .w369-band-head::before {
+  content: '';
+  position: absolute;
+  inset-block: calc(var(--sp-9) * -1) 0;
+  inset-inline: calc(50% - 50vw);
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(60% 70% at 50% 40%, color-mix(in srgb, var(--w369-tint-deep, var(--gold)) 14%, transparent), transparent 75%),
+    var(--w369-tint-bg, var(--bg));
+  mask-image: linear-gradient(to bottom, transparent, CanvasText 10%, CanvasText 82%, transparent);
+}
+.w369-band:not([data-scene='night']):not(#stars)::before {
+  background: linear-gradient(to bottom,
+    transparent 0%,
+    color-mix(in srgb, var(--w369-tint-bg, var(--bg)) 40%, var(--bg)) 40%,
+    var(--bg) 100%);
+}
+[data-theme='dark'] .w369-band:not([data-scene='night']):not(#stars) .w369-band-head::before {
+  background:
+    radial-gradient(60% 70% at 50% 40%, color-mix(in srgb, var(--w369-tint-deep, var(--gold)) 30%, transparent), transparent 75%),
+    color-mix(in srgb, var(--w369-tint-deep, var(--bg)) 18%, var(--bg));
+}
+
+/* ── r369 reference-match: the night band's two scenes ───────────────
+ * Headline scene: the deepest indigo with a denser star field (the
+ * arrival moment). Subject scene: the level path on the lifted night
+ * ground with the lavender bloom. Paint only. */
+.w369-band[data-scene='night'] .w369-band-head { position: relative; }
+.w369-band[data-scene='night'] .w369-band-head::before {
+  content: '';
+  position: absolute;
+  inset-block: calc(var(--sp-11) * -1) 0;
+  inset-inline: calc(50% - 50vw);
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(2px 2px at 14% 30%, color-mix(in srgb, var(--text) 85%, transparent), transparent),
+    radial-gradient(1.5px 1.5px at 27% 74%, color-mix(in srgb, var(--text) 60%, transparent), transparent),
+    radial-gradient(2px 2px at 43% 22%, color-mix(in srgb, var(--gold) 90%, transparent), transparent),
+    radial-gradient(1.5px 1.5px at 58% 66%, color-mix(in srgb, var(--text) 70%, transparent), transparent),
+    radial-gradient(1.5px 1.5px at 72% 28%, color-mix(in srgb, var(--text) 80%, transparent), transparent),
+    radial-gradient(2px 2px at 86% 58%, color-mix(in srgb, var(--gold) 80%, transparent), transparent),
+    radial-gradient(1px 1px at 92% 18%, color-mix(in srgb, var(--text) 60%, transparent), transparent),
+    radial-gradient(50% 60% at 50% 45%, color-mix(in srgb, var(--c-lavender-deep) 26%, transparent), transparent 75%),
+    color-mix(in srgb, var(--bg) 82%, black);
+  mask-image: linear-gradient(to bottom, transparent, CanvasText 18%, CanvasText 80%, transparent);
+}
+
+/* ── r369 reference-match: the pastel run after the night scene ──────
+ * Back in daylight the reference keeps changing ground per section.
+ * Each closing section paints its own full-bleed pastel (token colours,
+ * feathered at both seams), so the page keeps the cream, peach, night,
+ * pastel progression to the footer. Paint only, behind content. */
+.w369-handoff, .w369-show, .w369-principles, .w369-roles {
+  position: relative;
+  isolation: isolate;
+}
+.w369-handoff::before, .w369-show::before, .w369-principles::before, .w369-roles::before {
+  content: '';
+  position: absolute;
+  inset-block: 0;
+  inset-inline: calc(50% - 50vw);
+  z-index: -1;
+  pointer-events: none;
+  mask-image: linear-gradient(to bottom, transparent, CanvasText 14%, CanvasText 86%, transparent);
+  background: var(--w369-pastel, var(--bg));
+}
+.w369-handoff   { --w369-pastel: color-mix(in srgb, var(--c-sky-bg) 80%, var(--bg)); }
+.w369-show      { --w369-pastel: color-mix(in srgb, var(--c-mint-bg) 80%, var(--bg)); }
+.w369-principles{ --w369-pastel: color-mix(in srgb, var(--c-lavender-bg) 80%, var(--bg)); }
+.w369-roles     { --w369-pastel: color-mix(in srgb, var(--c-peach-bg) 80%, var(--bg)); }
+[data-theme='dark'] .w369-handoff, [data-theme='dark'] .w369-show,
+[data-theme='dark'] .w369-principles, [data-theme='dark'] .w369-roles {
+  --w369-pastel: color-mix(in srgb, var(--c-lavender-deep) 12%, var(--bg));
+}
+
+/* ── r369 reference-match: every band's headline scene STOPS the scroll ──
+ * Measured on the reference (desktop 1440x900 and phone 390x844): no
+ * scroll-snap, no wheel/touch handling, html scroll-behavior smooth, and
+ * every scene is a tall track (3 to 4.6 screens) holding a position:
+ * sticky stage of exactly one viewport at top 0. The section "stops"
+ * because its stage stays seated while the native scroll keeps moving.
+ * Ours does the same for each band's headline scene: the head is a
+ * runway, its stage is the sticky one-viewport beat, then the subject
+ * scene scrolls in normally (never trapped: only the headline is pinned,
+ * the long content flows). Native scroll everywhere; the runway is short
+ * on phones; reduced-motion gets the plain flow. The pinned #stars band
+ * keeps its own rule. */
+.w369-band-stage { display: grid; justify-items: inherit; text-align: inherit; }
+@media (prefers-reduced-motion: no-preference) {
+  .w369-band:not(#stars) > .w369-band-head {
+    min-block-size: 175svh;
+    display: block;
+    align-content: normal;
+  }
+  .w369-band:not(#stars) .w369-band-stage {
+    position: sticky;
+    inset-block-start: 0;
+    min-block-size: 100svh;
+    box-sizing: border-box;
+    padding-block-start: var(--sp-11);
+    align-content: center;
+    justify-items: center;
+    text-align: center;
+    margin-inline: auto;
+    max-inline-size: 48ch;
+  }
+  @supports (animation-timeline: view()) {
+    .w369-band:not(#stars) .w369-band-stage > * {
+      animation: w369-stage-in var(--ease-linear) both;
+      animation-timeline: view(block);
+      animation-range: entry 10% entry 70%;
+    }
+  }
+}
+@media (prefers-reduced-motion: no-preference) and (max-width: 1023px) {
+  .w369-band:not(#stars) > .w369-band-head { min-block-size: 150svh; }
+}
+@keyframes w369-stage-in {
+  from { opacity: 0; transform: translateY(var(--sp-6)) scale(0.97); }
+  to   { opacity: 1; transform: none; }
+}

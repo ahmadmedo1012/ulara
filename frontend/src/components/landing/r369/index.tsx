@@ -683,10 +683,12 @@ function Band({ n, kicker, title, body, tint, icon, children, jar, id, stage, sc
       data-scene={scene} data-theme={scene === 'night' ? 'dark' : undefined}
     >
       <div className="w369-band-head">
-        <span className="w369-band-num" aria-hidden="true">{n}</span>
-        <p className="w369-band-kicker"><Glyph name={icon} size={15} />{kicker}</p>
-        <h2 className="w369-h2">{title}</h2>
-        <p className="w369-body">{body}</p>
+        <div className="w369-band-stage">
+          <span className="w369-band-num" aria-hidden="true">{n}</span>
+          <p className="w369-band-kicker"><Glyph name={icon} size={15} />{kicker}</p>
+          <h2 className="w369-h2">{title}</h2>
+          <p className="w369-body">{body}</p>
+        </div>
       </div>
       <div className="w369-band-body" ref={useReveal<HTMLDivElement>()}>{children}</div>
     </section>
