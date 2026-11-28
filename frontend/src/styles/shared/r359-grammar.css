@@ -256,7 +256,12 @@
 a.sg-kpi:hover,
 a.sg-kpi:focus-visible {
   background: var(--surface-2);
-  outline: none;
+}
+/* Keyboard focus keeps the universal ring (it was suppressed, leaving
+   only a fill and a 2px tick); inset so the sheet's cell edges stay put. */
+a.sg-kpi:focus-visible {
+  outline: var(--state-focus-ring-width) solid var(--state-focus-ring-color);
+  outline-offset: calc(var(--state-focus-ring-width) * -1);
 }
 a.sg-kpi::after {
   content: '';
