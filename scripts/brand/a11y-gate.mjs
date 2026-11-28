@@ -117,7 +117,7 @@ const ROUTE_READY = {
    * not a below-fold section. main#main is LandingPage's own first
    * commit; the stepped walk below then mounts everything else. */
   '/': 'main#main',
-  '/auth': '.auth-shell',    // the login sheet root (App.tsx GuestRoute)
+  '/auth': '.auth-card',     // the r369 auth card (AuthPage.tsx; .auth-shell retired)
   '/404': '.nf-shell',       // NotFoundPage sheet root (also the `*` catch-all)
 };
 
