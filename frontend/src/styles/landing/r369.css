@@ -3237,3 +3237,28 @@ html:not([data-theme='dark']) .w369-footer {
     radial-gradient(60% 70% at 50% 40%, color-mix(in srgb, var(--w369-tint-deep, var(--gold)) 30%, transparent), transparent 75%),
     color-mix(in srgb, var(--w369-tint-deep, var(--bg)) 18%, var(--bg));
 }
+
+/* ── r369 reference-match: the night band's two scenes ───────────────
+ * Headline scene: the deepest indigo with a denser star field (the
+ * arrival moment). Subject scene: the level path on the lifted night
+ * ground with the lavender bloom. Paint only. */
+.w369-band[data-scene='night'] .w369-band-head { position: relative; }
+.w369-band[data-scene='night'] .w369-band-head::before {
+  content: '';
+  position: absolute;
+  inset-block: calc(var(--sp-11) * -1) 0;
+  inset-inline: calc(50% - 50vw);
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(2px 2px at 14% 30%, color-mix(in srgb, var(--text) 85%, transparent), transparent),
+    radial-gradient(1.5px 1.5px at 27% 74%, color-mix(in srgb, var(--text) 60%, transparent), transparent),
+    radial-gradient(2px 2px at 43% 22%, color-mix(in srgb, var(--gold) 90%, transparent), transparent),
+    radial-gradient(1.5px 1.5px at 58% 66%, color-mix(in srgb, var(--text) 70%, transparent), transparent),
+    radial-gradient(1.5px 1.5px at 72% 28%, color-mix(in srgb, var(--text) 80%, transparent), transparent),
+    radial-gradient(2px 2px at 86% 58%, color-mix(in srgb, var(--gold) 80%, transparent), transparent),
+    radial-gradient(1px 1px at 92% 18%, color-mix(in srgb, var(--text) 60%, transparent), transparent),
+    radial-gradient(50% 60% at 50% 45%, color-mix(in srgb, var(--c-lavender-deep) 26%, transparent), transparent 75%),
+    color-mix(in srgb, var(--bg) 82%, black);
+  mask-image: linear-gradient(to bottom, transparent, CanvasText 18%, CanvasText 80%, transparent);
+}
