@@ -3262,3 +3262,31 @@ html:not([data-theme='dark']) .w369-footer {
     color-mix(in srgb, var(--bg) 82%, black);
   mask-image: linear-gradient(to bottom, transparent, CanvasText 18%, CanvasText 80%, transparent);
 }
+
+/* ── r369 reference-match: the pastel run after the night scene ──────
+ * Back in daylight the reference keeps changing ground per section.
+ * Each closing section paints its own full-bleed pastel (token colours,
+ * feathered at both seams), so the page keeps the cream, peach, night,
+ * pastel progression to the footer. Paint only, behind content. */
+.w369-handoff, .w369-show, .w369-principles, .w369-roles {
+  position: relative;
+  isolation: isolate;
+}
+.w369-handoff::before, .w369-show::before, .w369-principles::before, .w369-roles::before {
+  content: '';
+  position: absolute;
+  inset-block: 0;
+  inset-inline: calc(50% - 50vw);
+  z-index: -1;
+  pointer-events: none;
+  mask-image: linear-gradient(to bottom, transparent, CanvasText 14%, CanvasText 86%, transparent);
+  background: var(--w369-pastel, var(--bg));
+}
+.w369-handoff   { --w369-pastel: color-mix(in srgb, var(--c-sky-bg) 80%, var(--bg)); }
+.w369-show      { --w369-pastel: color-mix(in srgb, var(--c-mint-bg) 80%, var(--bg)); }
+.w369-principles{ --w369-pastel: color-mix(in srgb, var(--c-lavender-bg) 80%, var(--bg)); }
+.w369-roles     { --w369-pastel: color-mix(in srgb, var(--c-peach-bg) 80%, var(--bg)); }
+[data-theme='dark'] .w369-handoff, [data-theme='dark'] .w369-show,
+[data-theme='dark'] .w369-principles, [data-theme='dark'] .w369-roles {
+  --w369-pastel: color-mix(in srgb, var(--c-lavender-deep) 12%, var(--bg));
+}
