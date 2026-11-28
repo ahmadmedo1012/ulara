@@ -416,3 +416,132 @@ for a one-pass fix by the owner: `.w369-hero` (349 vs 333), `.w369-hero-art`
 ratchet improved (`rawZIndex` 72→51, `rawHex` 25→24, `importantDeclarations`
 and `files` unchanged) — the baseline is pinned at 0 errors, so the six
 duplicates are the whole breach.
+
+# r370 — round 3
+
+## A. base re-merged, every gate re-run (exact counts)
+
+`origin/r369/new-identity` had moved one more commit (`947d842a` — the
+handoff/showcase/principles/roles headline scenes) → merged clean (`28805553`,
+3 files). All gates re-run **sequentially** (three suites in parallel on a
+2-CPU box produced phantom failures — see the note at the end):
+
+| gate | result |
+|---|---|
+| backend `tsc --noEmit` | **0 errors** |
+| backend suite | **2311 passed / 19 skipped / 0 failed** |
+| frontend `tsc --noEmit` | **0 errors** |
+| frontend suite (TZ=UTC) | **3018 passed / 247 suites / 0 failed** |
+| mobile suite | **1544 passed / 59 suites** |
+| parity export | **PASS** (201 checks, 0 broken var(), 0 retired) |
+| bundle gate | **PASS** — 830.4 KB gz total (≤878), entry 48.0 (≤92), pdf 95.4 (≤110) |
+| stylelint ratchet | **RED — 6 `no-duplicate-selectors`, all `styles/landing/r369.css`** (owner is fixing; untouched by r370) |
+| dead-code (knip) | unused files **49 → 1** (see E) |
+
+## B. real browser performance (not just backend)
+
+New instruments: `frontend/scripts/report-route-js.mjs` (per-route weight from
+the actual build) and `frontend/scripts/measure-web-vitals.mjs` (headless
+Chromium against the production build served by the real Express server, 390×844,
+5 cold runs each, LCP from the browser's own PerformanceObserver, optional CDP
+Slow-4G + 4× CPU).
+
+**Weight** (gzip -9 of the emitted files):
+
+| | JS | CSS | total |
+|---|---|---|---|
+| **BOOT** (index.html preloads) | 126.1 KB | 51.9 KB | **178.0 KB** to paint anything |
+| / (landing) | +1.6 KB route chunk | | 179.6 KB |
+| TeacherPages | +19.9 | | 197.9 KB |
+| OwnerPages | +28.0 | | 206.0 KB |
+| charts route | +64.9 | | 242.8 KB |
+| pdf route | +96.3 | | 274.3 KB |
+| app total | 830.4 KB | 100.9 KB | 931.4 KB (179 chunks) |
+
+**LCP** (chromium, production build behind the real server):
+
+| route | unthrottled LCP | Slow-4G + 4× CPU | DCL (throttled) | requests | JS | CSS |
+|---|---|---|---|---|---|---|
+| `/` | 180 ms | **2340 ms** | 1462 ms | 20 | 129.8 KB | 52.8 KB |
+| `/auth` | 40 ms | 336 ms | 1451 ms | 26 | 164.5 KB | 52.8 KB |
+| `/about` | 40 ms | 324 ms | 1440 ms | 23 | 141.8 KB | 54.1 KB |
+
+**Finding for the landing owner** (I may not edit `styles/landing/` or
+`components/landing/r369`): the landing's LCP is **7× the auth page's on the
+same bundle and the same CPU throttle** (2340 ms vs 336 ms) while shipping
+*less* JS (129.8 vs 164.5 KB) — so the cost is not bytes, it is the hero being
+revealed after JS (entrance/motion gating). An LCP element that paints before
+hydration is the single biggest landing perf win available.
+
+**WebKit: impossible on this machine.** `npx playwright install webkit` fails
+with `ERROR: Playwright does not support webkit on ubuntu26.04-x64` (both the
+pinned and the latest Playwright). Chromium headless shell 1255 was installed
+and drives both instruments.
+
+## C. security audit — route permissions, limits, uploads, sessions
+
+`backend/scripts/audit-routes.mjs` parses all 45 route files and classifies
+every handler by the authorization actually in front of it (transport auth /
+service token, declared `requireRole`/`requireCapability` incl. aliases,
+handler-level `assertCapability*`, caller-scoped query).
+
+**Measured:** 389 routes · **15 public** (3.9%) · 374 authenticated · **191
+declared role/capability-guarded** · 129 caller-scoped · 208 mutations ·
+**0 mutations authenticated but unguarded in every layer**.
+
+`backend/tests/contract/route-authz.test.ts` (4 tests) makes it binding: the
+public set is an explicit 15-entry allowlist (a new unauthenticated route is a
+red build), zero unguarded mutations, zero in the 15 privileged routers, plus a
+denominator floor so the assertions cannot go vacuous.
+
+Hand-audited and sound (evidence in the commit): password reset (sha-256 at
+rest, single-use `updateMany` claim, 30-min TTL, one generic refusal),
+refresh-token rotation + per-session revocation scoped to `req.user.id`,
+credential limiters (login/register/refresh/verify 10 failed/15 min;
+forgot-password 10/15 min per IP **and** 3/15 min per submitted email;
+change-password per user), PDF uploads (magic bytes + active-content scan +
+size cap), video presign (server-minted key, extension allowlist, role-gated,
+HEAD-verified on complete), no mass-assignment, no unverified
+body-supplied `institutionId`. **No exploitable gap found** — the durable
+output is the instrument + the contract.
+
+## D. the five timezone tests are fixed, not documented away
+
+They were UTC-instant fixtures whose calendar-day meaning only survived on a
+UTC runner (a 23:59Z "yesterday" row is *tomorrow* at UTC+02:00). Fixtures are
+now built from LOCAL calendar components; assertions unchanged. **50 tests pass
+with `TZ` unset (this box is EET +0200) and the full 3018-test suite is green
+without `TZ=UTC`.**
+
+## E. dead code by measurement only
+
+knip (pinned 5.88.1) reported **49 unused files, 19 unused exports, 215 unused
+types, 0 unused deps**. 45 of the 49 are the r359 art library that
+`PlatesPage` consumes via `import.meta.glob('../illustrations/r359/*.tsx')` — a
+pattern the analyzer cannot see; `public/sw.js` is registered by the browser;
+two were the new perf scripts. All declared in `knip.json`, so the honest count
+is **1**: `src/data/testimonials.config.ts`, which is **copy** and therefore not
+mine to delete. The one genuinely dead module,
+`src/lib/paperStatus.ts` (`PAPER_STATUS_TONE`, zero importers, referenced only
+by two comments), is deleted. Baseline re-pinned in the same commit
+(unusedFiles 47 → 1, unusedExportTypes 220 → 215).
+
+## F. mobile — what is verifiable without a device
+
+`npx tsc --noEmit` **0 errors**; jest **1544 passed / 59 suites**; and a real
+production JS export succeeds for **both** platforms — Android Hermes bundle
+**7.9 MB** (`.hbc`) + 38 assets, total export 8.8 MB; iOS export also
+completes. That proves the JS graph, the Metro/Hermes transform and the app
+config resolve — the part of a build that breaks without a device.
+
+**Not verifiable here (no Android SDK, no emulator, no Xcode/macOS):** Gradle
+APK build, signing, iOS archive, on-device startup time, list memory under
+scrolling, slow-network behaviour on a real radio. Installed SDK/Xcode would
+not change the JS side measured above.
+
+## Note — three suites in parallel lie on this 2-CPU box
+
+Running backend + frontend + mobile vitest/jest simultaneously produced a
+phantom `r324-type-gate` failure and 13 phantom mobile failures (and dropped 6
+frontend files). Re-run alone, everything is green. Measured numbers must come
+from one suite at a time.
