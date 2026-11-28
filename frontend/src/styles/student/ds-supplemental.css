@@ -241,20 +241,21 @@
     flex-direction: column;
     gap: var(--sp-0-5);
     padding-block-end: var(--sp-3);
-    border-block-end: 1px solid color-mix(in srgb, var(--neutral-0) 16%, transparent);
+    border-block-end: 1px solid var(--border);
     min-inline-size: 0;
   }
   .r305u-fact-label {
     font-size: var(--fs-sm);
     font-weight: var(--fw-medium);
-    /* P2.6 — band-safe mix: the fact row rides the deep identity band,
-       where the raw --neutral-500 rung washes to 1.87:1 on the dark
-       paper pole (see the foundation eyebrow note). */
-    color: color-mix(in srgb, var(--neutral-0) 72%, var(--neutral-900));
+    /* the fact rows sit on the page's card surface in both themes (the
+       deep identity band they were mixed for is gone), so the label and
+       value ride the text tokens: the old neutral-0 value read white on
+       cream in light and paper-on-paper in dark (1.0:1) */
+    color: var(--text-secondary);
   }
   .r305u-fact-value {
     font-size: var(--fs-sm);
-    color: var(--neutral-0);
+    color: var(--text);
     line-height: var(--lh-base);
     overflow-wrap: anywhere;
   }

@@ -95,6 +95,11 @@
   .btn.ghost,
   .btn.outline {
     background: transparent;
+    /* the label rides the ink token: components.css seats the outline
+       label at neutral-50 for its old ink SLAB, and with the slab gone
+       (transparent here) that read cream-on-cream (1.1:1) in light and
+       ink-on-ink in dark */
+    --_btn-fg: var(--text);
     /* r369 slice 06: the dead `box-shadow: none` above the inset
        declaration dropped (stylelint no-duplicate-properties) — the
        inset rule already wins in the same block. */
