@@ -3493,6 +3493,34 @@ html:not([data-theme='dark']) .w369-footer {
   .w369-show > .w369-carousel { margin-block-start: 0; }
 }
 
+/* ── the principles and roles split: headline seated, the grids flow past ──
+ * Same frame as the hand-off: the headline stage is the pinned half, the
+ * cards scroll past it in the second column. */
+@media (min-width: 1200px) and (min-height: 720px) and (prefers-reduced-motion: no-preference) {
+  :is(.w369-principles, .w369-roles) {
+    display: grid;
+    grid-template-columns: minmax(0, 0.72fr) minmax(0, 1.28fr);
+    column-gap: clamp(var(--sp-7), 3vw, var(--sp-10));
+    align-items: start;
+  }
+  :is(.w369-principles, .w369-roles):not(#stars) > .w369-band-head {
+    grid-column: 1;
+    grid-row: 1 / span 5;
+    align-self: stretch;
+    min-block-size: 0;
+  }
+  :is(.w369-principles, .w369-roles):not(#stars) .w369-band-stage {
+    max-inline-size: 30rem;
+    margin-inline: 0;
+    justify-items: start;
+    text-align: start;
+  }
+  :is(.w369-principles, .w369-roles) .w369-band-head .w369-h2 { font-size: clamp(2.2rem, 3.6vw, 3.4rem); }
+  :is(.w369-principles, .w369-roles) > :not(.w369-band-head) { grid-column: 2; }
+  .w369-principles > .w369-principle-grid { margin-block-start: var(--sp-11); grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .w369-roles > .w369-role-grid { margin-block-start: var(--sp-11); grid-template-columns: minmax(0, 1fr); }
+}
+
 /* ── stage rail: the pinned headline scene shows the scroll's progress ── */
 .w369-srail { display: none; }
 @media (prefers-reduced-motion: no-preference) {
