@@ -3375,14 +3375,14 @@ html:not([data-theme='dark']) .w369-footer {
  * the week, 880+ for the tall level path) and motion is allowed; everything else keeps the stacked flow, so nothing is trapped.
  * The sentence still builds in beats; no word moves or goes away. */
 @media (min-width: 1200px) and (min-height: 720px) and (prefers-reduced-motion: no-preference) {
-  :is(#progress, #rewards).w369-band {
+  :is(#story, #progress, #rewards).w369-band {
     grid-template-columns: minmax(0, 0.72fr) minmax(0, 1.28fr);
     column-gap: clamp(var(--sp-7), 3vw, var(--sp-10));
     align-items: stretch;
   }
-  :is(#progress, #rewards).w369-band > .w369-band-head,
-  :is(#progress, #rewards).w369-band:nth-of-type(even) > .w369-band-head,
-  :is(#progress, #rewards).w369-band:nth-of-type(odd) > .w369-band-head {
+  :is(#story, #progress, #rewards).w369-band > .w369-band-head,
+  :is(#story, #progress, #rewards).w369-band:nth-of-type(even) > .w369-band-head,
+  :is(#story, #progress, #rewards).w369-band:nth-of-type(odd) > .w369-band-head {
     order: 0;
     max-inline-size: none;
     margin-inline: 0;
@@ -3391,16 +3391,16 @@ html:not([data-theme='dark']) .w369-footer {
     justify-items: start;
     min-block-size: 220svh;
   }
-  :is(#progress, #rewards).w369-band .w369-band-stage {
+  :is(#story, #progress, #rewards).w369-band .w369-band-stage {
     max-inline-size: 30rem;
     margin-inline: 0;
     justify-items: start;
     text-align: start;
     padding-block-start: var(--sp-11);
   }
-  :is(#progress, #rewards).w369-band .w369-band-head .w369-h2 { font-size: clamp(2.2rem, 3.6vw, 3.4rem); }
-  :is(#progress, #rewards).w369-band .w369-band-body { min-block-size: 220svh; }
-  :is(#progress, #rewards).w369-band .w369-band-body > :only-child {
+  :is(#story, #progress, #rewards).w369-band .w369-band-head .w369-h2 { font-size: clamp(2.2rem, 3.6vw, 3.4rem); }
+  :is(#story, #progress, #rewards).w369-band .w369-band-body { min-block-size: 220svh; }
+  :is(#story, #progress, #rewards).w369-band .w369-band-body > :only-child {
     position: sticky;
     inset-block-start: calc(var(--sp-11) + var(--sp-4));
   }
