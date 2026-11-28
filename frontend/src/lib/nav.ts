@@ -363,7 +363,7 @@ export const OWNER_NAV: NavGroup[] = [
          the institutions console in this role's nav (A4 P3-4). */
       { to: ROUTES.institutionRoot, icon: Briefcase, label: 'مساحة العمل المؤسسية' },
       { to: ROUTES.ownerDashboard, icon: LayoutDashboard, label: 'لوحة التحكم الرئيسية' },
-      { to: ROUTES.ownerRealtime, icon: Radio, label: 'المراقبة الحية', badge: { text: 'LIVE', tone: 'brand' } },
+      { to: ROUTES.ownerRealtime, icon: Radio, label: 'المراقبة الحية', badge: { text: 'مباشر', tone: 'brand' } },
       { to: ROUTES.ownerUsers, icon: Users, label: 'إدارة المستخدمين' },
       /* r178 (multi-institution): the institution console — create
        * institutions, provision their ADMINs, suspend/reactivate.
