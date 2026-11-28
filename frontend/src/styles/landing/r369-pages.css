@@ -425,6 +425,14 @@
   line-height: var(--lh-tight);
 }
 
+@media (min-width: 900px) {
+  /* one short card sits under each bar, so on desktop the bar steps down
+     from the landing's 85px scene head to the card-title rung (36px
+     @1440): at 85px the head outweighed the lines under it. Phones keep
+     the h2 rung, which is already 32px there. */
+  .lg.p369-t1 .lg-bar { font-size: var(--fs-d3); }
+}
+
 .lg.p369-t1 .lg-cell {
   text-align: start;
   background: var(--w369-card, var(--surface));
