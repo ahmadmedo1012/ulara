@@ -138,7 +138,7 @@
     },
     {
       "name": "me",
-      "description": "28 operation(s) under /api/v1/me"
+      "description": "29 operation(s) under /api/v1/me"
     },
     {
       "name": "messages",
@@ -17491,6 +17491,89 @@
           }
         },
         "security": []
+      }
+    },
+    "/api/v1/me/calendar": {
+      "get": {
+        "tags": [
+          "me"
+        ],
+        "summary": "GET /api/v1/me/calendar",
+        "description": "Declared in `backend/src/http/routes/student-dashboard.routes.ts` (mounted at `/api/v1`).",
+        "x-mounted-at": "/api/v1",
+        "responses": {
+          "200": {
+            "description": "Success envelope `{ data }`",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SuccessEnvelope"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation / bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing, invalid or expired bearer token (TOKEN_EXPIRED on expiry — refresh)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limited (global 1000 req/15 min/IP; auth surface 10 req/15 min/IP)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "security": [],
+        "parameters": [
+          {
+            "name": "from",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "to",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          }
+        ]
       }
     },
     "/api/v1/me/certificates": {
@@ -34917,9 +35000,9 @@
   },
   "x-generator": {
     "tool": "backend/scripts/generate-openapi.ts (hand-rolled: express-stack walk + zod-v3 walker)",
-    "generatedAt": "2026-11-26T11:44:32.658Z",
-    "operationCount": 390,
-    "pathCount": 317,
+    "generatedAt": "2026-11-28T00:26:09.604Z",
+    "operationCount": 391,
+    "pathCount": 318,
     "contractSnapshotCovered": 13,
     "snapshotCoveredRoutes": [
       "GET /api/v1/ai/config",

@@ -736,6 +736,257 @@ router.post(
   },
 );
 
+// ─── r370 — GET /me/calendar: the WINDOWED agenda (additive) ─────────
+//
+// Why: /me/dashboard's agenda is deliberately a 7-DAY window (classes for
+// today/tomorrow, assignments + live sessions inside `horizon`, exams
+// inside the week). The student calendar then composed its MONTH grid from
+// that payload, so browsing any other month showed an essentially empty
+// sheet — the deadlines were in the database but never in the window.
+//
+// This endpoint answers the same four surfaces for an ARBITRARY range and
+// changes nothing about /me/dashboard (no field, no default, no shape):
+//   · assignments — due inside [from, to]
+//   · live        — scheduled inside [from, to]
+//   · exams       — PUBLISHED windows that OVERLAP [from, to] (an exam that
+//                   opened in September and closes in December is visible
+//                   in November), the same offering-or-faculty scope as
+//                   /me/dashboard
+//   · schedule    — the recurring weekly slots behind the month grid
+//
+// Bounds: the window is capped at CALENDAR_MAX_RANGE_DAYS and every
+// collection has a documented `take`, so a client cannot turn the month
+// browse into an unbounded read.
+
+const DAY_MS = 24 * 60 * 60 * 1000;
+
+/** Largest window a single request may ask for (one full academic year). */
+export const CALENDAR_MAX_RANGE_DAYS = 366;
+
+/** Per-collection ceilings — a month of one student's life, not the school's. */
+export const CALENDAR_TAKE = {
+  assignments: 500,
+  live: 300,
+  exams: 200,
+  schedule: 500,
+} as const;
+
+/**
+ * Query contract: `from` and `to` are required ISO-8601 instants (a plain
+ * `YYYY-MM-DD` is accepted and read as UTC midnight — the calendar's civil
+ * keys are built client-side). Anything unparseable is a 400.
+ */
+export const calendarQuerySchema = z
+  .object({
+    from: z.coerce.date(),
+    to: z.coerce.date(),
+  })
+  .strict();
+
+/**
+ * Window validation, separated from the route so the rules are testable
+ * without HTTP: parseable, `to > from`, and at most CALENDAR_MAX_RANGE_DAYS.
+ * Returns null when the window is legal (the message is user-facing Arabic
+ * copy — D17-3 — with the numbers left for the FE to localise).
+ */
+export function calendarRangeError(from: Date, to: Date): string | null {
+  if (Number.isNaN(from.getTime()) || Number.isNaN(to.getTime())) {
+    return 'صيغة التاريخ غير صالحة';
+  }
+  if (to.getTime() <= from.getTime()) {
+    return 'نهاية النطاق يجب أن تكون بعد بدايته';
+  }
+  if (to.getTime() - from.getTime() > CALENDAR_MAX_RANGE_DAYS * DAY_MS) {
+    return `أقصى نطاق للتقويم ${CALENDAR_MAX_RANGE_DAYS} يوم`;
+  }
+  return null;
+}
+
+/** Assignments due inside the window, for the student's offerings. */
+export function calendarAssignmentWhere(
+  offeringIds: readonly string[],
+  from: Date,
+  to: Date,
+): Prisma.AssignmentWhereInput {
+  return { offeringId: { in: [...offeringIds] }, dueAt: { gte: from, lte: to } };
+}
+
+/** Live sessions scheduled inside the window (cancelled ones included —
+ *  the calendar is a record of the month, not a to-do list). */
+export function calendarLiveWhere(
+  offeringIds: readonly string[],
+  from: Date,
+  to: Date,
+): Prisma.LiveSessionWhereInput {
+  return { offeringId: { in: [...offeringIds] }, scheduledAt: { gte: from, lte: to } };
+}
+
+/**
+ * Published exam windows that OVERLAP the range: the window opened before
+ * the range ends AND (it has no close, or it closes after the range
+ * starts). A not-yet-open exam is included — its `openAt` is a real event
+ * inside a future month. Faculty-wide templates join the union exactly as
+ * they do on /me/dashboard.
+ */
+export function calendarExamWhere(
+  offeringIds: readonly string[],
+  facultyId: string | null,
+  from: Date,
+  to: Date,
+): Prisma.ExamTemplateWhereInput {
+  return {
+    status: 'PUBLISHED',
+    AND: [
+      {
+        OR: [
+          { offeringId: { in: [...offeringIds] } },
+          ...(facultyId ? [{ facultyId }] : []),
+        ],
+      },
+      { OR: [{ openAt: null }, { openAt: { lte: to } }] },
+      { OR: [{ closeAt: null }, { closeAt: { gte: from } }] },
+    ],
+  };
+}
+
+router.get(
+  '/me/calendar',
+  validate(calendarQuerySchema, 'query'),
+  async (req, res, next) => {
+    try {
+      const { from, to } = req.query as unknown as { from: Date; to: Date };
+      const rangeError = calendarRangeError(from, to);
+      if (rangeError) throw AppError.badRequest(rangeError);
+
+      const userId = req.user!.id;
+      // Same scoping law as every other /me feed: a STUDENT needs a
+      // DB-verified institution context; the offerings are pinned to it.
+      const institution = await resolveCallerInstitutionScope(
+        req.user!.id,
+        req.user!.institutionId,
+      );
+      if (req.user!.role === Role.STUDENT && !institution) {
+        throw institutionContextRequiredError();
+      }
+
+      const enrollments = await prisma.enrollment.findMany({
+        where: {
+          studentId: userId,
+          status: 'active',
+          ...(institution
+            ? { offering: { course: { institutionId: institution } } }
+            : {}),
+        },
+        select: { offeringId: true },
+      });
+      const offeringIds = enrollments.map((e) => e.offeringId);
+      if (offeringIds.length === 0) {
+        res.json({
+          data: { from, to, assignments: [], live: [], exams: [], schedule: [] },
+        });
+        return;
+      }
+
+      const profile = institution
+        ? await prisma.studentProfile.findFirst({
+            where: {
+              userId,
+              institutionId: institution,
+              membership: { isActive: true },
+            },
+            select: { facultyId: true },
+          })
+        : null;
+
+      const [assignments, live, exams, schedule] = await Promise.all([
+        prisma.assignment.findMany({
+          where: calendarAssignmentWhere(offeringIds, from, to),
+          orderBy: { dueAt: 'asc' },
+          take: CALENDAR_TAKE.assignments,
+          select: {
+            id: true, title: true, type: true, dueAt: true, offeringId: true,
+            offering: { select: { course: { select: { name: true, code: true } } } },
+          },
+        }),
+        prisma.liveSession.findMany({
+          where: calendarLiveWhere(offeringIds, from, to),
+          orderBy: { scheduledAt: 'asc' },
+          take: CALENDAR_TAKE.live,
+          select: {
+            id: true, title: true, scheduledAt: true, status: true, offeringId: true,
+            offering: { select: { course: { select: { name: true, code: true } } } },
+          },
+        }),
+        prisma.examTemplate.findMany({
+          where: calendarExamWhere(offeringIds, profile?.facultyId ?? null, from, to),
+          orderBy: { openAt: 'asc' },
+          take: CALENDAR_TAKE.exams,
+          select: {
+            id: true, title: true, kind: true, openAt: true, closeAt: true,
+            offering: { select: { course: { select: { name: true, code: true } } } },
+            faculty: { select: { name: true } },
+          },
+        }),
+        prisma.scheduleSlot.findMany({
+          where: { offeringId: { in: offeringIds } },
+          orderBy: [{ dayOfWeek: 'asc' }, { startTime: 'asc' }],
+          take: CALENDAR_TAKE.schedule,
+          select: {
+            id: true, dayOfWeek: true, startTime: true, endTime: true, room: true,
+            offeringId: true,
+            offering: { select: { course: { select: { name: true, code: true } } } },
+          },
+        }),
+      ]);
+
+      res.json({
+        data: {
+          from,
+          to,
+          assignments: assignments.map((a) => ({
+            id: a.id,
+            offeringId: a.offeringId,
+            title: a.title,
+            type: a.type,
+            dueAt: a.dueAt,
+            courseName: a.offering.course.name,
+            courseCode: a.offering.course.code,
+          })),
+          live: live.map((l) => ({
+            id: l.id,
+            offeringId: l.offeringId,
+            title: l.title,
+            scheduledAt: l.scheduledAt,
+            status: l.status,
+            courseName: l.offering.course.name,
+            courseCode: l.offering.course.code,
+          })),
+          exams: exams.map((e) => ({
+            id: e.id,
+            title: e.title,
+            kind: e.kind,
+            openAt: e.openAt,
+            closeAt: e.closeAt,
+            courseName: e.offering?.course.name ?? null,
+            courseCode: e.offering?.course.code ?? null,
+            facultyName: e.faculty?.name ?? null,
+          })),
+          schedule: schedule.map((s) => ({
+            id: s.id,
+            offeringId: s.offeringId,
+            dayOfWeek: s.dayOfWeek,
+            startTime: s.startTime,
+            endTime: s.endTime,
+            room: s.room,
+            courseName: s.offering.course.name,
+            courseCode: s.offering.course.code,
+          })),
+        },
+      });
+    } catch (e) { next(e); }
+  },
+);
+
 /**
  * Statuses that mean the student HAS handed the work in — the complement
  * of «pending». DRAFT is deliberately absent: a draft is not delivered,

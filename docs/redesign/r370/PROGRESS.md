@@ -71,3 +71,35 @@ Rollout: the Prisma migration must run in a transaction (CONCURRENTLY is illegal
 there), so the live-database path is `scripts/sql/r370-indexes-concurrent.sql`
 (idempotent, one statement per transaction, safe to interrupt). Reversal is the
 three `DROP INDEX IF EXISTS` lines in the migration header.
+
+## Item 2 — `GET /me/calendar?from&to` (DONE, additive)
+
+**Spec.** The calendar's month grid was built from `/me/dashboard`, whose
+agenda is a deliberate 7-day window, so browsing any other month showed an
+essentially empty sheet. Add a windowed read of the same four surfaces;
+change nothing about `/me/dashboard`; no frontend edit.
+
+**Contract** (`backend/src/http/routes/student-dashboard.routes.ts`, also in
+`docs/api/openapi.json` → `/api/v1/me/calendar`, and in the regenerated
+`apps/mobile/src/api/schema.generated.ts`):
+
+| | |
+|---|---|
+| auth | bearer, any role; a STUDENT needs a DB-verified institution (403 `INSTITUTION_CONTEXT_REQUIRED`) |
+| query | `from`, `to` — required ISO-8601 (a bare `YYYY-MM-DD` reads as UTC midnight); `to > from`; window ≤ 366 days; unknown params rejected |
+| `assignments` | `{id, offeringId, title, type, dueAt, courseName, courseCode}` due ∈ `[from,to]`, `take 500` |
+| `live` | `{id, offeringId, title, scheduledAt, status, courseName, courseCode}` scheduled ∈ `[from,to]`, `take 300` |
+| `exams` | `{id, title, kind, openAt, closeAt, courseName?, courseCode?, facultyName?}` PUBLISHED **windows that overlap** `[from,to]` (offering ∪ faculty, as the dashboard does), `take 200` |
+| `schedule` | `{id, offeringId, dayOfWeek, startTime, endTime, room, courseName, courseCode}` — recurring weekly slots, `take 500` |
+| shape | `{ data: { from, to, assignments, live, exams, schedule } }`; empty enrollments → four empty arrays without touching the agenda tables |
+
+**Evidence.** `backend/tests/modules/me-calendar.test.ts` — **17 tests, 17
+passed** (schema/coercion/strictness, range guard incl. Invalid Date, the three
+where-builders incl. exam overlap + faculty union, and 6 HTTP cases: 401, 403
+fail-closed, 400 ×3, empty short-circuit, success shape with the window and the
+`take` bounds asserted on the prisma call args).
+Backend suite after the change: **2278 passed | 19 skipped**, `tsc --noEmit` 0.
+OpenAPI regenerated deterministically (87 insertions, the new path + a count);
+mobile `schema.generated.ts` regenerated from it (+78 lines, nothing else).
+No frontend file touched — the view keeps composing from the old payload until
+it is deliberately switched over.
