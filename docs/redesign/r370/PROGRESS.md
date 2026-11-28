@@ -388,3 +388,31 @@ that needs the owner's confirmation of the protection rules, not a unilateral
 edit. Dead-code removal "the ratchet allows" and duplicated-helper merging:
 both are repo-wide sweeps with no measurement behind them in this round;
 doing them blind is how a hardening pass turns into churn.
+
+## Step 0 again — the base moved 7 more commits during r370
+
+`origin/r369/new-identity` advanced from `0e6d46b`… to `87a25cf3` (+7
+commits, landing only: the sticky band scenes, 164 lines of
+`styles/landing/r369.css`, one r305 e2e, the a11y gate). Merged clean into
+`r370/hardening` (`f838950d`, 4 files, no conflict). Re-ran every gate that
+the merge could touch, on the merged head:
+
+| gate | result |
+|---|---|
+| frontend suite (TZ=UTC) | **3018 passed / 247 suites** |
+| backend suite | **2307 passed / 19 skipped** |
+| backend `tsc --noEmit` | **0** |
+| parity export | **PASS** (201 checks, 0 broken var(), 0 retired values) |
+| bundle gate (`scripts/check-bundle-size.mjs`) | **PASS** — 830.4 KB gz total (ceiling 878), entry 48.0 (≤92), pdf 95.4 (≤110) |
+| stylelint ratchet | **RED — 6 `no-duplicate-selectors`, all in `styles/landing/r369.css`** |
+
+The stylelint red is **inherited from the landing branch, not from r370**:
+the file is byte-identical to `origin/r369/new-identity` (`git diff` on it is
+empty) and its last three commits are the visual round's. Exact offenders
+for a one-pass fix by the owner: `.w369-hero` (349 vs 333), `.w369-hero-art`
+(386 vs 376), `.w369-road-stop::after` (1805 vs 1784), `.w369-hero::before`
+(2835 vs 350), `.w369-band:not([data-scene='night']):not(#stars)::before`
+(3229 vs 3184), `.w369-roles` (3288 vs 1105). Everything else about the
+ratchet improved (`rawZIndex` 72→51, `rawHex` 25→24, `importantDeclarations`
+and `files` unchanged) — the baseline is pinned at 0 errors, so the six
+duplicates are the whole breach.
